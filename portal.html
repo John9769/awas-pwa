@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWAS - Institutional Portal</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --primary: #2563eb;
+            --primary-hover: #1d4ed8; --text: #f8fafc; --text-muted: #94a3b8;
+            --success: #16a34a; --warn: #eab308; --border: #334155; --danger: #dc2626;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        header { text-align: center; margin-bottom: 24px; }
+        h1 { font-size: 1.8rem; font-weight: 800; }
+        .badge { display: inline-block; background: #1e3a8a; color: #60a5fa; font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-top: 4px; }
+        main { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; }
+        .panel { background: var(--card); padding: 24px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border: 1px solid var(--border); }
+        h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group { margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        input, select { background: #020617; border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: white; font-size: 0.95rem; width: 100%; }
+        input:focus { border-color: var(--primary); outline: none; }
+        .btn-action { width: 100%; background: var(--primary); border: none; color: white; padding: 14px; font-weight: 700; font-size: 0.95rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
+        .btn-action:hover { background: var(--primary-hover); }
+        .toggle-link { text-align: center; margin-top: 14px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+        .status-banner { background: #020617; padding: 16px; border-radius: 8px; border-left: 4px solid var(--border); margin-top: 14px; font-size: 0.9rem; line-height: 1.5; }
+        .status-banner.pending { border-left-color: var(--warn); color: #fde047; }
+        .status-banner.approved { border-left-color: var(--success); color: #4ade80; }
+        .status-banner.error { border-left-color: var(--danger); color: #fca5a5; }
+        #evidence-payload { display: none; margin-top: 20px; background: #020617; border: 1px solid var(--border); padding: 16px; border-radius: 8px; }
+        pre { white-space: pre-wrap; word-break: break-all; font-family: monospace; font-size: 0.8rem; color: #38bdf8; line-height: 1.4; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AWAS Legal Hub</h1>
+        <div class="badge">Enterprise Verification Gateway</div>
+    </header>
+
+    <main>
+        <div class="panel" id="login-panel">
+            <h3>Institutional Login</h3>
+            <div class="form-group">
+                <label>Corporate Email</label>
+                <input type="email" id="login-email" placeholder="name@company.com.my">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-pass">
+            </div>
+            <button class="btn-action" id="btn-login">Authenticate Account</button>
+            <div id="login-status" class="status-banner" style="display:none;"></div>
+            <div class="toggle-link" id="go-to-signup">Need corporate account? Apply here</div>
+        </div>
+
+        <div class="panel" id="signup-panel" style="display:none;">
+            <h3>Corporate Registration</h3>
+            <div class="form-group">
+                <label>Corporate Email</label>
+                <input type="email" id="signup-email" placeholder="agent@allianz.com.my">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signup-pass">
+            </div>
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" id="signup-company" placeholder="e.g., Allianz Insurance Malaysia">
+            </div>
+            <div class="form-group">
+                <label>Institution Type</label>
+                <select id="signup-type">
+                    <option value="INSURANCE">Insurance Adjuster Agency</option>
+                    <option value="LAWYER">Legal Counsel / Law Firm</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>License Number (PIAM / Bar Council ID)</label>
+                <input type="text" id="signup-license" placeholder="e.g., BC/12345/26">
+            </div>
+            <button class="btn-action" id="btn-signup" style="background:var(--success);">Submit Vetting Application</button>
+            <div id="signup-status" class="status-banner" style="display:none;"></div>
+            <div class="toggle-link" id="go-to-login">Return to login</div>
+        </div>
+
+        <div class="panel" id="query-panel" style="display:none;">
+            <h3>Forensic Ledger Query</h3>
+            <div id="welcome-badge" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;font-weight:600;"></div>
+            <div class="form-group">
+                <label>Target SHA-256 Forensic Hash</label>
+                <input type="text" id="log-hash" placeholder="Paste 64-character hash">
+            </div>
+            <div class="form-group">
+                <label>Internal Case Reference Number</label>
+                <input type="text" id="case-ref" placeholder="Your internal claim number">
+            </div>
+            <button class="btn-action" id="btn-query">Query Verification Ledger</button>
+            <div id="request-status" class="status-banner" style="display:none;"></div>
+        </div>
+
+        <div class="panel" id="unlock-panel" style="display:none;">
+            <h3>Consent Approved: Process Settlement</h3>
+            <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;">
+                Driver has digitally authorized evidence release. Settle transaction to unlock forensic pack.
+            </div>
+            <button id="btn-pay-unlock" class="btn-action" style="background:var(--success);">Authorize Settlement & Download</button>
+            <div id="evidence-payload">
+                <h4 style="font-size:0.85rem;margin-bottom:8px;color:var(--text-muted);">CHAIN-OF-CUSTODY DATA UNLOCKED:</h4>
+                <pre id="payload-display"></pre>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = 'http://localhost:5000'; // Change to production URL before deploy
+
+        let globalTicketId = null;
+        let authToken = null;
+
+        document.getElementById('go-to-signup').addEventListener('click', () => {
+            document.getElementById('login-panel').style.display = 'none';
+            document.getElementById('signup-panel').style.display = 'block';
+        });
+        document.getElementById('go-to-login').addEventListener('click', () => {
+            document.getElementById('signup-panel').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'block';
+        });
+
+        document.getElementById('btn-signup').addEventListener('click', async () => {
+            const statusBox = document.getElementById('signup-status');
+            statusBox.className = 'status-banner';
+            statusBox.style.display = 'block';
+            statusBox.innerText = 'Submitting application...';
+
+            const payload = {
+                email: document.getElementById('signup-email').value,
+                password: document.getElementById('signup-pass').value,
+                companyName: document.getElementById('signup-company').value,
+                requesterType: document.getElementById('signup-type').value,
+                licenseId: document.getElementById('signup-license').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                statusBox.classList.add(res.ok ? 'approved' : 'error');
+                statusBox.innerText = res.ok ? data.message : data.error;
+            } catch {
+                statusBox.classList.add('error');
+                statusBox.innerText = 'Network connection error.';
+            }
+        });
+
+        document.getElementById('btn-login').addEventListener('click', async () => {
+            const statusBox = document.getElementById('login-status');
+            statusBox.className = 'status-banner';
+            statusBox.style.display = 'block';
+            statusBox.innerText = 'Validating credentials...';
+
+            const payload = {
+                email: document.getElementById('login-email').value,
+                password: document.getElementById('login-pass').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    authToken = data.token; // Save JWT
+                    document.getElementById('login-panel').style.display = 'none';
+                    document.getElementById('query-panel').style.display = 'block';
+                    document.getElementById('welcome-badge').innerText = `🏢 ${data.companyName} (${data.requesterType})`;
+                } else {
+                    statusBox.classList.add('error');
+                    statusBox.innerText = data.error;
+                }
+            } catch {
+                statusBox.classList.add('error');
+                statusBox.innerText = 'Server connection error.';
+            }
+        });
+
+        document.getElementById('btn-query').addEventListener('click', async () => {
+            const statusDiv = document.getElementById('request-status');
+            statusDiv.className = 'status-banner';
+            statusDiv.style.display = 'block';
+            statusDiv.innerText = 'Routing forensic lookup...';
+
+            const payload = {
+                logHash: document.getElementById('log-hash').value.trim(),
+                caseReferenceNo: document.getElementById('case-ref').value.trim()
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/institutions/request-access`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.status === 202) {
+                    globalTicketId = data.ticketId;
+                    statusDiv.classList.add('pending');
+                    statusDiv.innerHTML = `⏳ <strong>${data.message}</strong><br>Ticket ID: <strong>${globalTicketId}</strong>`;
+                    document.getElementById('unlock-panel').style.display = 'block';
+                } else {
+                    statusDiv.classList.add('error');
+                    statusDiv.innerText = data.error || 'Query failed.';
+                }
+            } catch {
+                statusDiv.classList.add('error');
+                statusDiv.innerText = 'Network error.';
+            }
+        });
+
+        document.getElementById('btn-pay-unlock').addEventListener('click', async () => {
+            const statusDiv = document.getElementById('request-status');
+            if (!globalTicketId) return alert('Invalid flow. Re-query first.');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/institutions/unlock-evidence`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ ticketId: globalTicketId })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    statusDiv.className = 'status-banner approved';
+                    statusDiv.innerHTML = `✅ <strong>SETTLED (${data.meta.billingRate})</strong><br>Consent signed: ${new Date(data.meta.consentSignedAt).toLocaleString('en-MY')}`;
+                    document.getElementById('payload-display').innerText = JSON.stringify(data.evidenceBundle, null, 2);
+                    document.getElementById('evidence-payload').style.display = 'block';
+                } else {
+                    alert(data.error || 'Unlock failed.');
+                }
+            } catch {
+                alert('Network error during settlement.');
+            }
+        });
+    </script>
+</body>
+</html>

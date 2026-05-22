@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWAS - Evidence Release Consent</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
+            --text-muted: #94a3b8; --success: #16a34a;
+            --danger: #dc2626; --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: var(--card); border-radius: 12px; padding: 28px; max-width: 420px; width: 100%; border: 1px solid var(--border); }
+        h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+        .sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+        .info-box { background: #020617; border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.6; border-left: 4px solid #2563eb; }
+        .info-box span { color: var(--text-muted); font-size: 0.8rem; }
+        .btn-approve { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
+        .btn-reject { width: 100%; background: transparent; border: 2px solid var(--danger); color: #fca5a5; padding: 12px; font-weight: 700; font-size: 0.9rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
+        .result-box { text-align: center; padding: 20px; border-radius: 8px; font-weight: 700; font-size: 1rem; margin-top: 16px; }
+        .result-box.approved { background: rgba(22,163,74,0.1); color: #4ade80; border: 1px solid var(--success); }
+        .result-box.rejected { background: rgba(220,38,38,0.1); color: #fca5a5; border: 1px solid var(--danger); }
+        .result-box.error { background: rgba(234,179,8,0.1); color: #fde047; border: 1px solid #eab308; }
+        #loading { text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>⚖️ Evidence Release Request</h2>
+        <div class="sub">A licensed institution is requesting access to your AWAS accident report.</div>
+
+        <div id="loading">Loading request details...</div>
+
+        <div id="consent-content" style="display:none;">
+            <div class="info-box" id="request-info"></div>
+            <button class="btn-approve" id="btn-approve">✅ Approve Release</button>
+            <button class="btn-reject" id="btn-reject">❌ Reject & Block Access</button>
+        </div>
+
+        <div id="result-box" style="display:none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000'; // Change to production URL before deploy
+
+        const params = new URLSearchParams(window.location.search);
+        const consentToken = params.get('token');
+
+        const loadingEl = document.getElementById('loading');
+        const consentContent = document.getElementById('consent-content');
+        const requestInfo = document.getElementById('request-info');
+        const resultBox = document.getElementById('result-box');
+
+        if (!consentToken) {
+            loadingEl.innerText = 'Invalid or missing consent link. Please check your WhatsApp message.';
+        } else {
+            // Display token info — in Phase 2 add a GET endpoint to fetch ticket details
+            loadingEl.style.display = 'none';
+            requestInfo.innerHTML = `
+                <span>Consent Reference</span><br>
+                <strong style="font-family:monospace;font-size:0.8rem;">${consentToken}</strong><br><br>
+                A verified AWAS institutional partner is requesting access to view your accident evidence bundle.<br><br>
+                <strong>Your consent is required before any data is released.</strong>
+            `;
+            consentContent.style.display = 'block';
+        }
+
+        async function submitConsent(approve) {
+            document.getElementById('btn-approve').disabled = true;
+            document.getElementById('btn-reject').disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/institutions/driver-authorize`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ consentToken, approve })
+                });
+                const data = await res.json();
+
+                consentContent.style.display = 'none';
+                resultBox.style.display = 'block';
+
+                if (res.ok) {
+                    resultBox.className = `result-box ${approve ? 'approved' : 'rejected'}`;
+                    resultBox.innerHTML = approve
+                        ? '✅ Access Approved.<br><span style="font-size:0.8rem;font-weight:400;">The institution may now retrieve your evidence under PDPA authorization.</span>'
+                        : '❌ Access Rejected.<br><span style="font-size:0.8rem;font-weight:400;">Your evidence remains locked. No data has been released.</span>';
+                } else {
+                    resultBox.className = 'result-box error';
+                    resultBox.innerText = data.error || 'Something went wrong. Try again.';
+                }
+            } catch {
+                resultBox.style.display = 'block';
+                resultBox.className = 'result-box error';
+                resultBox.innerText = 'Connection error. Check your internet and try again.';
+            }
+        }
+
+        document.getElementById('btn-approve').addEventListener('click', () => submitConsent(true));
+        document.getElementById('btn-reject').addEventListener('click', () => submitConsent(false));
+    </script>
+</body>
+</html>

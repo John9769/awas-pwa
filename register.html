@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWAS - Driver Registration</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --primary: #dc2626;
+            --primary-hover: #b91c1c; --text: #f8fafc;
+            --text-muted: #94a3b8; --success: #16a34a; --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        main { width: 100%; max-width: 420px; background: var(--card); padding: 24px; border-radius: 12px; margin: auto 0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; text-align: center; }
+        .price-tag { text-align: center; color: var(--success); font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        input, select { background: #020617; border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: white; font-size: 1rem; width: 100%; }
+        input:focus, select:focus { border-color: var(--primary); outline: none; }
+        select option { background: #020617; }
+        .consent-container { background: #020617; border: 1px solid rgba(220,38,38,0.2); padding: 12px; border-radius: 6px; margin: 20px 0; display: flex; gap: 10px; align-items: flex-start; }
+        .consent-container input[type="checkbox"] { width: auto; margin-top: 4px; transform: scale(1.2); cursor: pointer; }
+        .consent-text { font-size: 0.78rem; line-height: 1.4; color: var(--text-muted); }
+        .consent-text strong { color: var(--text); }
+        .btn-submit { width: 100%; background: var(--primary); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        .btn-submit:hover { background: var(--primary-hover); }
+        #message { text-align: center; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <main>
+        <h2>Create AWAS Account</h2>
+        <div class="price-tag">RM12.00 / Annually</div>
+
+        <form id="register-form">
+            <div class="form-group">
+                <label>Vehicle Registration Plate</label>
+                <input type="text" id="vehicle-plate" placeholder="e.g., VAK1234" required>
+            </div>
+            <div class="form-group">
+                <label>Vehicle Type</label>
+                <select id="vehicle-type" required>
+                    <option value="CAR">Car</option>
+                    <option value="MOTORCYCLE">Motorcycle</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Vehicle Make & Model</label>
+                <input type="text" id="vehicle-model" placeholder="e.g., Perodua Myvi 1.5 / Honda Wave 125" required>
+            </div>
+            <div class="form-group">
+                <label>MyKad (Last 4 Digits Only)</label>
+                <input type="text" id="mykad-four" maxlength="4" placeholder="e.g., 5678" required>
+            </div>
+            <div class="form-group">
+                <label>WhatsApp Number (Optional — for consent alerts)</label>
+                <input type="tel" id="phone" placeholder="e.g., 0123456789">
+            </div>
+
+            <div class="consent-container">
+                <input type="checkbox" id="pdpa-check" required>
+                <div class="consent-text">
+                    I explicitly consent to AWAS storing my partial credentials, and <strong>authorize AWAS to release verified evidence bundles</strong> to licensed insurers or legal representatives handling my accident investigations under Section 39 of the PDPA 2010.
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Pay RM12 & Register</button>
+        </form>
+        <div id="message"></div>
+    </main>
+
+    <script>
+        const API_BASE = 'http://localhost:5000'; // Change to production URL before deploy
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msgDiv = document.getElementById('message');
+            msgDiv.style.color = 'var(--text-muted)';
+            msgDiv.innerText = 'Processing registration...';
+
+            const vehiclePlate = document.getElementById('vehicle-plate').value.toUpperCase().replace(/\s+/g, '');
+            const vehicleType = document.getElementById('vehicle-type').value;
+            const vehicleMakeModel = document.getElementById('vehicle-model').value;
+            const mykadLastFour = document.getElementById('mykad-four').value;
+            const phone = document.getElementById('phone').value.trim() || null;
+            const consentGiven = document.getElementById('pdpa-check').checked;
+
+            const payload = {
+                vehiclePlate,
+                vehicleType,
+                vehicleMakeModel,
+                mykadLastFour,
+                phone,
+                consentGiven
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/drivers/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('awas_vehicle_plate', vehiclePlate);
+                    localStorage.setItem('awas_vehicle_model', vehicleMakeModel);
+                    localStorage.setItem('awas_vehicle_type', vehicleType);
+                    localStorage.setItem('awas_mykad_four', mykadLastFour);
+
+                    msgDiv.style.color = 'var(--success)';
+                    msgDiv.innerHTML = `✅ Registration Active! (${vehicleType})<br>Expires: ${new Date(data.expiry).toLocaleDateString('en-MY')}`;
+                } else {
+                    msgDiv.style.color = 'var(--primary)';
+                    msgDiv.innerText = data.error || 'Registration failed.';
+                }
+            } catch (err) {
+                msgDiv.style.color = 'var(--primary)';
+                msgDiv.innerText = 'Connection failure. Try again.';
+            }
+        });
+    </script>
+</body>
+</html>
