@@ -91,12 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // OSM Static Map — free, no API key, works on HTTPS
             const lat = gpsCoordinates.latitude.toFixed(6);
             const lng = gpsCoordinates.longitude.toFixed(6);
-            mapContainer.innerHTML = `<img 
-                src="https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=16&size=600x200&markers=${lat},${lng},lightblue1" 
-                style="width:100%;height:100%;object-fit:cover;border:none;" 
-                alt="AWAS Location Map"
-                onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;font-size:0.8rem;color:#64748b;\'>GPS: ${lat}, ${lng}</div>'"
-            >`;
+            mapContainer.innerHTML = `<iframe 
+    src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.005},${parseFloat(lat)-0.005},${parseFloat(lng)+0.005},${parseFloat(lat)+0.005}&layer=mapnik&marker=${lat},${lng}"
+    style="width:100%;height:100%;border:none;"
+    loading="lazy">
+</iframe>`;
 
             captureView.style.display = 'none';
             reportView.style.display = 'flex';
