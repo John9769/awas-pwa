@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const lng = gpsCoordinates.longitude.toFixed(6);
             mapContainer.innerHTML = `<iframe 
     src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.005},${parseFloat(lat)-0.005},${parseFloat(lng)+0.005},${parseFloat(lat)+0.005}&layer=mapnik&marker=${lat},${lng}"
-    style="width:100%;height:100%;border:none;"
+    style="width:100%;height:300px;border:none;margin-bottom:-80px;"
     loading="lazy">
 </iframe>`;
 
