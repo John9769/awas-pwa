@@ -5,7 +5,7 @@
 
 const CACHE_NAME = 'awas-v1.0.4-live';
 const ASSETS_TO_CACHE = [
-  './index.html',
+  './app.html',
   './app.js',
   './register.html',
   './portal.html',
