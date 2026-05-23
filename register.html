@@ -27,12 +27,47 @@
         .btn-submit { width: 100%; background: var(--primary); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
         .btn-submit:hover { background: var(--primary-hover); }
         #message { text-align: center; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
+
+        /* SUCCESS SCREEN */
+        #success-screen { display: none; width: 100%; max-width: 420px; margin: auto 0; }
+        .success-hero { background: var(--card); border-radius: 12px; padding: 28px 24px; text-align: center; margin-bottom: 16px; border: 1px solid rgba(22,163,74,0.3); }
+        .shield-icon { font-size: 4rem; margin-bottom: 12px; }
+        .success-title { font-size: 1.5rem; font-weight: 800; color: var(--success); margin-bottom: 6px; }
+        .success-sub { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+        .expiry-badge { display: inline-block; background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); color: #86efac; font-size: 0.8rem; font-weight: 700; padding: 6px 16px; border-radius: 100px; }
+
+        /* HOW TO USE GUIDE */
+        .guide-box { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+        .guide-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 16px; }
+        .guide-step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 20px; }
+        .guide-step:last-child { margin-bottom: 0; }
+        .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; font-weight: 800; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .step-content h4 { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+        .step-content p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+        .step-content .highlight { color: #fbbf24; font-weight: 600; }
+
+        /* MAP PREVIEW NOTE */
+        .map-note { background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.3); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; font-size: 0.83rem; color: #93c5fd; line-height: 1.6; }
+        .map-note strong { color: #bfdbfe; }
+
+        /* CTA BUTTONS */
+        .btn-test { width: 100%; background: var(--primary); border: none; color: white; padding: 16px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; text-decoration: none; display: block; text-align: center; }
+        .btn-test:hover { background: var(--primary-hover); }
+        .btn-home { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 14px; font-weight: 600; font-size: 0.9rem; border-radius: 8px; cursor: pointer; text-decoration: none; display: block; text-align: center; }
+
+        /* INSTALL HINT */
+        .install-hint { background: var(--card); border-radius: 12px; padding: 18px; margin-bottom: 16px; display: flex; gap: 12px; align-items: flex-start; }
+        .install-hint .icon { font-size: 1.5rem; flex-shrink: 0; }
+        .install-hint h4 { font-weight: 700; font-size: 0.88rem; margin-bottom: 4px; }
+        .install-hint p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
     </style>
 </head>
 <body>
-    <main>
+
+    <!-- REGISTRATION FORM -->
+    <main id="register-screen">
         <h2>Create AWAS Account</h2>
-        <div class="price-tag">RM12.00 / Annually</div>
+        <div class="price-tag">RM12.00 / Annually — Beta: Register Free</div>
 
         <form id="register-form">
             <div class="form-group">
@@ -55,30 +90,85 @@
                 <input type="text" id="mykad-four" maxlength="4" placeholder="e.g., 5678" required>
             </div>
             <div class="form-group">
-                <label>WhatsApp Number (Optional — for consent alerts)</label>
+                <label>WhatsApp Number (Optional)</label>
                 <input type="tel" id="phone" placeholder="e.g., 0123456789">
             </div>
-
             <div class="consent-container">
                 <input type="checkbox" id="pdpa-check" required>
                 <div class="consent-text">
-                    I explicitly consent to AWAS storing my partial credentials, and <strong>authorize AWAS to release verified evidence bundles</strong> to licensed insurers or legal representatives handling my accident investigations under Section 39 of the PDPA 2010.
+                    I explicitly consent to AWAS storing my partial credentials, and <strong>authorize AWAS to release verified evidence bundles</strong> to licensed insurers or legal representatives under Section 39 of the PDPA 2010.
                 </div>
             </div>
-
-            <button type="submit" class="btn-submit">Pay RM12 & Register</button>
+            <button type="submit" class="btn-submit">Register & Activate Protection</button>
         </form>
         <div id="message"></div>
     </main>
 
+    <!-- SUCCESS + GUIDE SCREEN -->
+    <div id="success-screen">
+
+        <!-- YOU ARE PROTECTED -->
+        <div class="success-hero">
+            <div class="shield-icon">🛡️</div>
+            <div class="success-title">You Are Now Protected</div>
+            <div class="success-sub">Your vehicle is registered on the AWAS network.<br>Evidence capture is now active on your account.</div>
+            <div class="expiry-badge" id="expiry-display">Active until --/--/----</div>
+        </div>
+
+        <!-- HOW TO USE -->
+        <div class="guide-box">
+            <div class="guide-title">📋 How To Use AWAS</div>
+            <div class="guide-step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <h4>When Accident Happens — Tap RECORD</h4>
+                    <p>Open AWAS app immediately. Tap the big red button. <span class="highlight">Take a 15-second video walkaround</span> — capture the other vehicle's plate, damage, and road position. Stay calm. Stay safe.</p>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <h4>AWAS Seals Your Evidence</h4>
+                    <p>AWAS automatically locks your <span class="highlight">GPS coordinates</span>, generates a <span class="highlight">SHA-256 tamper-proof hash</span>, and timestamps everything at the exact moment of capture. Nobody can alter it after this.</p>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <h4>Get Your Balai Report — RM8</h4>
+                    <p>Your official forensic PDF is generated instantly. It includes your <span class="highlight">GPS map location</span>, coordinates, vehicle details, and the cryptographic signature. Print it or show it at the police station. Insurers and lawyers cannot dispute it.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAP NOTE -->
+        <div class="map-note">
+            <strong>📍 About the GPS Map:</strong> When you tap RECORD, AWAS captures your precise GPS coordinates and displays an exact map of where the accident occurred. This map — with your location pinned — is printed directly in your forensic report. Police and insurers see exactly where it happened. No ambiguity.
+        </div>
+
+        <!-- INSTALL HINT -->
+        <div class="install-hint">
+            <div class="icon">📲</div>
+            <div>
+                <h4>Add AWAS to Your Home Screen</h4>
+                <p>Tap your browser menu → "Add to Home Screen". AWAS becomes a one-tap app on your phone — ready instantly when accident happens. Don't waste time searching for the link.</p>
+            </div>
+        </div>
+
+        <!-- TEST CTA -->
+        <a href="app.html" class="btn-test">🔴 Test AWAS Now — Try A Live Capture</a>
+        <a href="index.html" class="btn-home">Back to Home</a>
+
+    </div>
+
     <script>
-        const API_BASE = 'https://awas-backend.onrender.com'; // Change to production URL before deploy
+        const API_BASE = 'https://awas-backend.onrender.com';
 
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const msgDiv = document.getElementById('message');
             msgDiv.style.color = 'var(--text-muted)';
-            msgDiv.innerText = 'Processing registration...';
+            msgDiv.innerText = 'Activating your protection...';
 
             const vehiclePlate = document.getElementById('vehicle-plate').value.toUpperCase().replace(/\s+/g, '');
             const vehicleType = document.getElementById('vehicle-type').value;
@@ -87,14 +177,7 @@
             const phone = document.getElementById('phone').value.trim() || null;
             const consentGiven = document.getElementById('pdpa-check').checked;
 
-            const payload = {
-                vehiclePlate,
-                vehicleType,
-                vehicleMakeModel,
-                mykadLastFour,
-                phone,
-                consentGiven
-            };
+            const payload = { vehiclePlate, vehicleType, vehicleMakeModel, mykadLastFour, phone, consentGiven };
 
             try {
                 const res = await fetch(`${API_BASE}/api/drivers/register`, {
@@ -110,15 +193,19 @@
                     localStorage.setItem('awas_vehicle_type', vehicleType);
                     localStorage.setItem('awas_mykad_four', mykadLastFour);
 
-                    msgDiv.style.color = 'var(--success)';
-                    msgDiv.innerHTML = `✅ Registration Active! (${vehicleType})<br>Expires: ${new Date(data.expiry).toLocaleDateString('en-MY')}`;
+                    // Show success screen
+                    document.getElementById('register-screen').style.display = 'none';
+                    document.getElementById('success-screen').style.display = 'block';
+                    document.getElementById('expiry-display').innerText = `Active until ${new Date(data.expiry).toLocaleDateString('en-MY')}`;
+
+                    window.scrollTo(0, 0);
                 } else {
                     msgDiv.style.color = 'var(--primary)';
-                    msgDiv.innerText = data.error || 'Registration failed.';
+                    msgDiv.innerText = data.error || 'Registration failed. Try again.';
                 }
             } catch (err) {
                 msgDiv.style.color = 'var(--primary)';
-                msgDiv.innerText = 'Connection failure. Try again.';
+                msgDiv.innerText = 'Connection error. Check your internet and try again.';
             }
         });
     </script>
