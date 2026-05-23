@@ -11,11 +11,12 @@
             --bg: #0f172a; --card: #1e293b; --primary: #dc2626;
             --primary-hover: #b91c1c; --text: #f8fafc;
             --text-muted: #94a3b8; --success: #16a34a; --border: #334155;
+            --warn: #eab308;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; padding: 20px; align-items: center; }
 
-        /* TEST MODE BANNER */
+        /* TEST BANNER */
         .test-banner { width: 100%; max-width: 440px; background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.4); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
         .test-banner-title { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #fbbf24; margin-bottom: 8px; }
         .test-banner p { font-size: 0.82rem; color: #fde68a; line-height: 1.6; }
@@ -23,17 +24,15 @@
         .test-step { display: flex; gap: 8px; align-items: flex-start; font-size: 0.8rem; color: #fde68a; }
         .test-step-num { background: rgba(234,179,8,0.3); color: #fbbf24; font-weight: 800; font-size: 0.7rem; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
 
-        /* SCREEN 1 */
+        /* SCREEN 1 — CAPTURE */
         #capture-view { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 20px; margin: auto 0; }
         header { text-align: center; }
         h1 { font-size: 2rem; font-weight: 900; letter-spacing: 0.05em; }
         .tagline { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-top: 4px; }
         .status-box { width: 100%; background: var(--card); border-left: 5px solid var(--primary); padding: 16px; border-radius: 8px; font-size: 0.95rem; line-height: 1.5; }
-        #video-capture { display: none; }
+        #video-capture, #other-video-capture { display: none; }
         .btn-record { width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); border: 8px solid rgba(220,38,38,0.15); color: white; font-size: 1.3rem; font-weight: 900; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; box-shadow: 0 0 30px rgba(220,38,38,0.3); }
         .btn-record span { font-size: 0.75rem; font-weight: 500; opacity: 0.8; }
-
-        /* WHAT HAPPENS NEXT - mini guide below button */
         .capture-guide { width: 100%; background: var(--card); border-radius: 10px; padding: 16px; }
         .capture-guide-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
         .cg-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
@@ -42,25 +41,56 @@
         .cg-item p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
         .cg-item p strong { color: var(--text); }
 
-        /* SCREEN 2: REPORT */
-        #report-view { display: none; width: 100%; max-width: 600px; background: white; color: #000; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-direction: column; gap: 20px; }
-        .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #000; padding-bottom: 12px; }
-        .report-title { font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        .report-meta-box { font-family: monospace; font-size: 0.85rem; text-align: right; line-height: 1.3; }
-        .section-title { font-size: 0.9rem; font-weight: 800; background: #e2e8f0; padding: 6px 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 10px; margin-bottom: 8px; border-left: 4px solid #000; }
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; padding: 0 6px; }
-        .data-label { font-weight: 700; color: #475569; text-transform: uppercase; font-size: 0.8rem; }
-        .data-value { font-weight: 600; color: #000; }
-        .map-box { width: 100%; height: 220px; background: #cbd5e1; border: 2px solid #000; border-radius: 4px; position: relative; overflow: hidden; }
-        .hash-footer { background: #f1f5f9; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 0.78rem; word-break: break-all; border: 1px dashed #64748b; line-height: 1.4; text-align: center; margin-top: 15px; }
+        /* SCREEN 2 — INCIDENT DETAILS */
+        #incident-view { display: none; width: 100%; max-width: 440px; flex-direction: column; gap: 16px; margin: 20px 0; }
+        .capture-success { background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); border-radius: 10px; padding: 16px; text-align: center; }
+        .cs-icon { font-size: 2rem; margin-bottom: 6px; }
+        .cs-title { font-weight: 800; font-size: 1rem; color: #4ade80; margin-bottom: 4px; }
+        .cs-sub { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+        .incident-form-box { background: var(--card); border-radius: 10px; padding: 18px; }
+        .if-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 14px; }
+        .if-group { margin-bottom: 12px; }
+        .if-group:last-child { margin-bottom: 0; }
+        .if-label { display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
+        .if-select, .if-input { width: 100%; background: #020617; border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; color: var(--text); font-size: 0.9rem; }
+        .if-select:focus, .if-input:focus { border-color: var(--primary); outline: none; }
+        .if-select option { background: #020617; }
+        .if-textarea { width: 100%; background: #020617; border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; color: var(--text); font-size: 0.88rem; resize: none; line-height: 1.5; }
+        .if-textarea:focus { border-color: var(--primary); outline: none; }
+        .other-party-box { background: var(--card); border-radius: 10px; padding: 18px; border: 1px solid rgba(37,99,235,0.3); }
+        .op-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+        .op-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+        .btn-record-other { width: 100%; background: #1d4ed8; border: none; color: white; padding: 12px; font-weight: 700; font-size: 0.9rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        .btn-record-other:hover { background: #1e40af; }
+        .op-success { color: #4ade80; font-weight: 700; font-size: 0.88rem; margin-bottom: 10px; }
+        .btn-generate { width: 100%; background: var(--primary); border: none; color: white; padding: 16px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-generate:hover { background: var(--primary-hover); }
+        .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* REPORT SEAL NOTE */
-        .seal-note { background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 12px 14px; font-size: 0.78rem; color: #166534; line-height: 1.6; text-align: center; }
+        /* SCREEN 3 — REPORT */
+        #report-view { display: none; width: 100%; max-width: 600px; background: white; color: #000; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-direction: column; gap: 16px; }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #000; padding-bottom: 12px; }
+        .report-title { font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .report-subtitle { font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase; margin-top: 2px; }
+        .report-meta-box { font-family: monospace; font-size: 0.8rem; text-align: right; line-height: 1.4; }
+        .writ-number { font-size: 0.85rem; font-weight: 800; color: #dc2626; }
+        .section-title { font-size: 0.85rem; font-weight: 800; background: #e2e8f0; padding: 6px 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; margin-bottom: 8px; border-left: 4px solid #000; }
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.88rem; padding: 0 6px; }
+        .data-label { font-weight: 700; color: #475569; text-transform: uppercase; font-size: 0.75rem; margin-bottom: 2px; }
+        .data-value { font-weight: 600; color: #000; }
+        .map-box { width: 100%; height: 220px; background: #cbd5e1; border: 2px solid #000; border-radius: 4px; overflow: hidden; }
+        .hash-box { background: #f1f5f9; padding: 10px 12px; border-radius: 4px; font-family: monospace; font-size: 0.72rem; word-break: break-all; border: 1px dashed #64748b; line-height: 1.5; }
+        .other-hash-box { background: #eff6ff; padding: 10px 12px; border-radius: 4px; font-family: monospace; font-size: 0.72rem; word-break: break-all; border: 1px dashed #93c5fd; line-height: 1.5; margin-top: 8px; }
+        .seal-note { background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 12px 14px; font-size: 0.76rem; color: #166534; line-height: 1.6; text-align: center; }
+        .awas-stamp { border: 2px solid #000; border-radius: 6px; padding: 10px 14px; text-align: center; margin-top: 4px; }
+        .stamp-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #475569; }
+        .stamp-value { font-size: 0.85rem; font-weight: 800; color: #dc2626; font-family: monospace; }
+        .stamp-sub { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
 
         .btn-print { width: 100%; max-width: 600px; margin-top: 16px; background: var(--success); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; display: none; }
 
         /* REPORT OPTIONS MODAL */
-        .report-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: flex-end; justify-content: center; padding: 0; }
+        .report-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: flex-end; justify-content: center; }
         .report-modal.show { display: flex; }
         .modal-box { background: #1e293b; border-radius: 20px 20px 0 0; padding: 28px 20px 36px; width: 100%; max-width: 480px; border-top: 1px solid #334155; }
         .modal-title { font-size: 1rem; font-weight: 800; text-align: center; margin-bottom: 6px; }
@@ -82,12 +112,11 @@
         .li-icon { flex-shrink: 0; margin-top: 1px; }
         .btn-free { width: 100%; background: transparent; border: 1px solid #334155; color: #94a3b8; padding: 12px; font-weight: 700; font-size: 0.85rem; border-radius: 8px; cursor: pointer; margin-bottom: 8px; }
         .btn-paid { width: 100%; background: #16a34a; border: none; color: white; padding: 14px; font-weight: 800; font-size: 0.95rem; border-radius: 8px; cursor: pointer; }
-        .btn-paid:hover { background: #15803d; }
         .btn-close-modal { width: 100%; background: transparent; border: none; color: #475569; padding: 10px; font-size: 0.8rem; cursor: pointer; margin-top: 4px; }
 
         @media print {
-            body { background: white !important; color: black !important; padding: 0 !important; }
-            #capture-view, .btn-print, footer, .test-banner, .seal-note { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            #capture-view, #incident-view, .btn-print, footer, .test-banner, .seal-note { display: none !important; }
             #report-view { display: flex !important; width: 100% !important; max-width: 100% !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
         }
         footer { text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 20px 0; margin-top: auto; }
@@ -95,15 +124,15 @@
 </head>
 <body>
 
-    <!-- TEST MODE BANNER -->
+    <!-- TEST BANNER -->
     <div class="test-banner" id="test-banner">
         <div class="test-banner-title">⚡ Test Mode — Try A Live AWAS Capture</div>
         <p>This is exactly how AWAS works in a real accident. Test it now so you know what to do when it matters.</p>
         <div class="test-steps">
-            <div class="test-step"><div class="test-step-num">1</div><span>Tap the red RECORD button below</span></div>
-            <div class="test-step"><div class="test-step-num">2</div><span>Take a short video of anything around you — your car, surroundings, anything</span></div>
-            <div class="test-step"><div class="test-step-num">3</div><span>Allow location access when browser asks — AWAS needs your GPS</span></div>
-            <div class="test-step"><div class="test-step-num">4</div><span>Your forensic report generates with your <strong style="color:#fbbf24">real GPS coordinates</strong> and <strong style="color:#fbbf24">exact map location</strong></span></div>
+            <div class="test-step"><div class="test-step-num">1</div><span>Tap RECORD — take a short video of anything around you</span></div>
+            <div class="test-step"><div class="test-step-num">2</div><span>Allow location access — AWAS needs your GPS</span></div>
+            <div class="test-step"><div class="test-step-num">3</div><span>Fill in incident details, optionally record the other party</span></div>
+            <div class="test-step"><div class="test-step-num">4</div><span>Tap Generate — your forensic writ report is sealed with <strong style="color:#fbbf24">real GPS</strong> and <strong style="color:#fbbf24">map</strong></span></div>
         </div>
     </div>
 
@@ -111,35 +140,102 @@
     <div id="capture-view">
         <header>
             <h1>AWAS</h1>
-            <div class="tagline">Accident Witness Automation System</div>
+            <div class="tagline">Accident Writ Automation System</div>
         </header>
         <div id="status-display" class="status-box">
             <strong>⚠️ HIGHWAY EMERGENCY STATE:</strong><br>
-            Tap below, take a 15-second video walkaround of plates and damage, then clear traffic immediately.
+            Tap below, take a 15-second video walkaround of plates and damage, then move to safety.
         </div>
         <input type="file" id="video-capture" accept="video/*" capture="environment">
+        <input type="file" id="other-video-capture" accept="video/*" capture="environment">
         <button type="button" id="record-trigger" class="btn-record">RECORD<span>EVIDENCE</span></button>
-
-        <!-- MINI GUIDE BELOW BUTTON -->
         <div class="capture-guide">
-            <div class="capture-guide-title">What AWAS captures for you</div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>Video evidence</strong> — what you record, hashed and sealed permanently</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>GPS coordinates</strong> — your exact location at the moment of capture</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>Map location</strong> — pinned on map, printed in your report</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>SHA-256 signature</strong> — cryptographic proof nobody can tamper with</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>Timestamp</strong> — exact date and time locked at capture</p></div>
+            <div class="capture-guide-title">What AWAS seals for you</div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>Video evidence</strong> — hashed and sealed permanently at capture</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>GPS coordinates</strong> — your exact location locked at the moment</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>Map location</strong> — pinned on map, printed in your writ</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>SHA-256 signature</strong> — tamper-proof, court-grade integrity</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>AWAS Writ Number</strong> — official reference for police and insurers</p></div>
         </div>
     </div>
 
-    <!-- SCREEN 2: BALAI REPORT -->
+    <!-- SCREEN 2: INCIDENT DETAILS -->
+    <div id="incident-view">
+        <div class="capture-success">
+            <div class="cs-icon">✅</div>
+            <div class="cs-title">Evidence Sealed</div>
+            <div class="cs-sub">Your video is hashed. GPS is locked. Complete the details below — then generate your official AWAS Writ.</div>
+        </div>
+
+        <div class="incident-form-box">
+            <div class="if-title">📋 Incident Details — Optional but recommended</div>
+            <div class="if-group">
+                <label class="if-label">Road Condition</label>
+                <select id="road-condition" class="if-select">
+                    <option value="UNKNOWN">Not sure</option>
+                    <option value="DRY">Dry</option>
+                    <option value="WET">Wet — after rain</option>
+                    <option value="FLOODED">Flooded</option>
+                    <option value="UNDER_CONSTRUCTION">Under construction</option>
+                </select>
+            </div>
+            <div class="if-group">
+                <label class="if-label">Weather at Time of Incident</label>
+                <select id="weather-condition" class="if-select">
+                    <option value="UNKNOWN">Not sure</option>
+                    <option value="CLEAR">Clear / Sunny</option>
+                    <option value="RAINY">Rainy</option>
+                    <option value="FOGGY">Foggy</option>
+                    <option value="HAZY">Hazy</option>
+                    <option value="NIGHT">Night / Low visibility</option>
+                </select>
+            </div>
+            <div class="if-group">
+                <label class="if-label">Injuries Involved?</label>
+                <select id="injury-status" class="if-select">
+                    <option value="NONE">No injuries</option>
+                    <option value="MINOR">Minor injuries</option>
+                    <option value="SERIOUS">Serious injuries</option>
+                </select>
+            </div>
+            <div class="if-group">
+                <label class="if-label">Brief Description (Optional)</label>
+                <textarea id="incident-description" class="if-textarea" placeholder="e.g., Other vehicle changed lanes without signal and hit my left side..." rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="other-party-box">
+            <div class="op-title">📹 Other Party's Vehicle</div>
+            <div class="op-sub">Record the other vehicle to seal their evidence too. Both hashes link together cryptographically.</div>
+            <div id="other-party-pending">
+                <button type="button" id="btn-record-other" class="btn-record-other">Record Other Vehicle (Optional)</button>
+            </div>
+            <div id="other-party-captured" style="display:none;">
+                <div class="op-success">✅ Other vehicle evidence sealed</div>
+                <div class="if-group">
+                    <label class="if-label">Other Vehicle Plate</label>
+                    <input type="text" id="other-plate" class="if-input" placeholder="e.g., ABC1234">
+                </div>
+                <div class="if-group">
+                    <label class="if-label">Other Vehicle Make & Model</label>
+                    <input type="text" id="other-model" class="if-input" placeholder="e.g., Toyota Vios 1.5">
+                </div>
+            </div>
+        </div>
+
+        <button type="button" id="btn-generate-report" class="btn-generate">🔒 Generate AWAS Forensic Writ</button>
+    </div>
+
+    <!-- SCREEN 3: REPORT -->
     <div id="report-view">
         <div class="report-header">
             <div>
-                <div class="report-title">AWAS Forensic Report</div>
-                <div style="font-size:0.75rem;font-weight:700;color:#475569;text-transform:uppercase;margin-top:2px;">Dokumen Bukti Digital Notari</div>
+                <div class="report-title">AWAS Forensic Writ</div>
+                <div class="report-subtitle">Accident Writ Automation System — Dokumen Bukti Digital</div>
             </div>
             <div class="report-meta-box">
-                <div>LOG ID: <span id="pdf-log-id">------</span></div>
+                <div class="writ-number" id="pdf-writ-number">AWAS/MY/----/------</div>
+                <div>LOG: <span id="pdf-log-id">------</span></div>
                 <div id="pdf-date">DD/MM/YYYY</div>
                 <div id="pdf-time">00:00:00 MYT</div>
             </div>
@@ -148,94 +244,135 @@
         <div class="section-title">1. Maklumat Pemandu & Kenderaan (Pengadu)</div>
         <div class="data-grid">
             <div>
-                <div class="data-label">Nombor Pendaftaran (Plate)</div>
+                <div class="data-label">Nombor Pendaftaran</div>
                 <div class="data-value" id="pdf-plate">------</div>
             </div>
             <div>
-                <div class="data-label">Model & Jenis Kenderaan</div>
+                <div class="data-label">Model & Jenis</div>
                 <div class="data-value" id="pdf-model">------</div>
             </div>
             <div>
-                <div class="data-label">No. MyKad (4 Angka Terakhir)</div>
+                <div class="data-label">MyKad (4 Angka Terakhir)</div>
                 <div class="data-value" id="pdf-mykad">------</div>
             </div>
             <div>
-                <div class="data-label">Status Langganan AWAS</div>
+                <div class="data-label">Status AWAS</div>
                 <div class="data-value" style="color:#16a34a;">ACTIVE / VERIFIED</div>
             </div>
         </div>
 
         <div class="section-title">2. Telemetri Lokasi Satelit GPS</div>
-        <div class="data-grid" style="margin-bottom:12px;">
+        <div class="data-grid" style="margin-bottom:10px;">
             <div>
-                <div class="data-label">Latitude Koordinate</div>
-                <div class="data-value" id="pdf-lat">0.00000000</div>
+                <div class="data-label">Latitude</div>
+                <div class="data-value" id="pdf-lat">0.000000</div>
             </div>
             <div>
-                <div class="data-label">Longitude Koordinate</div>
-                <div class="data-value" id="pdf-lng">0.00000000</div>
+                <div class="data-label">Longitude</div>
+                <div class="data-value" id="pdf-lng">0.000000</div>
+            </div>
+        </div>
+        <div class="map-box" id="map-frame-container"></div>
+
+        <div class="section-title">3. Butiran Insiden</div>
+        <div class="data-grid">
+            <div>
+                <div class="data-label">Keadaan Jalan</div>
+                <div class="data-value" id="pdf-road">—</div>
+            </div>
+            <div>
+                <div class="data-label">Cuaca</div>
+                <div class="data-value" id="pdf-weather">—</div>
+            </div>
+            <div>
+                <div class="data-label">Kecederaan</div>
+                <div class="data-value" id="pdf-injury">—</div>
+            </div>
+        </div>
+        <div style="padding:0 6px;margin-top:8px;">
+            <div class="data-label">Penerangan</div>
+            <div class="data-value" id="pdf-description" style="margin-top:4px;font-size:0.85rem;line-height:1.5;">—</div>
+        </div>
+
+        <!-- OTHER PARTY — conditional -->
+        <div id="pdf-other-party-section" style="display:none;">
+            <div class="section-title">4. Kenderaan Pihak Lain</div>
+            <div class="data-grid">
+                <div>
+                    <div class="data-label">Plate Lain</div>
+                    <div class="data-value" id="pdf-other-plate">—</div>
+                </div>
+                <div>
+                    <div class="data-label">Model Lain</div>
+                    <div class="data-value" id="pdf-other-model">—</div>
+                </div>
+            </div>
+            <div class="other-hash-box" style="margin-top:8px;">
+                <strong>OTHER PARTY SHA-256 HASH:</strong><br>
+                <span id="pdf-other-hash">—</span>
             </div>
         </div>
 
-        <div class="map-box" id="map-frame-container"></div>
+        <div class="section-title"><span id="sha-section-num">4.</span> Tandatangan Digital SHA-256</div>
+        <div class="hash-box">
+            <strong>FORENSIC CRYPTOGRAPHIC SIGNATURE (OWN VEHICLE):</strong><br>
+            <span id="pdf-hash">—</span>
+        </div>
 
-        <div class="section-title">3. Tandatangan Digital Immutability (SHA-256)</div>
-        <div class="hash-footer">
-            <strong>FORENSIC CRYPTOGRAPHIC LOG SIGNATURE:</strong><br>
-            <span id="pdf-hash">----------------------------------------------------------------</span>
+        <div class="awas-stamp">
+            <div class="stamp-title">AWAS Certified Writ</div>
+            <div class="stamp-value" id="stamp-writ">AWAS/MY/----/------</div>
+            <div class="stamp-sub">AWAS Ltd — United Kingdom | Accident Writ Automation System</div>
         </div>
 
         <div class="seal-note">
-            ✅ <strong>Evidence Sealed.</strong> This report was generated at the moment of capture. The SHA-256 signature above proves this data has not been altered. Any modification to the video, GPS, or timestamp will produce a completely different hash — making tampering instantly detectable by police, insurers, and courts.
+            ✅ <strong>Evidence Sealed.</strong> This document was generated at the moment of capture. The SHA-256 signature proves this data has not been altered. Any modification to the video, GPS, or timestamp will produce a completely different hash — making tampering instantly detectable.
         </div>
 
-        <div style="font-size:0.65rem;color:#64748b;text-align:center;margin-top:5px;font-weight:600;text-transform:uppercase;">
-            Sijil digital ini mengesahkan data visual dan koordinat dikunci pada masa kejadian. Sebarang pindaan akan merosakkan integriti fail.
+        <div style="font-size:0.62rem;color:#64748b;text-align:center;margin-top:4px;font-weight:600;text-transform:uppercase;">
+            Dokumen ini dihasilkan secara automatik oleh sistem AWAS. Data visual dan koordinat dikunci pada masa kejadian. Sebarang pindaan akan merosakkan integriti hash.
         </div>
     </div>
 
-    <button type="button" id="print-btn" class="btn-print">📄 Get Official Balai Report</button>
+    <button type="button" id="print-btn" class="btn-print">📄 Get Official Balai Writ — RM8</button>
 
     <!-- REPORT OPTIONS MODAL -->
     <div class="report-modal" id="report-modal">
         <div class="modal-box">
-            <div class="modal-title">How would you like to use your report?</div>
+            <div class="modal-title">How would you like to use your writ?</div>
             <div class="modal-sub">Your evidence is sealed. Choose how you want to present it.</div>
             <div class="options-grid">
                 <div class="option-card free">
                     <div class="option-label gray">Free</div>
                     <div class="option-price free-price">RM0</div>
                     <ul class="option-list">
-                        <li class="yes"><span class="li-icon">✓</span>Show on mobile screen to police</li>
-                        <li class="yes"><span class="li-icon">✓</span>GPS & hash visible on screen</li>
+                        <li class="yes"><span class="li-icon">✓</span>Show on mobile to police</li>
+                        <li class="yes"><span class="li-icon">✓</span>GPS & hash visible</li>
                         <li class="no"><span class="li-icon">✗</span>No official AWAS stamp</li>
                         <li class="no"><span class="li-icon">✗</span>Not submittable to insurer</li>
                         <li class="no"><span class="li-icon">✗</span>Not verifiable by lawyers</li>
-                        <li class="no"><span class="li-icon">✗</span>Screenshot can be questioned</li>
                     </ul>
                 </div>
                 <div class="option-card paid">
-                    <div class="option-label green">Certified</div>
+                    <div class="option-label green">Certified Writ</div>
                     <div class="option-price paid-price">RM8</div>
                     <ul class="option-list">
-                        <li class="yes"><span class="li-icon">✓</span>Official AWAS certified PDF</li>
+                        <li class="yes"><span class="li-icon">✓</span>Official AWAS Writ PDF</li>
                         <li class="yes"><span class="li-icon">✓</span>Printable Balai document</li>
                         <li class="yes"><span class="li-icon">✓</span>Submittable to insurer</li>
                         <li class="yes"><span class="li-icon">✓</span>Verifiable by lawyers</li>
-                        <li class="yes"><span class="li-icon">✓</span>Court admissible</li>
-                        <li class="yes"><span class="li-icon">✓</span>SHA-256 server confirmed</li>
+                        <li class="yes"><span class="li-icon">✓</span>AWAS Writ Number stamped</li>
                     </ul>
                 </div>
             </div>
-            <!-- TODO Phase 2: Replace btn-paid with Stripe/Billplz payment trigger -->
             <button class="btn-paid" id="btn-get-certified">Pay RM8 — Save as PDF</button>
-            <div style="font-size:0.72rem;color:#64748b;text-align:center;margin-bottom:10px;">On the next screen — select <strong style="color:#94a3b8;">"Save as PDF"</strong> to save to your phone.</div>
+            <div style="font-size:0.72rem;color:#64748b;text-align:center;margin-bottom:10px;">Select <strong style="color:#94a3b8;">"Save as PDF"</strong> on the next screen.</div>
             <button class="btn-free" id="btn-use-screen">Continue With Screen Only</button>
             <button class="btn-close-modal" id="btn-close-modal">Cancel</button>
         </div>
     </div>
 
-    <footer>SECURE &bull; IMMUTABLE &bull; PDPA COMPLIANT</footer>
+    <footer>SECURE &bull; IMMUTABLE &bull; PDPA COMPLIANT &bull; AWAS LTD UK</footer>
 
     <script src="app.js"></script>
 </body>
