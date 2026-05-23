@@ -138,7 +138,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    printBtn.addEventListener('click', () => { window.print(); });
+    printBtn.addEventListener('click', () => {
+        document.getElementById('report-modal').classList.add('show');
+    });
+
+    document.getElementById('btn-close-modal').addEventListener('click', () => {
+        document.getElementById('report-modal').classList.remove('show');
+    });
+
+    document.getElementById('btn-use-screen').addEventListener('click', () => {
+        document.getElementById('report-modal').classList.remove('show');
+    });
+
+    document.getElementById('btn-get-certified').addEventListener('click', () => {
+        // TODO Phase 2: Trigger Stripe/Billplz payment here
+        // On payment success: call clearPaywall API then window.print()
+        document.getElementById('report-modal').classList.remove('show');
+        window.print();
+    });
 });
 
 if ('serviceWorker' in navigator) {

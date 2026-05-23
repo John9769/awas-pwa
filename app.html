@@ -59,6 +59,32 @@
 
         .btn-print { width: 100%; max-width: 600px; margin-top: 16px; background: var(--success); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; display: none; }
 
+        /* REPORT OPTIONS MODAL */
+        .report-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: flex-end; justify-content: center; padding: 0; }
+        .report-modal.show { display: flex; }
+        .modal-box { background: #1e293b; border-radius: 20px 20px 0 0; padding: 28px 20px 36px; width: 100%; max-width: 480px; border-top: 1px solid #334155; }
+        .modal-title { font-size: 1rem; font-weight: 800; text-align: center; margin-bottom: 6px; }
+        .modal-sub { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-bottom: 20px; line-height: 1.5; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .option-card { border-radius: 12px; padding: 16px 14px; border: 1px solid #334155; }
+        .option-card.free { background: #0f172a; }
+        .option-card.paid { background: rgba(22,163,74,0.08); border-color: rgba(22,163,74,0.4); }
+        .option-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .option-label.gray { color: #64748b; }
+        .option-label.green { color: #86efac; }
+        .option-price { font-size: 1.4rem; font-weight: 900; margin-bottom: 10px; }
+        .option-price.free-price { color: #94a3b8; }
+        .option-price.paid-price { color: #16a34a; }
+        .option-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .option-list li { font-size: 0.75rem; line-height: 1.4; display: flex; gap: 6px; align-items: flex-start; }
+        .option-list li.yes { color: #86efac; }
+        .option-list li.no { color: #475569; }
+        .li-icon { flex-shrink: 0; margin-top: 1px; }
+        .btn-free { width: 100%; background: transparent; border: 1px solid #334155; color: #94a3b8; padding: 12px; font-weight: 700; font-size: 0.85rem; border-radius: 8px; cursor: pointer; margin-bottom: 8px; }
+        .btn-paid { width: 100%; background: #16a34a; border: none; color: white; padding: 14px; font-weight: 800; font-size: 0.95rem; border-radius: 8px; cursor: pointer; }
+        .btn-paid:hover { background: #15803d; }
+        .btn-close-modal { width: 100%; background: transparent; border: none; color: #475569; padding: 10px; font-size: 0.8rem; cursor: pointer; margin-top: 4px; }
+
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
             #capture-view, .btn-print, footer, .test-banner, .seal-note { display: none !important; }
@@ -168,7 +194,45 @@
         </div>
     </div>
 
-    <button type="button" id="print-btn" class="btn-print">🖨️ Print / Save Balai PDF Report</button>
+    <button type="button" id="print-btn" class="btn-print">📄 Get Official Balai Report</button>
+
+    <!-- REPORT OPTIONS MODAL -->
+    <div class="report-modal" id="report-modal">
+        <div class="modal-box">
+            <div class="modal-title">How would you like to use your report?</div>
+            <div class="modal-sub">Your evidence is sealed. Choose how you want to present it.</div>
+            <div class="options-grid">
+                <div class="option-card free">
+                    <div class="option-label gray">Free</div>
+                    <div class="option-price free-price">RM0</div>
+                    <ul class="option-list">
+                        <li class="yes"><span class="li-icon">✓</span>Show on mobile screen to police</li>
+                        <li class="yes"><span class="li-icon">✓</span>GPS & hash visible on screen</li>
+                        <li class="no"><span class="li-icon">✗</span>No official AWAS stamp</li>
+                        <li class="no"><span class="li-icon">✗</span>Not submittable to insurer</li>
+                        <li class="no"><span class="li-icon">✗</span>Not verifiable by lawyers</li>
+                        <li class="no"><span class="li-icon">✗</span>Screenshot can be questioned</li>
+                    </ul>
+                </div>
+                <div class="option-card paid">
+                    <div class="option-label green">Certified</div>
+                    <div class="option-price paid-price">RM8</div>
+                    <ul class="option-list">
+                        <li class="yes"><span class="li-icon">✓</span>Official AWAS certified PDF</li>
+                        <li class="yes"><span class="li-icon">✓</span>Printable Balai document</li>
+                        <li class="yes"><span class="li-icon">✓</span>Submittable to insurer</li>
+                        <li class="yes"><span class="li-icon">✓</span>Verifiable by lawyers</li>
+                        <li class="yes"><span class="li-icon">✓</span>Court admissible</li>
+                        <li class="yes"><span class="li-icon">✓</span>SHA-256 server confirmed</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- TODO Phase 2: Replace btn-paid with Stripe/Billplz payment trigger -->
+            <button class="btn-paid" id="btn-get-certified">Pay RM8 — Get Certified PDF</button>
+            <button class="btn-free" id="btn-use-screen">Continue With Screen Only</button>
+            <button class="btn-close-modal" id="btn-close-modal">Cancel</button>
+        </div>
+    </div>
 
     <footer>SECURE &bull; IMMUTABLE &bull; PDPA COMPLIANT</footer>
 
