@@ -3,7 +3,7 @@
 // DESCRIPTION: AWAS PWA Core Engine
 // ==========================================
 
-const API_BASE = 'http://localhost:5000'; // Change to production URL before deploy
+const API_BASE = 'https://awas-backend.onrender.com'; // Change to production URL before deploy
 
 document.addEventListener('DOMContentLoaded', () => {
     const recordTrigger = document.getElementById('record-trigger');
