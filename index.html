@@ -13,36 +13,35 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:rgba(8,12,20,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--red);letter-spacing:3px}
-.nav-cta{background:var(--red);color:white;border:none;padding:10px 22px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px}
-.nav-cta:hover{background:var(--red-dark)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(8,12,20,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo img{height:42px;width:auto;display:block}
+.nav-btns{display:flex;gap:8px;align-items:center}
+.nav-login{background:var(--green);color:white;border:none;padding:9px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px}
+.nav-login:hover{background:var(--green-dark)}
+.nav-daftar{background:var(--red);color:white;border:none;padding:9px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px}
+.nav-daftar:hover{background:var(--red-dark)}
 
-/* HERO */
+/* HERO — VIDEO BACKGROUND */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:100px 24px 60px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 10%,rgba(220,38,38,0.08),transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);color:#fca5a5;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:5px 14px;border-radius:100px;margin-bottom:28px}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0.25}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,20,0.7) 0%,rgba(8,12,20,0.5) 50%,rgba(8,12,20,0.9) 100%);z-index:1}
+.hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);color:#fca5a5;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:5px 14px;border-radius:100px;margin-bottom:24px}
 .pulse{width:7px;height:7px;background:var(--red);border-radius:50%;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-.hero-malay{font-size:1rem;color:var(--muted);font-style:italic;margin-bottom:10px}
+.hero-malay{font-size:1rem;color:#94a3b8;font-style:italic;margin-bottom:10px}
 .hero-malay span{color:#fca5a5}
 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,9vw,6.5rem);line-height:0.95;letter-spacing:2px;margin-bottom:20px}
 h1 .red{color:var(--red)}
 h1 .dim{color:var(--muted)}
-.hero-sub{max-width:520px;font-size:1.05rem;color:#94a3b8;line-height:1.7;margin-bottom:36px}
+.hero-sub{max-width:480px;font-size:1rem;color:#94a3b8;line-height:1.7;margin-bottom:32px}
 .hero-sub strong{color:var(--text)}
 .hero-cta-group{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:48px}
-
-/* BUTTONS */
-.btn-red{background:var(--red);color:white;border:none;padding:15px 34px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;transition:all 0.2s;display:inline-block}
-.btn-red:hover{background:var(--red-dark);transform:translateY(-1px)}
 .btn-green{background:var(--green);color:white;border:none;padding:15px 34px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;transition:all 0.2s;display:inline-block}
 .btn-green:hover{background:var(--green-dark);transform:translateY(-1px)}
 .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);padding:15px 34px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;transition:all 0.2s;display:inline-block}
 .btn-ghost:hover{border-color:#334155;background:var(--bg2)}
-
-/* STATS */
-.hero-stats{display:flex;flex-wrap:wrap;gap:28px;justify-content:center;padding-top:36px;border-top:1px solid var(--border);width:100%;max-width:500px}
+.hero-stats{display:flex;flex-wrap:wrap;gap:28px;justify-content:center;padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);width:100%;max-width:500px}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px}
 .stat-num.red{color:var(--red)}
 .stat-num.yellow{color:var(--yellow)}
@@ -54,214 +53,244 @@ h1 .dim{color:var(--muted)}
 .sec-full{padding:64px 0;background:var(--bg2)}
 .sec-full-inner{max-width:960px;margin:0 auto;padding:0 24px}
 .sec-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--red);margin-bottom:12px}
-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5.5vw,3.5rem);letter-spacing:1px;line-height:1;margin-bottom:12px}
-.sec-sub{font-size:1rem;color:#94a3b8;max-width:520px;line-height:1.7;margin-bottom:40px}
+h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,3.2rem);letter-spacing:1px;line-height:1;margin-bottom:12px}
+.sec-sub{font-size:0.95rem;color:#94a3b8;max-width:520px;line-height:1.7;margin-bottom:32px}
 
-/* PROBLEM */
-.scenario{background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--yellow);border-radius:8px;padding:24px 28px;margin-bottom:36px;font-size:1rem;line-height:1.9;color:#cbd5e1}
-.scenario em{color:var(--muted);font-size:0.9rem}
-.prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+/* ACCIDENT IMAGE SECTION */
+.accident-section{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.accident-img{width:100%;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.accident-img img{width:100%;height:100%;object-fit:cover;display:block}
+.accident-text h2{margin-bottom:16px}
+.accident-text p{font-size:0.92rem;color:#94a3b8;line-height:1.8;margin-bottom:12px}
+.accident-text .highlight{color:#fca5a5;font-style:italic;font-size:0.88rem}
+@media(max-width:680px){.accident-section{grid-template-columns:1fr}}
+
+/* PROBLEM CARDS */
+.prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:32px}
 .prob-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px;position:relative;overflow:hidden}
 .prob-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--yellow)}
-.prob-card h4{font-weight:700;font-size:0.9rem;margin-bottom:6px;margin-top:10px}
-.prob-card p{font-size:0.82rem;color:var(--muted);line-height:1.5}
-.prob-icon{font-size:1.5rem}
+.prob-card h4{font-weight:700;font-size:0.88rem;margin-bottom:4px;margin-top:8px}
+.prob-card p{font-size:0.8rem;color:var(--muted);line-height:1.5}
+.prob-icon{font-size:1.4rem}
 
-/* VS DASHCAM */
+/* VS — SIMPLIFIED */
 .vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
-.vs-col{padding:28px 24px}
+.vs-col{padding:24px 20px}
 .vs-col.dashcam{background:var(--bg2)}
 .vs-col.awas{background:rgba(22,163,74,0.04);border-left:2px solid var(--green)}
-.vs-head{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;margin-bottom:20px}
+.vs-head{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:1px;margin-bottom:16px}
 .vs-head.gray{color:var(--muted)}
 .vs-head.green{color:var(--green)}
-.vs-item{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
-.vi{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:0.65rem;font-weight:900}
+.vs-item{display:flex;gap:8px;margin-bottom:10px;align-items:flex-start}
+.vi{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:0.6rem;font-weight:900}
 .vi.x{background:rgba(220,38,38,0.15);color:var(--red)}
 .vi.ok{background:rgba(22,163,74,0.15);color:var(--green)}
-.vs-item p{font-size:0.85rem;color:#94a3b8;line-height:1.5}
+.vs-item p{font-size:0.82rem;color:#94a3b8;line-height:1.4}
 .vs-item p strong{color:var(--text)}
 @media(max-width:560px){.vs-grid{grid-template-columns:1fr}}
 
 /* STEPS */
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
-.step{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:28px 24px;position:relative}
-.step-num{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;line-height:1;color:rgba(22,163,74,0.12);position:absolute;top:14px;right:18px;letter-spacing:2px}
-.step-icon{font-size:1.8rem;margin-bottom:14px}
-.step h4{font-weight:700;font-size:1rem;margin-bottom:6px}
-.step p{font-size:0.85rem;color:var(--muted);line-height:1.6}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.step{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px 20px;position:relative}
+.step-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;line-height:1;color:rgba(22,163,74,0.1);position:absolute;top:12px;right:16px}
+.step-icon{font-size:1.6rem;margin-bottom:12px}
+.step h4{font-weight:700;font-size:0.95rem;margin-bottom:4px}
+.step p{font-size:0.82rem;color:var(--muted);line-height:1.5}
 
 /* WHO */
-.who-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
-.who-card{background:var(--bg2);border:1px solid rgba(220,38,38,0.35);border-radius:12px;padding:22px;background:rgba(220,38,38,0.04);transition:border-color 0.2s}
-.who-card:hover{border-color:rgba(220,38,38,0.6)}
-.tag{display:inline-block;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;border-radius:4px;margin-bottom:12px;background:rgba(220,38,38,0.1);color:#fca5a5}
-.who-card h4{font-weight:700;font-size:0.95rem;margin-bottom:6px}
-.who-card p{font-size:0.82rem;color:var(--muted);line-height:1.5}
+.who-section{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.who-img{width:100%;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.who-img img{width:100%;display:block}
+.who-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.who-card{background:rgba(220,38,38,0.04);border:1px solid rgba(220,38,38,0.25);border-radius:10px;padding:16px}
+.tag{display:inline-block;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:4px;margin-bottom:8px;background:rgba(220,38,38,0.1);color:#fca5a5}
+.who-card h4{font-weight:700;font-size:0.88rem;margin-bottom:4px}
+.who-card p{font-size:0.78rem;color:var(--muted);line-height:1.4}
+@media(max-width:680px){.who-section{grid-template-columns:1fr}.who-cards{grid-template-columns:1fr 1fr}}
 
 /* PRICING */
-.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
-.pc{background:var(--bg);padding:32px 28px}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.pc{background:var(--bg);padding:28px 24px}
 .pc.hl{background:var(--bg3)}
-.pc-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px}
-.pc-amount{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;letter-spacing:1px;line-height:1;margin-bottom:4px}
+.pc-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px}
+.pc-amount{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:1px;line-height:1;margin-bottom:4px}
 .pc-amount.green{color:var(--green)}
 .pc-amount.yellow{color:var(--yellow)}
-.pc-per{font-size:0.8rem;color:var(--muted);margin-bottom:16px}
-.pc h4{font-weight:700;margin-bottom:6px;font-size:0.95rem}
-.pc p{font-size:0.83rem;color:var(--muted);line-height:1.6}
-.math-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:24px 28px;text-align:center;font-size:0.9rem;color:var(--muted);line-height:2}
+.pc-per{font-size:0.78rem;color:var(--muted);margin-bottom:12px}
+.pc h4{font-weight:700;margin-bottom:4px;font-size:0.9rem}
+.pc p{font-size:0.8rem;color:var(--muted);line-height:1.5}
+.math-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:20px 24px;text-align:center;font-size:0.88rem;color:var(--muted);line-height:2}
 .math-box strong{color:var(--text)}
-.math-box .vs-text{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--red);display:block;margin:4px 0}
-.math-box .malay{color:#fca5a5;font-weight:700;font-size:0.95rem}
+.math-box .vs-text{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--red);display:block;margin:4px 0}
+.math-box .malay{color:#fca5a5;font-weight:700}
 @media(max-width:560px){.price-grid{grid-template-columns:1fr}}
 
-/* TRUST BADGES */
-.trust-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:40px}
-.tbadge{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-size:0.8rem;font-weight:600;min-width:240px;text-align:center}
-.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* TRUST */
+.trust-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:32px}
+.tbadge{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:0.78rem;font-weight:600;min-width:200px;text-align:center}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .dot.g{background:var(--green)}
 .dot.y{background:var(--yellow)}
 .dot.r{background:var(--red)}
 
 /* FINAL CTA */
-.fcta{text-align:center;padding:80px 24px;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(22,163,74,0.07),transparent 70%)}
+.fcta{text-align:center;padding:72px 24px;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(22,163,74,0.07),transparent 70%)}
 .fcta h2{margin-bottom:10px}
-.fcta p{color:#94a3b8;font-size:1rem;margin-bottom:32px;max-width:420px;margin-left:auto;margin-right:auto}
-.pill{display:inline-block;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);color:#86efac;font-size:0.8rem;font-weight:700;padding:5px 14px;border-radius:100px;margin-bottom:20px}
+.fcta p{color:#94a3b8;font-size:0.95rem;margin-bottom:28px;max-width:380px;margin-left:auto;margin-right:auto}
+.pill{display:inline-block;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);color:#86efac;font-size:0.78rem;font-weight:700;padding:4px 14px;border-radius:100px;margin-bottom:16px}
 
-footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;color:var(--muted);font-size:0.78rem}
-footer .flogo{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--red);letter-spacing:2px;margin-bottom:6px}
+footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:0.76rem}
+footer .flogo img{height:36px;margin-bottom:8px}
 
 .fi{opacity:0;transform:translateY(18px);transition:opacity 0.55s ease,transform 0.55s ease}
 .fi.on{opacity:1;transform:none}
 
-@media(max-width:600px){nav{padding:12px 16px}.hero{padding:86px 16px 48px}.sec{padding:48px 16px}.sec-full-inner{padding:0 16px}.vs-col,.pc{padding:20px 18px}.tbadge{min-width:calc(50% - 6px)}}
+@media(max-width:600px){nav{padding:10px 14px}.hero{padding:80px 16px 48px}.sec{padding:48px 16px}.sec-full-inner{padding:0 16px}.vs-col,.pc{padding:16px 14px}.tbadge{min-width:calc(50% - 5px)}}
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">AWAS</div>
-  <a href="register.html" class="nav-cta">Daftar — RM15/Year</a>
+  <div class="nav-logo">
+    <img src="awas-logo.png" alt="AWAS">
+  </div>
+  <div class="nav-btns">
+    <a href="login.html" class="nav-login">Log Masuk</a>
+    <a href="register.html" class="nav-daftar">Daftar — RM15</a>
+  </div>
 </nav>
 
-<!-- HERO -->
+<!-- HERO — VIDEO BACKGROUND -->
 <div class="hero">
-  <div class="hero-badge"><div class="pulse"></div>Accident Writ Automation System</div>
-  <div class="hero-malay">Kemalangan. Pemandu lain kata salah anda? <span>Tiada saksi. Tiada bukti.</span></div>
-  <h1>YOUR ACCIDENT.<br><span class="red">YOUR PROOF.</span><br><span class="dim">YOUR RIGHTS.</span></h1>
-  <p class="hero-sub">AWAS seals your accident evidence with a <strong>tamper-proof digital signature</strong> the moment it happens. Video. GPS. Timestamp. Locked forever.</p>
-  <div class="hero-cta-group">
-    <a href="register.html" class="btn-green">Daftar Sekarang — RM15/Year</a>
-    <a href="#how" class="btn-ghost">See How It Works</a>
-  </div>
-  <div class="hero-stats">
-    <div><div class="stat-num red">400K+</div><div class="stat-label">Road accidents yearly</div></div>
-    <div><div class="stat-num yellow">60%</div><div class="stat-label">Motorcycle fatalities</div></div>
-    <div><div class="stat-num green">RM0.41</div><div class="stat-label">Per day protection</div></div>
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="awas-logo-animation.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><div class="pulse"></div>Accident Writ Automation System</div>
+    <div class="hero-malay">Kemalangan. Pemandu lain kata salah anda? <span>Tiada saksi. Tiada bukti.</span></div>
+    <h1>YOUR ACCIDENT.<br><span class="red">YOUR PROOF.</span><br><span class="dim">YOUR RIGHTS.</span></h1>
+    <p class="hero-sub">AWAS seals your accident evidence with a <strong>tamper-proof digital signature</strong> the moment it happens. Video. GPS. Timestamp. Locked forever.</p>
+    <div class="hero-cta-group">
+      <a href="register.html" class="btn-green">Daftar Sekarang — RM15/Year</a>
+      <a href="#how" class="btn-ghost">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num red">400K+</div><div class="stat-label">Road accidents yearly</div></div>
+      <div><div class="stat-num yellow">60%</div><div class="stat-label">Motorcycle fatalities</div></div>
+      <div><div class="stat-num green">RM0.41</div><div class="stat-label">Per day protection</div></div>
+    </div>
   </div>
 </div>
 
-<!-- PROBLEM -->
-<div class="sec-full fi">
-  <div class="sec-full-inner">
-    <div class="sec-label">The Reality</div>
-    <h2>THE MOMENT IT HAPPENS</h2>
-    <div class="scenario">
-      Accident. Other driver says it's your fault. No witnesses around. Police report filed — but the scene was never physically attended. Months later, insurance denies your claim. You have nothing to prove otherwise.<br><br>
-      <em>Kemalangan. Pemandu lain kata salah anda. Tiada saksi. Polis report je tak cukup bila lawyer diorang cabar.</em>
+<!-- THE MOMENT IT HAPPENS — WITH ACCIDENT IMAGE -->
+<div class="sec fi">
+  <div class="accident-section">
+    <div class="accident-img">
+      <img src="motor-vs-myvi.png" alt="Malaysian road accident scene">
     </div>
-    <div class="prob-grid">
-      <div class="prob-card"><div class="prob-icon">🚔</div><h4>Police couldn't always come</h4><p>Remote highways, minor incidents — reports filed without scene visits. Your word against theirs.</p></div>
-      <div class="prob-card"><div class="prob-icon">⚖️</div><h4>Insurance disputes drag</h4><p>Without verified evidence, insurers delay, dispute, and deny. You lose time and money.</p></div>
-      <div class="prob-card"><div class="prob-icon">🏍️</div><h4>E-hailing riders unprotected</h4><p>On the road 10 hours daily. Highest risk group. Least legal protection.</p></div>
-      <div class="prob-card"><div class="prob-icon">💸</div><h4>Legal fees are costly</h4><p>Fighting a disputed claim without solid evidence costs far more than the claim itself.</p></div>
+    <div class="accident-text">
+      <div class="sec-label">The Reality</div>
+      <h2>THE MOMENT IT HAPPENS</h2>
+      <p>Accident. Other driver says it's your fault. No witnesses. Police report filed — but the scene was never attended. Months later, insurance denies your claim.</p>
+      <p class="highlight">Kemalangan. Pemandu lain kata salah anda. Tiada saksi. Polis report je tak cukup bila lawyer diorang cabar.</p>
+      <div class="prob-grid">
+        <div class="prob-card"><div class="prob-icon">🚔</div><h4>Police couldn't always come</h4><p>Your word against theirs.</p></div>
+        <div class="prob-card"><div class="prob-icon">⚖️</div><h4>Insurance disputes drag</h4><p>Delay, dispute, deny.</p></div>
+        <div class="prob-card"><div class="prob-icon">🏍️</div><h4>Riders unprotected</h4><p>Highest risk. Least protection.</p></div>
+        <div class="prob-card"><div class="prob-icon">💸</div><h4>Legal fees are costly</h4><p>Evidence beats lawyers.</p></div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- VS DASHCAM -->
-<div class="sec fi">
-  <div class="sec-label">Why Not Just Use A Dashcam?</div>
-  <h2>DASHCAM RECORDS.<br><span style="color:var(--green)">AWAS PROVES.</span></h2>
-  <p class="sec-sub">Dashcam footage can be challenged. AWAS evidence cannot.</p>
-  <div class="vs-grid">
-    <div class="vs-col dashcam">
-      <div class="vs-head gray">Dashcam Only</div>
-      <div class="vs-item"><div class="vi x">✕</div><p><strong>No tamper verification.</strong> Any lawyer can question if the file was edited after the fact.</p></div>
-      <div class="vs-item"><div class="vi x">✕</div><p><strong>Fixed angle only.</strong> Side impact or wrong direction — camera missed it.</p></div>
-      <div class="vs-item"><div class="vi x">✕</div><p><strong>No official report format.</strong> Raw footage needs extraction, conversion, and manual submission.</p></div>
-      <div class="vs-item"><div class="vi x">✕</div><p><strong>Cannot be independently verified.</strong> No confirmation pipeline for insurers or courts.</p></div>
-      <div class="vs-item"><div class="vi x">✕</div><p><strong>Riders cannot use it.</strong> No mount, no power source — motorcycles are excluded.</p></div>
-    </div>
-    <div class="vs-col awas">
-      <div class="vs-head green">AWAS + Dashcam</div>
-      <div class="vs-item"><div class="vi ok">✓</div><p><strong>SHA-256 hash sealed at capture.</strong> Tampering breaks the signature instantly. Court-grade integrity.</p></div>
-      <div class="vs-item"><div class="vi ok">✓</div><p><strong>You direct the evidence.</strong> 15-second walkaround — plates, damage, road position — your call.</p></div>
-      <div class="vs-item"><div class="vi ok">✓</div><p><strong>Instant Balai-ready PDF.</strong> Formatted forensic report with minimal forensic fee. Walk in ready.</p></div>
-      <div class="vs-item"><div class="vi ok">✓</div><p><strong>Institutional verification available.</strong> Insurers and legal professionals can authenticate reports directly.</p></div>
-      <div class="vs-item"><div class="vi ok">✓</div><p><strong>Works on any phone.</strong> Rider or driver. Android or iOS. No hardware needed. Just AWAS.</p></div>
+<div class="sec-full fi">
+  <div class="sec-full-inner">
+    <div class="sec-label">Why Not Just Use A Dashcam?</div>
+    <h2>DASHCAM RECORDS.<br><span style="color:var(--green)">AWAS PROVES.</span></h2>
+    <p class="sec-sub">Dashcam footage can be challenged. AWAS evidence cannot.</p>
+    <div class="vs-grid">
+      <div class="vs-col dashcam">
+        <div class="vs-head gray">Dashcam Only</div>
+        <div class="vs-item"><div class="vi x">✕</div><p><strong>No tamper verification.</strong> Lawyer can question if file was edited.</p></div>
+        <div class="vs-item"><div class="vi x">✕</div><p><strong>Fixed angle.</strong> Side impact — camera missed it.</p></div>
+        <div class="vs-item"><div class="vi x">✕</div><p><strong>No official report.</strong> Raw footage, manual submission.</p></div>
+        <div class="vs-item"><div class="vi x">✕</div><p><strong>Cannot be verified.</strong> No pipeline for insurers or courts.</p></div>
+        <div class="vs-item"><div class="vi x">✕</div><p><strong>Riders excluded.</strong> No mount, no power source.</p></div>
+      </div>
+      <div class="vs-col awas">
+        <div class="vs-head green">AWAS + Dashcam</div>
+        <div class="vs-item"><div class="vi ok">✓</div><p><strong>SHA-256 sealed.</strong> Tamper breaks signature. Court-grade.</p></div>
+        <div class="vs-item"><div class="vi ok">✓</div><p><strong>You direct evidence.</strong> 15-second walkaround — your call.</p></div>
+        <div class="vs-item"><div class="vi ok">✓</div><p><strong>Instant Balai PDF.</strong> Walk in with proof. RM8.</p></div>
+        <div class="vs-item"><div class="vi ok">✓</div><p><strong>Institutions verify directly.</strong> Insurers authenticate reports.</p></div>
+        <div class="vs-item"><div class="vi ok">✓</div><p><strong>Any phone.</strong> Rider or driver. No hardware needed.</p></div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- HOW IT WORKS -->
-<div class="sec-full fi" id="how">
-  <div class="sec-full-inner">
-    <div class="sec-label">Three Steps</div>
-    <h2>HOW AWAS WORKS</h2>
-    <p class="sec-sub">Accident happens. You have 60 seconds. AWAS handles the rest.</p>
-    <div class="steps">
-      <div class="step"><div class="step-num">01</div><div class="step-icon">📱</div><h4>Tap RECORD</h4><p>Open AWAS. Hit the red button. Record a 15-second walkaround. GPS coordinates locked automatically.</p></div>
-      <div class="step"><div class="step-num">02</div><div class="step-icon">🔐</div><h4>Evidence Sealed</h4><p>SHA-256 hash generated instantly from your video, GPS, and timestamp. Immutable. Permanent. Unbreakable.</p></div>
-      <div class="step"><div class="step-num">03</div><div class="step-icon">📄</div><h4>Get Your Balai Writ</h4><p>Generate your official forensic PDF for RM8. Formatted for police stations and insurance claims. Walk in with proof that cannot be disputed.</p></div>
-    </div>
+<div class="sec fi" id="how">
+  <div class="sec-label">Three Steps</div>
+  <h2>HOW AWAS WORKS</h2>
+  <p class="sec-sub">Accident happens. You have 60 seconds. AWAS handles the rest.</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">01</div><div class="step-icon">📱</div><h4>Tap RECORD</h4><p>Open AWAS. Hit the green button. Record a 15-second walkaround. GPS locked automatically.</p></div>
+    <div class="step"><div class="step-num">02</div><div class="step-icon">🔐</div><h4>Evidence Sealed</h4><p>SHA-256 hash generated from video, GPS, timestamp. Immutable. Permanent. Unbreakable.</p></div>
+    <div class="step"><div class="step-num">03</div><div class="step-icon">📄</div><h4>Get Your Balai Writ</h4><p>Official forensic PDF. RM8. Walk into the police station with proof nobody can dispute.</p></div>
   </div>
 </div>
 
-<!-- WHO NEEDS IT -->
-<div class="sec fi">
-  <div class="sec-label">Who Is AWAS For?</div>
-  <h2>EVERYONE ON MALAYSIAN ROADS</h2>
-  <p class="sec-sub">Evidence is the only language that counts when accident happens.</p>
-  <div class="who-grid">
-    <div class="who-card"><div class="tag">Most At Risk</div><h4>🏍️ E-Hailing & Gig Riders</h4><p>On Malaysian roads 10 hours daily. Highest accident rate. Zero dashcam. AWAS is your only protection.</p></div>
-    <div class="who-card"><div class="tag">Daily Commuters</div><h4>🚗 Car Drivers</h4><p>Your dashcam records. AWAS verifies. Together, your case becomes bulletproof.</p></div>
-    <div class="who-card"><div class="tag">B40 / M40</div><h4>👷 Low Income Workers</h4><p>RM0.41 sehari. Harga teh tarik. But when it counts — RM15 could save you from a RM10,000 dispute.</p></div>
-    <div class="who-card"><div class="tag">Everyone</div><h4>🏢 All Road Users</h4><p>Accidents don't check your income. A minister needs AWAS as much as a student. Nobody knows when.</p></div>
+<!-- WHO NEEDS IT — WITH HIGHWAY IMAGE -->
+<div class="sec-full fi">
+  <div class="sec-full-inner">
+    <div class="sec-label">Who Is AWAS For?</div>
+    <h2>EVERYONE ON MALAYSIAN ROADS</h2>
+    <div class="who-section" style="margin-top:32px">
+      <div class="who-img">
+        <img src="myvi-vs-x50.jpeg" alt="Malaysian highway accident">
+      </div>
+      <div>
+        <div class="who-cards">
+          <div class="who-card"><div class="tag">Most At Risk</div><h4>🏍️ E-Hailing Riders</h4><p>10 hours daily on Malaysian roads. Zero dashcam. AWAS is your only protection.</p></div>
+          <div class="who-card"><div class="tag">Daily Commuters</div><h4>🚗 Car Drivers</h4><p>Dashcam records. AWAS certifies. Together — bulletproof.</p></div>
+          <div class="who-card"><div class="tag">B40 / M40</div><h4>👷 Low Income</h4><p>RM0.41 sehari. Harga teh tarik. Worth every sen when it counts.</p></div>
+          <div class="who-card"><div class="tag">Everyone</div><h4>🏢 All Road Users</h4><p>Accidents don't check your income. Nobody knows when it happens.</p></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- PRICING -->
-<div class="sec-full fi">
-  <div class="sec-full-inner">
-    <div class="sec-label">Simple Pricing</div>
-    <h2>CHEAPER THAN YOUR NEXT TEH TARIK</h2>
-    <p class="sec-sub">One annual fee. Pay only when you need a report.</p>
-    <div class="price-grid">
-      <div class="pc">
-        <div class="pc-label">Annual Membership</div>
-        <div class="pc-amount green">RM15</div>
-        <div class="pc-per">per year &mdash; RM1.25/month &mdash; RM0.41/day</div>
-        <h4>Full AWAS Protection</h4>
-        <p>Register your vehicle. Record unlimited incidents. GPS sealing active on every capture.</p>
-      </div>
-      <div class="pc hl">
-        <div class="pc-label">Per Forensic Writ</div>
-        <div class="pc-amount yellow">RM8</div>
-        <div class="pc-per">only when you need it</div>
-        <h4>Official Evidence Document</h4>
-        <p>SHA-256 verified. Balai-formatted. Print-ready. Accepted by police stations, insurers, and legal professionals.</p>
-      </div>
+<div class="sec fi">
+  <div class="sec-label">Simple Pricing</div>
+  <h2>CHEAPER THAN YOUR NEXT TEH TARIK</h2>
+  <div class="price-grid">
+    <div class="pc">
+      <div class="pc-label">Annual Membership</div>
+      <div class="pc-amount green">RM15</div>
+      <div class="pc-per">per year — RM1.25/month — RM0.41/day</div>
+      <h4>Full AWAS Protection</h4>
+      <p>Register. Record unlimited incidents. GPS sealing on every capture.</p>
     </div>
-    <div class="math-box">
-      <p>Average cost of a disputed claim without evidence: <strong>RM5,000 – RM30,000</strong></p>
-      <span class="vs-text">VS</span>
-      <p>Total AWAS protection: <strong>RM15/year</strong> + <strong>RM8</strong> writ when needed</p>
-      <br>
-      <span class="malay">Ini bukan perbelanjaan. Ini perlindungan.</span>
+    <div class="pc hl">
+      <div class="pc-label">Per Forensic Writ</div>
+      <div class="pc-amount yellow">RM8</div>
+      <div class="pc-per">only when you need it</div>
+      <h4>Official Evidence Document</h4>
+      <p>SHA-256 certified. Balai-formatted. Accepted by police, insurers, lawyers.</p>
     </div>
+  </div>
+  <div class="math-box">
+    <p>Disputed claim without evidence: <strong>RM5,000 – RM30,000</strong></p>
+    <span class="vs-text">VS</span>
+    <p>AWAS: <strong>RM15/year</strong> + <strong>RM8</strong> writ when needed</p>
+    <br>
+    <span class="malay">Ini bukan perbelanjaan. Ini perlindungan.</span>
   </div>
 </div>
 
@@ -282,16 +311,16 @@ footer .flogo{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--r
 
 <!-- FINAL CTA -->
 <div class="fcta fi">
-  <div class="pill">RM15/Year &mdash; RM0.41/Day</div>
+  <div class="pill">RM15/Year — RM0.41/Day</div>
   <h2>DON'T WAIT FOR<br><span style="color:var(--red)">THE ACCIDENT.</span></h2>
   <p>Register now. Two minutes. Protection starts immediately.</p>
   <a href="register.html" class="btn-green" style="font-size:1rem;padding:16px 44px">Daftar AWAS Sekarang</a>
   <br><br>
-  <p style="font-size:0.78rem;color:var(--muted)">Already registered? <a href="app.html" style="color:#64748b">Open AWAS App →</a></p>
+  <p style="font-size:0.78rem;color:var(--muted)">Already registered? <a href="app.html" style="color:#64748b">Log Masuk →</a></p>
 </div>
 
 <footer>
-  <div class="flogo">AWAS</div>
+  <div class="flogo"><img src="awas-logo.png" alt="AWAS"></div>
   <p>Accident Writ Automation System</p>
   <p style="margin-top:6px">AWAS Ltd — United Kingdom &bull; Serving Malaysia &bull; Expanding SEA</p>
   <p style="margin-top:6px">SECURE &bull; IMMUTABLE &bull; PDPA COMPLIANT &bull; SHA-256 VERIFIED</p>
