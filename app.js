@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const incidentView = document.getElementById('incident-view');
     const reportView = document.getElementById('report-view');
     const printBtn = document.getElementById('print-btn');
+    const testBanner = document.getElementById('test-banner');
+    const reportBanner = document.getElementById('report-banner');
 
     // Report field refs
     const pdfWritNum = document.getElementById('pdf-writ-number');
@@ -70,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ownHash = await executeLocalSHA256(JSON.stringify(rawPayload));
 
-            // Transition to incident details screen
             captureView.style.display = 'none';
             incidentView.style.display = 'flex';
 
@@ -90,18 +91,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const files = event.target.files;
         if (!files || files.length === 0) return;
 
-        document.getElementById('btn-record-other').innerText = '⏳ Sealing other party evidence...';
+        document.getElementById('btn-record-other').innerText = '⏳ Recording other vehicle...';
         document.getElementById('btn-record-other').disabled = true;
 
         try {
             otherVideoBase64 = await readVideoAsBase64(files[0]);
 
+            // Hash stored internally for BE — NOT displayed on report
             const otherPayload = {
                 videoBase64: otherVideoBase64,
                 linkedToHash: ownHash,
                 timestamp: eventTimestamp.toISOString()
             };
-
             otherHash = await executeLocalSHA256(JSON.stringify(otherPayload));
 
             document.getElementById('other-party-pending').style.display = 'none';
@@ -117,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Step 3 — Generate report
     document.getElementById('btn-generate-report').addEventListener('click', async () => {
         const btn = document.getElementById('btn-generate-report');
-        btn.innerText = '⏳ Generating Forensic Report...';
+        btn.innerText = '⏳ Generating Forensic Writ...';
         btn.disabled = true;
 
         const cachedPlate = localStorage.getItem('awas_vehicle_plate') || 'WD519A';
@@ -161,8 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             const writNumber = result.writNumber || 'AWAS/MY/PENDING';
 
-            // Populate report
+            // Populate report fields
             pdfWritNum.innerText = writNumber;
+            document.getElementById('stamp-writ').innerText = writNumber; // fix stamp
             pdfLogId.innerText = ownHash.substring(0, 8).toUpperCase();
             pdfDate.innerText = eventTimestamp.toLocaleDateString('en-MY');
             pdfTime.innerText = eventTimestamp.toLocaleTimeString('en-MY') + ' MYT';
@@ -171,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfMykad.innerText = `******-XX-${cachedMykad}`;
             pdfLat.innerText = gpsCoordinates.latitude.toFixed(6);
             pdfLng.innerText = gpsCoordinates.longitude.toFixed(6);
-            pdfHash.innerText = ownHash;
+            pdfHash.innerText = ownHash; // OWN user SHA-256 only
 
             // Incident details
             pdfRoad.innerText = formatCondition(roadCondition);
@@ -188,25 +190,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 loading="lazy">
             </iframe>`;
 
-            // Other party section
-            if (otherHash) {
+            // Other party — plate & model only, NO hash on report
+            if (otherPlate) {
                 document.getElementById('pdf-other-party-section').style.display = 'block';
-                document.getElementById('pdf-other-plate').innerText = otherPlate || '—';
+                document.getElementById('pdf-other-plate').innerText = otherPlate;
                 document.getElementById('pdf-other-model').innerText = otherModel || '—';
-                document.getElementById('pdf-other-hash').innerText = otherHash;
                 document.getElementById('sha-section-num').innerText = '5.';
             } else {
                 document.getElementById('pdf-other-party-section').style.display = 'none';
                 document.getElementById('sha-section-num').innerText = '4.';
             }
 
+            // Switch banners
+            testBanner.style.display = 'none';
+            reportBanner.style.display = 'block';
+
             incidentView.style.display = 'none';
             reportView.style.display = 'flex';
             printBtn.style.display = 'block';
 
+            window.scrollTo(0, 0);
+
         } catch (fault) {
             console.error('AWAS Submit Fault:', fault);
-            btn.innerText = '🔒 Generate Forensic Report';
+            btn.innerText = '🔒 Generate AWAS Forensic Writ';
             btn.disabled = false;
             alert('Failed to submit evidence. Check your connection and try again.');
         }
@@ -276,6 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.1.0').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js?v=1.1.1').catch(err => console.error(err));
     });
 }

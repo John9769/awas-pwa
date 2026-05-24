@@ -24,6 +24,11 @@
         .test-step { display: flex; gap: 8px; align-items: flex-start; font-size: 0.8rem; color: #fde68a; }
         .test-step-num { background: rgba(234,179,8,0.3); color: #fbbf24; font-weight: 800; font-size: 0.7rem; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
 
+        /* REPORT BANNER */
+        .report-banner { display: none; width: 100%; max-width: 600px; background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; text-align: center; }
+        .report-banner-title { font-size: 0.85rem; font-weight: 800; color: #4ade80; margin-bottom: 4px; }
+        .report-banner p { font-size: 0.78rem; color: #86efac; line-height: 1.6; }
+
         /* SCREEN 1 — CAPTURE */
         #capture-view { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 20px; margin: auto 0; }
         header { text-align: center; }
@@ -80,8 +85,8 @@
         .data-label { font-weight: 700; color: #475569; text-transform: uppercase; font-size: 0.75rem; margin-bottom: 2px; }
         .data-value { font-weight: 600; color: #000; }
         .map-box { width: 100%; height: 220px; background: #cbd5e1; border: 2px solid #000; border-radius: 4px; overflow: hidden; }
-        .hash-box { background: #f1f5f9; padding: 10px 12px; border-radius: 4px; font-family: monospace; font-size: 0.72rem; word-break: break-all; border: 1px dashed #64748b; line-height: 1.5; }
-        .other-hash-box { background: #eff6ff; padding: 10px 12px; border-radius: 4px; font-family: monospace; font-size: 0.72rem; word-break: break-all; border: 1px dashed #93c5fd; line-height: 1.5; margin-top: 8px; }
+        .hash-box { background: #f0fdf4; padding: 12px 14px; border-radius: 6px; font-family: monospace; font-size: 0.72rem; word-break: break-all; border: 2px solid #16a34a; line-height: 1.6; }
+        .hash-label { font-weight: 800; color: #166534; font-size: 0.78rem; margin-bottom: 6px; letter-spacing: 0.5px; }
         .seal-note { background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 12px 14px; font-size: 0.76rem; color: #166534; line-height: 1.6; text-align: center; }
         .awas-stamp { border: 2px solid #000; border-radius: 6px; padding: 10px 14px; text-align: center; margin-top: 4px; }
         .stamp-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #475569; }
@@ -117,7 +122,7 @@
 
         @media print {
             body { background: white !important; padding: 0 !important; }
-            #capture-view, #incident-view, .btn-print, footer, .test-banner, .seal-note { display: none !important; }
+            #capture-view, #incident-view, .btn-print, footer, .test-banner, .report-banner, .seal-note { display: none !important; }
             #report-view { display: flex !important; width: 100% !important; max-width: 100% !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
         }
         footer { text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 20px 0; margin-top: auto; }
@@ -125,7 +130,7 @@
 </head>
 <body>
 
-    <!-- TEST BANNER -->
+    <!-- TEST BANNER — shown during capture & incident screens -->
     <div class="test-banner" id="test-banner">
         <div class="test-banner-title">⚡ Test Mode — Try A Live AWAS Capture</div>
         <p>This is exactly how AWAS works in a real accident. Test it now so you know what to do when it matters.</p>
@@ -133,8 +138,14 @@
             <div class="test-step"><div class="test-step-num">1</div><span>Tap RECORD — take a short video of anything around you</span></div>
             <div class="test-step"><div class="test-step-num">2</div><span>Allow location access — AWAS needs your GPS</span></div>
             <div class="test-step"><div class="test-step-num">3</div><span>Fill in incident details, optionally record the other party</span></div>
-            <div class="test-step"><div class="test-step-num">4</div><span>Tap Generate — your forensic writ report is sealed with <strong style="color:#fbbf24">real GPS</strong> and <strong style="color:#fbbf24">map</strong></span></div>
+            <div class="test-step"><div class="test-step-num">4</div><span>Tap Generate — your forensic writ is sealed with <strong style="color:#fbbf24">real GPS</strong> and <strong style="color:#fbbf24">exact map</strong></span></div>
         </div>
+    </div>
+
+    <!-- REPORT BANNER — shown only when report is generated -->
+    <div class="report-banner" id="report-banner">
+        <div class="report-banner-title">✅ Your AWAS Forensic Writ Is Sealed</div>
+        <p>This is your official evidence document — exactly what police, insurers and lawyers will see. Your SHA-256 signature is server-confirmed and tamper-proof.</p>
     </div>
 
     <!-- SCREEN 1: CAPTURE -->
@@ -207,12 +218,12 @@
 
         <div class="other-party-box">
             <div class="op-title">📹 Other Party's Vehicle</div>
-            <div class="op-sub">Record the other vehicle to seal their evidence too. Both hashes link together cryptographically.</div>
+            <div class="op-sub">Record the other vehicle to strengthen your evidence as the claimant. Their plate and model will be noted in your report.</div>
             <div id="other-party-pending">
                 <button type="button" id="btn-record-other" class="btn-record-other">Record Other Vehicle (Optional)</button>
             </div>
             <div id="other-party-captured" style="display:none;">
-                <div class="op-success">✅ Other vehicle evidence sealed</div>
+                <div class="op-success">✅ Other vehicle recorded by claimant</div>
                 <div class="if-group">
                     <label class="if-label">Other Vehicle Plate</label>
                     <input type="text" id="other-plate" class="if-input" placeholder="e.g., ABC1234">
@@ -295,28 +306,28 @@
             <div class="data-value" id="pdf-description" style="margin-top:4px;font-size:0.85rem;line-height:1.5;">—</div>
         </div>
 
-        <!-- OTHER PARTY — conditional -->
+        <!-- OTHER PARTY — plate & model only, NO hash -->
         <div id="pdf-other-party-section" style="display:none;">
-            <div class="section-title">4. Kenderaan Pihak Lain</div>
+            <div class="section-title">4. Kenderaan Pihak Lain (Catatan Pengadu)</div>
             <div class="data-grid">
                 <div>
-                    <div class="data-label">Plate Lain</div>
+                    <div class="data-label">Nombor Plate</div>
                     <div class="data-value" id="pdf-other-plate">—</div>
                 </div>
                 <div>
-                    <div class="data-label">Model Lain</div>
+                    <div class="data-label">Model Kenderaan</div>
                     <div class="data-value" id="pdf-other-model">—</div>
                 </div>
             </div>
-            <div class="other-hash-box" style="margin-top:8px;">
-                <strong>OTHER PARTY SHA-256 HASH:</strong><br>
-                <span id="pdf-other-hash">—</span>
+            <div style="padding:0 6px;margin-top:8px;font-size:0.72rem;color:#64748b;font-style:italic;">
+                * Maklumat ini adalah catatan pengadu semasa kejadian. Ia bukan rekod rasmi pihak lain.
             </div>
         </div>
 
+        <!-- SHA-256 — OWN USER ONLY -->
         <div class="section-title"><span id="sha-section-num">4.</span> Tandatangan Digital SHA-256</div>
         <div class="hash-box">
-            <strong>FORENSIC CRYPTOGRAPHIC SIGNATURE (OWN VEHICLE):</strong><br>
+            <div class="hash-label">✅ YOUR VEHICLE FORENSIC SIGNATURE</div>
             <span id="pdf-hash">—</span>
         </div>
 
@@ -327,7 +338,7 @@
         </div>
 
         <div class="seal-note">
-            ✅ <strong>Evidence Sealed.</strong> This document was generated at the moment of capture. The SHA-256 signature proves this data has not been altered. Any modification to the video, GPS, or timestamp will produce a completely different hash — making tampering instantly detectable.
+            ✅ <strong>Evidence Sealed.</strong> This document was generated at the moment of capture. The SHA-256 signature above proves this data has not been altered. Any modification to the video, GPS, or timestamp will produce a completely different hash — making tampering instantly detectable by police, insurers, and courts.
         </div>
 
         <div style="font-size:0.62rem;color:#64748b;text-align:center;margin-top:4px;font-weight:600;text-transform:uppercase;">
