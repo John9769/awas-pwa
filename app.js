@@ -12,6 +12,9 @@ let ownHash = null;
 let otherVideoBase64 = null;
 let otherHash = null;
 let eventTimestamp = null;
+let currentWritNumber = null;
+let currentLat = null;
+let currentLng = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const recordTrigger = document.getElementById('record-trigger');
@@ -97,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             otherVideoBase64 = await readVideoAsBase64(files[0]);
 
-            // Hash stored internally for BE — NOT displayed on report
             const otherPayload = {
                 videoBase64: otherVideoBase64,
                 linkedToHash: ownHash,
@@ -160,20 +162,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            const writNumber = result.writNumber || 'AWAS/MY/PENDING';
+            currentWritNumber = result.writNumber || 'AWAS/MY/PENDING';
+
+            // Store lat/lng for PDF static map
+            currentLat = gpsCoordinates.latitude.toFixed(6);
+            currentLng = gpsCoordinates.longitude.toFixed(6);
 
             // Populate report fields
-            pdfWritNum.innerText = writNumber;
-            document.getElementById('stamp-writ').innerText = writNumber; // fix stamp
+            pdfWritNum.innerText = currentWritNumber;
+            document.getElementById('stamp-writ').innerText = currentWritNumber;
             pdfLogId.innerText = ownHash.substring(0, 8).toUpperCase();
             pdfDate.innerText = eventTimestamp.toLocaleDateString('en-MY');
             pdfTime.innerText = eventTimestamp.toLocaleTimeString('en-MY') + ' MYT';
             pdfPlate.innerText = cachedPlate;
             pdfModel.innerText = cachedModel;
             pdfMykad.innerText = `******-XX-${cachedMykad}`;
-            pdfLat.innerText = gpsCoordinates.latitude.toFixed(6);
-            pdfLng.innerText = gpsCoordinates.longitude.toFixed(6);
-            pdfHash.innerText = ownHash; // OWN user SHA-256 only
+            pdfLat.innerText = currentLat;
+            pdfLng.innerText = currentLng;
+            pdfHash.innerText = ownHash;
 
             // Incident details
             pdfRoad.innerText = formatCondition(roadCondition);
@@ -181,16 +187,14 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfInjury.innerText = formatInjury(injuryStatus);
             pdfDescription.innerText = incidentDescription || '—';
 
-            // Map
-            const lat = gpsCoordinates.latitude.toFixed(6);
-            const lng = gpsCoordinates.longitude.toFixed(6);
+            // Map — interactive iframe for on-screen view
             mapContainer.innerHTML = `<iframe
-                src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.005},${parseFloat(lat)-0.005},${parseFloat(lng)+0.005},${parseFloat(lat)+0.005}&layer=mapnik&marker=${lat},${lng}"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
                 loading="lazy">
             </iframe>`;
 
-            // Other party — plate & model only, NO hash on report
+            // Other party
             if (otherPlate) {
                 document.getElementById('pdf-other-party-section').style.display = 'block';
                 document.getElementById('pdf-other-plate').innerText = otherPlate;
@@ -229,9 +233,79 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-use-screen').addEventListener('click', () => {
         document.getElementById('report-modal').classList.remove('show');
     });
-    document.getElementById('btn-get-certified').addEventListener('click', () => {
+
+    // PDF DOWNLOAD — replaces window.print()
+    document.getElementById('btn-get-certified').addEventListener('click', async () => {
         document.getElementById('report-modal').classList.remove('show');
-        window.print();
+
+        const downloadBtn = document.getElementById('print-btn');
+        downloadBtn.innerText = '⏳ Preparing your PDF...';
+        downloadBtn.disabled = true;
+
+        try {
+            // Swap iframe map → static image for PDF capture
+            const staticMapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${currentLat},${currentLng}&zoom=16&size=560x200&markers=${currentLat},${currentLng},lightblue1`;
+            mapContainer.innerHTML = `<img src="${staticMapUrl}" style="width:100%;height:100%;object-fit:cover;border:none;" alt="GPS Location Map" crossorigin="anonymous">`;
+
+            // Wait for map image to load
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            const reportEl = document.getElementById('report-view');
+
+            const canvas = await html2canvas(reportEl, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                logging: false
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pageWidth;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            const fileName = `AWAS-WRIT-${(currentWritNumber || 'REPORT').replace(/\//g, '-')}.pdf`;
+            pdf.save(fileName);
+
+            // Restore interactive map after PDF save
+            mapContainer.innerHTML = `<iframe
+                src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
+                style="width:100%;height:300px;border:none;margin-bottom:-80px;"
+                loading="lazy">
+            </iframe>`;
+
+            downloadBtn.innerText = '✅ PDF Downloaded — Check Your Files';
+            downloadBtn.disabled = false;
+
+        } catch (err) {
+            console.error('PDF generation fault:', err);
+            mapContainer.innerHTML = `<iframe
+                src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
+                style="width:100%;height:300px;border:none;margin-bottom:-80px;"
+                loading="lazy">
+            </iframe>`;
+            downloadBtn.innerText = '📄 Get Official Balai Writ — RM8';
+            downloadBtn.disabled = false;
+            alert('PDF generation failed. Please try again.');
+        }
     });
 
     // Helpers
