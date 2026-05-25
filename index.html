@@ -2,231 +2,315 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AWAS — Your Accident. Your Proof. Your Rights.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--red:#dc2626;--red-dark:#991b1b;--green:#16a34a;--green-dark:#15803d;--yellow:#eab308;--blue:#2563eb;--blue-dark:#1d4ed8;--bg:#080c14;--bg2:#0f1623;--bg3:#141e2e;--text:#f1f5f9;--muted:#64748b;--border:#1e293b}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+:root {
+    --red: #ef4444;
+    --red-dark: #b91c1c;
+    --green: #22c55e;
+    --green-dark: #15803d;
+    --yellow: #f59e0b;
+    --blue: #3b82f6;
+    --blue-dark: #1d4ed8;
+    --bg: #06090f;
+    --bg2: #0f172a;
+    --bg3: #1e293b;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: rgba(255, 255, 255, 0.08);
+    --glass: rgba(15, 23, 42, 0.8);
+}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(8,12,20,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-.nav-logo img{height:36px;width:auto;display:block}
-.nav-btns{display:flex;gap:8px;align-items:center;justify-content:center}
-.nav-affiliate{background:var(--blue);color:white;border:none;padding:9px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;text-align:center}
-.nav-affiliate:hover{background:var(--blue-dark)}
-.nav-login{background:var(--green);color:white;border:none;padding:9px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;text-align:center}
-.nav-login:hover{background:var(--green-dark)}
-.nav-daftar{background:var(--red);color:white;border:none;padding:9px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;text-align:center}
-.nav-daftar:hover{background:var(--red-dark)}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; }
+body { 
+    background: var(--bg); 
+    color: var(--text); 
+    font-family: 'DM Sans', sans-serif; 
+    font-size: 16px; 
+    line-height: 1.6; 
+    overflow-x: hidden; 
+}
+
+/* NAV - THE FIX */
+nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 5%;
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-logo img { height: 32px; width: auto; display: block; }
+
+.nav-btns { display: flex; gap: 10px; align-items: center; }
+
+/* Desktop Buttons */
+.nav-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-affiliate { color: var(--muted); padding: 8px 12px; }
+.nav-login { color: var(--text); border: 1px solid var(--border); padding: 8px 16px; background: rgba(255,255,255,0.05); }
+.nav-daftar { background: var(--red); color: white; padding: 10px 20px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
 
 /* HERO */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:100px 24px 60px;text-align:center;position:relative;overflow:hidden}
-.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0.25}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,20,0.7) 0%,rgba(8,12,20,0.5) 50%,rgba(8,12,20,0.9) 100%);z-index:1}
-.hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);color:#fca5a5;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:5px 14px;border-radius:100px;margin-bottom:24px}
-.pulse{width:7px;height:7px;background:var(--red);border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-.hero-malay{font-size:1rem;color:#94a3b8;font-style:italic;margin-bottom:20px;text-align:center}
-.hero-malay span{color:#fca5a5}
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 140px 24px 80px;
+    text-align: center;
+    position: relative;
+}
 
-/* 3-SECOND CLARITY BOX */
-.clarity-box{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;width:100%;max-width:420px}
-.clarity-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;text-align:center}
-.clarity-icon{font-size:1.4rem}
-.clarity-text{font-size:0.9rem;color:#f1f5f9;font-weight:600;text-align:center}
+.hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.15; }
+.hero-overlay { position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 0%, var(--bg) 90%); z-index: 1; }
+.hero-content { position: relative; z-index: 2; max-width: 900px; width: 100%; }
 
-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,9vw,6.5rem);line-height:0.95;letter-spacing:2px;margin-bottom:20px;text-align:center}
-h1 .red{color:var(--red)}
-h1 .dim{color:var(--muted)}
-.hero-sub{max-width:480px;font-size:1rem;color:#94a3b8;line-height:1.7;margin-bottom:32px;text-align:center}
-.hero-sub strong{color:var(--text)}
-.hero-cta-group{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:48px}
-.btn-green{background:var(--green);color:white;border:none;padding:15px 34px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;transition:all 0.2s;display:inline-block;text-align:center}
-.btn-green:hover{background:var(--green-dark);transform:translateY(-1px)}
-.btn-blue{background:var(--blue);color:white;border:none;padding:15px 34px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;transition:all 0.2s;display:inline-block;text-align:center}
-.btn-blue:hover{background:var(--blue-dark);transform:translateY(-1px)}
-.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);padding:15px 34px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;transition:all 0.2s;display:inline-block;text-align:center}
-.btn-ghost:hover{border-color:#334155;background:var(--bg2)}
-.hero-stats{display:flex;flex-wrap:wrap;gap:28px;justify-content:center;padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);width:100%;max-width:500px}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;text-align:center}
-.stat-num.red{color:var(--red)}
-.stat-num.yellow{color:var(--yellow)}
-.stat-num.green{color:var(--green)}
-.stat-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;text-align:center}
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 30px;
+}
+
+.pulse { width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 12vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+}
+h1 .red { color: var(--red); }
+h1 .dim { color: #334155; -webkit-text-stroke: 1px rgba(255,255,255,0.1); }
+
+.hero-sub {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* CLARITY BOXES - Premium Grid */
+.clarity-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 0 auto 40px;
+    max-width: 800px;
+}
+.clarity-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.clarity-icon { font-size: 1.2rem; }
+.clarity-text { font-size: 0.75rem; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* BUTTONS */
+.hero-cta-group { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
+.btn {
+    padding: 18px 36px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-green { background: var(--green); color: white; box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2); }
+.btn-green:hover { background: var(--green-dark); transform: translateY(-3px); }
+.btn-ghost { border: 1px solid var(--border); color: var(--text); backdrop-filter: blur(10px); }
+.btn-ghost:hover { background: rgba(255,255,255,0.05); }
+
+/* STATS */
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+}
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; }
+.stat-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
 
 /* SECTIONS */
-.sec{padding:64px 24px;max-width:960px;margin:0 auto;text-align:center}
-.sec-full{padding:64px 0;background:var(--bg2)}
-.sec-full-inner{max-width:960px;margin:0 auto;padding:0 24px;text-align:center}
-.sec-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--red);margin-bottom:12px;text-align:center}
-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,3.2rem);letter-spacing:1px;line-height:1;margin-bottom:12px;text-align:center}
-.sec-sub{font-size:0.95rem;color:#94a3b8;max-width:520px;line-height:1.7;margin-bottom:32px;text-align:center;margin-left:auto;margin-right:auto}
+.sec { padding: 100px 5%; max-width: 1100px; margin: 0 auto; }
+.sec-full { background: var(--bg2); padding: 100px 5%; }
+.sec-label { color: var(--red); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; display: block; }
+h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1; margin-bottom: 20px; }
 
-/* ACCIDENT IMAGE SECTION */
-.accident-section{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;text-align:left}
-.accident-img{width:100%;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
-.accident-img img{width:100%;height:100%;object-fit:cover;display:block}
-.accident-text h2{margin-bottom:16px;text-align:left}
-.accident-text .sec-label{text-align:left}
-.accident-text p{font-size:0.92rem;color:#94a3b8;line-height:1.8;margin-bottom:12px;text-align:left}
-.accident-text .highlight{color:#fca5a5;font-style:italic;font-size:0.88rem}
-@media(max-width:680px){.accident-section{grid-template-columns:1fr}.accident-text h2,.accident-text .sec-label,.accident-text p{text-align:center}}
+/* ACCIDENT SECTION */
+.accident-section { display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: center; }
+.accident-img { border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+.accident-img img { width: 100%; display: block; transition: transform 0.5s ease; }
+.accident-img:hover img { transform: scale(1.05); }
 
-/* PROBLEM CARDS */
-.prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:32px}
-.prob-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px;position:relative;overflow:hidden;text-align:center}
-.prob-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--yellow)}
-.prob-card h4{font-weight:700;font-size:0.88rem;margin-bottom:4px;margin-top:8px;text-align:center}
-.prob-card p{font-size:0.8rem;color:var(--muted);line-height:1.5;text-align:center}
-.prob-icon{font-size:1.4rem;text-align:center}
+/* VS GRID */
+.vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); background: var(--border); }
+.vs-col { padding: 40px; background: var(--bg); }
+.vs-col.awas { background: linear-gradient(145deg, #0f172a, #06090f); border-left: 2px solid var(--green); }
+.vs-item { display: flex; gap: 12px; margin-bottom: 16px; text-align: left; }
+.vi { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; margin-top: 3px; }
+.vi.x { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+.vi.ok { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
 
-/* VS */
-.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
-.vs-col{padding:24px 20px;text-align:center}
-.vs-col.dashcam{background:var(--bg2)}
-.vs-col.awas{background:rgba(22,163,74,0.04);border-left:2px solid var(--green)}
-.vs-head{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:1px;margin-bottom:16px;text-align:center}
-.vs-head.gray{color:var(--muted)}
-.vs-head.green{color:var(--green)}
-.vs-item{display:flex;gap:8px;margin-bottom:10px;align-items:flex-start;text-align:left}
-.vi{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:0.6rem;font-weight:900}
-.vi.x{background:rgba(220,38,38,0.15);color:var(--red)}
-.vi.ok{background:rgba(22,163,74,0.15);color:var(--green)}
-.vs-item p{font-size:0.82rem;color:#94a3b8;line-height:1.4;text-align:left}
-.vs-item p strong{color:var(--text)}
-@media(max-width:560px){.vs-grid{grid-template-columns:1fr}}
-
-/* STEPS */
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.step{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px 20px;position:relative;text-align:center}
-.step-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;line-height:1;color:rgba(22,163,74,0.1);position:absolute;top:12px;right:16px}
-.step-icon{font-size:1.6rem;margin-bottom:12px;text-align:center}
-.step h4{font-weight:700;font-size:0.95rem;margin-bottom:4px;text-align:center}
-.step p{font-size:0.82rem;color:var(--muted);line-height:1.5;text-align:center}
-
-/* WHO */
-.who-section{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
-.who-img{width:100%;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
-.who-img img{width:100%;display:block}
-.who-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.who-card{background:rgba(220,38,38,0.04);border:1px solid rgba(220,38,38,0.25);border-radius:10px;padding:16px;text-align:center}
-.tag{display:inline-block;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:4px;margin-bottom:8px;background:rgba(220,38,38,0.1);color:#fca5a5;text-align:center}
-.who-card h4{font-weight:700;font-size:0.88rem;margin-bottom:4px;text-align:center}
-.who-card p{font-size:0.78rem;color:var(--muted);line-height:1.4;text-align:center}
-@media(max-width:680px){.who-section{grid-template-columns:1fr}.who-cards{grid-template-columns:1fr 1fr}}
+/* WHO SECTION CARDS */
+.who-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.who-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 15px; transition: 0.3s; }
+.who-card:hover { border-color: var(--red); background: rgba(239, 68, 68, 0.05); }
 
 /* PRICING */
-.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
-.pc{background:var(--bg);padding:28px 24px;text-align:center}
-.pc.hl{background:var(--bg3)}
-.pc-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;text-align:center}
-.pc-amount{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:1px;line-height:1;margin-bottom:4px;text-align:center}
-.pc-amount.green{color:var(--green)}
-.pc-amount.yellow{color:var(--yellow)}
-.pc-per{font-size:0.78rem;color:var(--muted);margin-bottom:12px;text-align:center}
-.pc h4{font-weight:700;margin-bottom:4px;font-size:0.9rem;text-align:center}
-.pc p{font-size:0.8rem;color:var(--muted);line-height:1.5;text-align:center}
-@media(max-width:560px){.price-grid{grid-template-columns:1fr}}
+.price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
+.pc { background: var(--bg); border: 1px solid var(--border); padding: 50px 30px; border-radius: 20px; position: relative; }
+.pc.hl { border: 2px solid var(--green); transform: scale(1.05); z-index: 2; background: #0c1a16; }
 
-/* AFFILIATE SECTION */
-.affiliate-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;max-width:700px;margin:0 auto 32px}
-.aff-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center}
-.aff-num{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;margin-bottom:8px;text-align:center}
-.aff-num.green{color:var(--green)}
-.aff-num.yellow{color:var(--yellow)}
-.aff-num.red{color:var(--red)}
-.aff-label{font-size:0.78rem;color:var(--muted);line-height:1.5;text-align:center}
+/* FADE IN ANIMATION */
+.fi { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.fi.on { opacity: 1; transform: translateY(0); }
 
-/* FINAL CTA */
-.fcta{text-align:center;padding:72px 24px;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(22,163,74,0.07),transparent 70%)}
-.fcta h2{margin-bottom:10px;text-align:center}
-.fcta p{color:#94a3b8;font-size:0.95rem;margin-bottom:28px;max-width:380px;margin-left:auto;margin-right:auto;text-align:center}
-.pill{display:inline-block;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);color:#86efac;font-size:0.78rem;font-weight:700;padding:4px 14px;border-radius:100px;margin-bottom:16px}
+/* MOBILE RESPONSIVENESS */
+@media (max-width: 768px) {
+    nav { padding: 10px 15px; }
+    .nav-logo img { height: 24px; }
+    
+    /* Navbar button fix for mobile */
+    .nav-affiliate { display: none; } /* Hide secondary on mobile to save space */
+    .nav-login { padding: 6px 10px; font-size: 0.65rem; border: none; }
+    .nav-daftar { padding: 8px 14px; font-size: 0.65rem; }
 
-footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:0.76rem}
-footer .flogo img{height:36px;margin-bottom:8px}
+    .hero { padding-top: 100px; }
+    .clarity-box { grid-template-columns: 1fr; gap: 8px; }
+    .clarity-item { flex-direction: row; padding: 12px; }
+    
+    .hero-stats { grid-template-columns: 1fr; gap: 20px; text-align: center; }
+    .accident-section { grid-template-columns: 1fr; text-align: center; gap: 30px; }
+    .accident-text h2 { text-align: center; }
+    
+    .vs-grid { grid-template-columns: 1fr; }
+    .vs-col { padding: 25px; }
+    
+    .who-cards { grid-template-columns: 1fr; }
+    .price-grid { grid-template-columns: 1fr; gap: 40px; }
+    .pc.hl { transform: none; }
+    
+    .sec { padding: 60px 20px; }
+}
 
-.fi{opacity:0;transform:translateY(18px);transition:opacity 0.55s ease,transform 0.55s ease}
-.fi.on{opacity:1;transform:none}
-
-@media(max-width:600px){nav{padding:10px 14px}.hero{padding:80px 16px 48px}.sec{padding:48px 16px}.sec-full-inner{padding:0 16px}.vs-col,.pc{padding:16px 14px}.nav-affiliate{display:none}}
+@media (max-width: 380px) {
+    /* Extreme small screens: hide login, keep only CTA */
+    .nav-login { display: none; }
+    .nav-btns { width: 100%; justify-content: flex-end; }
+}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-logo">
     <img src="awas-logo.png" alt="AWAS">
   </div>
   <div class="nav-btns">
-    <a href="affiliate.html" class="nav-affiliate">Affiliate</a>
-    <a href="login.html" class="nav-login">Log Masuk</a>
-    <a href="register.html" class="nav-daftar">Daftar — RM29.99/Tahun</a>
+    <a href="affiliate.html" class="nav-btn nav-affiliate">Affiliate</a>
+    <a href="login.html" class="nav-btn nav-login">Log Masuk</a>
+    <a href="register.html" class="nav-btn nav-daftar">Daftar — RM29.99</a>
   </div>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <video class="hero-video" autoplay muted loop playsinline>
     <source src="awas-logo-animation.mp4" type="video/mp4">
   </video>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-badge"><div class="pulse"></div>Accident Writ Automation System</div>
-    <div class="hero-malay">Kemalangan. Pemandu lain kata salah anda? <span>Tiada saksi. Tiada bukti.</span></div>
+    <div class="hero-badge fi"><div class="pulse"></div> Accident Writ Automation System</div>
+    
+    <h1 class="fi">YOUR ACCIDENT.<br><span class="red">YOUR PROOF.</span><br><span class="dim">YOUR RIGHTS.</span></h1>
+    
+    <p class="hero-sub fi">AWAS seals your accident evidence with <strong>tamper-proof digital signatures</strong> the moment it happens. Video, GPS, and Timestamps — locked forever.</p>
 
-    <!-- 3-SECOND CLARITY BOX -->
-    <div class="clarity-box">
+    <div class="clarity-box fi">
       <div class="clarity-item">
         <span class="clarity-icon">📱</span>
-        <span class="clarity-text">Rakam Video Kemalangan</span>
+        <span class="clarity-text">Rakam Video</span>
       </div>
       <div class="clarity-item">
         <span class="clarity-icon">🔐</span>
-        <span class="clarity-text">Digital Code SHA-256 Automatik</span>
+        <span class="clarity-text">SHA-256 Sealed</span>
       </div>
       <div class="clarity-item">
         <span class="clarity-icon">📄</span>
-        <span class="clarity-text">PDF Laporan Forensik Kemalangan</span>
+        <span class="clarity-text">Laporan Forensik</span>
       </div>
     </div>
 
-    <h1>YOUR ACCIDENT.<br><span class="red">YOUR PROOF.</span><br><span class="dim">YOUR RIGHTS.</span></h1>
-    <p class="hero-sub">AWAS meterai bukti kemalangan anda dengan <strong>tandatangan digital kalis gangguan</strong> pada detik ia berlaku. Video. GPS. Cap Masa. Terkunci selama-lamanya.</p>
-    <div class="hero-cta-group">
-      <a href="register.html" class="btn-green">Daftar Sekarang — RM29.99/Tahun</a>
-      <a href="#how" class="btn-ghost">Lihat Cara Kerja</a>
+    <div class="hero-cta-group fi">
+      <a href="register.html" class="btn btn-green">Daftar — RM29.99/Tahun</a>
+      <a href="#how" class="btn btn-ghost">Lihat Cara Kerja</a>
     </div>
-    <div class="hero-stats">
-      <div><div class="stat-num red">400K+</div><div class="stat-label">Kemalangan setahun</div></div>
-      <div><div class="stat-num yellow">60%</div><div class="stat-label">Kematian motosikal</div></div>
-      <div><div class="stat-num green">RM29.99</div><div class="stat-label">Perlindungan setahun</div></div>
+
+    <div class="hero-stats fi">
+      <div><div class="stat-num red">400K+</div><div class="stat-label">Kes Kemalangan / Thn</div></div>
+      <div><div class="stat-num yellow">60%</div><div class="stat-label">Kematian Motosikal</div></div>
+      <div><div class="stat-num green">RM8</div><div class="stat-label">Kos Per Writ</div></div>
     </div>
   </div>
 </div>
 
-<!-- THE MOMENT IT HAPPENS -->
+<!-- REALITY SECTION -->
 <div class="sec fi">
   <div class="accident-section">
     <div class="accident-img">
-      <img src="motor-vs-myvi.png" alt="Malaysian road accident scene">
+      <img src="motor-vs-myvi.png" alt="Accident scene">
     </div>
     <div class="accident-text">
-      <div class="sec-label">The Reality</div>
+      <span class="sec-label">The Reality</span>
       <h2>THE MOMENT IT HAPPENS</h2>
-      <p>Accident. Other driver says it's your fault. No witnesses. Police report filed — but the scene was never attended. Months later, insurance denies your claim.</p>
-      <p class="highlight">Kemalangan. Pemandu lain kata salah anda. Tiada saksi. Polis report je tak cukup bila lawyer diorang cabar.</p>
-      <div class="prob-grid">
-        <div class="prob-card"><div class="prob-icon">🚔</div><h4>Police Couldn't Always Come</h4><p>Your word against theirs.</p></div>
-        <div class="prob-card"><div class="prob-icon">⚖️</div><h4>Insurance Disputes Drag</h4><p>Delay, dispute, deny.</p></div>
-        <div class="prob-card"><div class="prob-icon">🏍️</div><h4>Riders Unprotected</h4><p>Highest risk. Least protection.</p></div>
-        <div class="prob-card"><div class="prob-icon">💸</div><h4>Legal Fees Are Costly</h4><p>Evidence beats lawyers.</p></div>
+      <p style="color:var(--muted); margin-bottom: 20px;">Other drivers lie. Witnesses disappear. Without AWAS, it's just your word against theirs. Police reports are just paperwork; AWAS is <strong>forensic proof.</strong></p>
+      
+      <div class="who-cards">
+          <div class="who-card"><h4>🚔 Tiada Saksi?</h4><p style="font-size: 0.8rem; color: var(--muted)">Bukti video digital yang sah di mahkamah.</p></div>
+          <div class="who-card"><h4>⚖️ Dispute Insurans</h4><p style="font-size: 0.8rem; color: var(--muted)">Elakkan claim anda ditolak tanpa sebab.</p></div>
       </div>
     </div>
   </div>
@@ -234,131 +318,67 @@ footer .flogo img{height:36px;margin-bottom:8px}
 
 <!-- VS DASHCAM -->
 <div class="sec-full fi">
-  <div class="sec-full-inner">
-    <div class="sec-label">Why Not Just Use A Dashcam?</div>
+  <div style="text-align: center; max-width: 800px; margin: 0 auto 50px;">
+    <span class="sec-label">Comparison</span>
     <h2>DASHCAM RECORDS.<br><span style="color:var(--green)">AWAS PROVES.</span></h2>
-    <p class="sec-sub">Dashcam footage can be challenged. AWAS evidence cannot.</p>
-    <div class="vs-grid">
-      <div class="vs-col dashcam">
-        <div class="vs-head gray">Dashcam Only</div>
-        <div class="vs-item"><div class="vi x">✕</div><p><strong>No tamper verification.</strong> Lawyer can question if file was edited.</p></div>
-        <div class="vs-item"><div class="vi x">✕</div><p><strong>Fixed angle.</strong> Side impact — camera missed it.</p></div>
-        <div class="vs-item"><div class="vi x">✕</div><p><strong>No official report.</strong> Raw footage, manual submission.</p></div>
-        <div class="vs-item"><div class="vi x">✕</div><p><strong>Cannot be verified.</strong> No pipeline for insurers or courts.</p></div>
-        <div class="vs-item"><div class="vi x">✕</div><p><strong>Riders excluded.</strong> No mount, no power source.</p></div>
+  </div>
+  <div class="vs-grid">
+      <div class="vs-col">
+        <h4 style="font-family:'Bebas Neue'; font-size: 1.5rem; margin-bottom: 20px; color: var(--muted)">Dashcam Biasa</h4>
+        <div class="vs-item"><div class="vi x">✕</div><p>Boleh disunting (Tamper-prone)</p></div>
+        <div class="vs-item"><div class="vi x">✕</div><p>Tiada pengesahan GPS/Masa rasmi</p></div>
+        <div class="vs-item"><div class="vi x">✕</div><p>Sudut tetap (Fixed angle)</p></div>
       </div>
       <div class="vs-col awas">
-        <div class="vs-head green">AWAS + Dashcam</div>
-        <div class="vs-item"><div class="vi ok">✓</div><p><strong>SHA-256 sealed.</strong> Tamper breaks signature. Court-grade.</p></div>
-        <div class="vs-item"><div class="vi ok">✓</div><p><strong>You direct evidence.</strong> 15-second walkaround — your call.</p></div>
-        <div class="vs-item"><div class="vi ok">✓</div><p><strong>Instant Balai PDF.</strong> Walk in with proof. RM8.</p></div>
-        <div class="vs-item"><div class="vi ok">✓</div><p><strong>Institutions verify directly.</strong> Insurers authenticate reports.</p></div>
-        <div class="vs-item"><div class="vi ok">✓</div><p><strong>Any phone.</strong> Rider or driver. No hardware needed.</p></div>
+        <h4 style="font-family:'Bebas Neue'; font-size: 1.5rem; margin-bottom: 20px; color: var(--green)">AWAS System</h4>
+        <div class="vs-item"><div class="vi ok">✓</div><p><strong>SHA-256 Sealed:</strong> Kalis gangguan.</p></div>
+        <div class="vs-item"><div class="vi ok">✓</div><p><strong>Writ Forensik:</strong> Format Balai Polis.</p></div>
+        <div class="vs-item"><div class="vi ok">✓</div><p><strong>Universal:</strong> Guna sebarang telefon.</p></div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<div class="sec fi" id="how">
-  <div class="sec-label">Tiga Langkah</div>
-  <h2>CARA AWAS BERFUNGSI</h2>
-  <p class="sec-sub">Kemalangan berlaku. Anda ada 60 saat. AWAS uruskan selebihnya.</p>
-  <div class="steps">
-    <div class="step"><div class="step-num">01</div><div class="step-icon">📱</div><h4>Tekan REKOD</h4><p>Buka AWAS. Tekan butang hijau. Rakam 15 saat keliling kenderaan. GPS dikunci automatik.</p></div>
-    <div class="step"><div class="step-num">02</div><div class="step-icon">🔐</div><h4>Bukti Tersedia</h4><p>Hash SHA-256 dijana dari video, GPS, cap masa. Kekal. Tetap. Tidak boleh diubah.</p></div>
-    <div class="step"><div class="step-num">03</div><div class="step-icon">📄</div><h4>Dapatkan Writ Balai</h4><p>PDF forensik rasmi. RM8. Masuk balai polis dengan bukti yang tidak boleh dipertikaikan.</p></div>
-  </div>
-</div>
-
-<!-- WHO NEEDS IT -->
-<div class="sec-full fi">
-  <div class="sec-full-inner">
-    <div class="sec-label">Siapa AWAS Untuk?</div>
-    <h2>SEMUA PENGGUNA JALAN MALAYSIA</h2>
-    <div class="who-section" style="margin-top:32px">
-      <div class="who-img">
-        <img src="myvi-vs-x50.png" alt="Malaysian highway accident">
-      </div>
-      <div>
-        <div class="who-cards">
-          <div class="who-card"><div class="tag">Paling Berisiko</div><h4>🏍️ Rider E-Hailing</h4><p>10 jam sehari di jalan Malaysia. Tiada dashcam. AWAS adalah perlindungan satu-satunya.</p></div>
-          <div class="who-card"><div class="tag">Pemandu Harian</div><h4>🚗 Pemandu Kereta</h4><p>Dashcam merakam. AWAS mengesahkan. Bersama — tidak boleh dipertikaikan.</p></div>
-          <div class="who-card"><div class="tag">B40 / M40</div><h4>👷 Pekerja</h4><p>RM29.99 setahun. Berbaloi apabila diperlukan.</p></div>
-          <div class="who-card"><div class="tag">Semua</div><h4>🏢 Semua Pengguna Jalan</h4><p>Kemalangan tidak memilih. Tiada siapa tahu bila ia berlaku.</p></div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
 <!-- PRICING -->
 <div class="sec fi">
-  <div class="sec-label">Harga Mudah</div>
-  <h2>PERLINDUNGAN TERMURAH DI ABAD INI</h2>
+  <div style="text-align: center; margin-bottom: 50px;">
+    <span class="sec-label">Pricing</span>
+    <h2>INVEST IN YOUR PROTECTION</h2>
+  </div>
   <div class="price-grid">
     <div class="pc">
-      <div class="pc-label">Keahlian Tahunan</div>
-      <div class="pc-amount green">RM29.99</div>
-      <div class="pc-per">setahun — RM2.50/bulan</div>
-      <h4>Perlindungan AWAS Penuh</h4>
-      <p>Daftar. Rakam insiden tanpa had. GPS tersedia pada setiap rakaman.</p>
+      <span class="sec-label">Yearly Access</span>
+      <div class="stat-num green" style="font-size: 4rem;">RM29.99</div>
+      <p style="margin: 20px 0; color: var(--muted)">Akses penuh aplikasi, rakaman tanpa had, dan storan awan selamat.</p>
+      <a href="register.html" class="btn btn-ghost" style="display: block; width: 100%; text-align: center; padding: 12px;">Daftar Sekarang</a>
     </div>
     <div class="pc hl">
-      <div class="pc-label">Setiap Writ Forensik</div>
-      <div class="pc-amount yellow">RM8</div>
-      <div class="pc-per">hanya apabila diperlukan</div>
-      <h4>Dokumen Bukti Rasmi</h4>
-      <p>Disahkan SHA-256. Format Balai. Diterima polis, insurans, peguam.</p>
+      <span class="sec-label" style="color: var(--green)">Forensic Writ</span>
+      <div class="stat-num" style="font-size: 4rem; color: #fff;">RM8.00</div>
+      <p style="margin: 20px 0; color: #94a3b8">Hanya bayar apabila anda perlu jana dokumen bukti rasmi untuk Polis/Insurans.</p>
+      <div style="background: rgba(34,197,94,0.1); padding: 10px; border-radius: 8px; font-size: 0.8rem; color: var(--green); font-weight: 700;">Format Diterima PDRM & Insurans</div>
     </div>
   </div>
 </div>
 
-<!-- AFFILIATE SECTION -->
-<div class="sec-full fi">
-  <div class="sec-full-inner">
-    <div class="sec-label">Jana Pendapatan Pasif</div>
-    <h2>JADI AFFILIATE AWAS</h2>
-    <p class="sec-sub">Daftar AWAS. Kongsi pautan anda. Setiap orang yang mendaftar melalui pautan anda — anda terima RM9.99 serta-merta. Apabila mereka memperbaharui tahun depan — anda terima lagi.</p>
-    <div class="affiliate-cards">
-      <div class="aff-card">
-        <div class="aff-num green">RM9.99</div>
-        <div class="aff-label">Setiap pendaftaran baru melalui pautan anda</div>
-      </div>
-      <div class="aff-card">
-        <div class="aff-num yellow">∞</div>
-        <div class="aff-label">Berulang setiap tahun — selagi mereka aktif</div>
-      </div>
-      <div class="aff-card">
-        <div class="aff-num red">RM0</div>
-        <div class="aff-label">Kos untuk sertai — percuma untuk pengguna berdaftar</div>
-      </div>
-    </div>
-    <a href="affiliate.html" class="btn-blue" style="font-size:1rem;padding:16px 44px;">Papar Dashboard Affiliate Saya</a>
-    <p style="margin-top:12px;font-size:0.78rem;color:var(--muted);">Mesti daftar sebagai pengguna AWAS dahulu. <a href="register.html" style="color:#64748b;">Daftar sekarang →</a></p>
-  </div>
-</div>
-
-<!-- FINAL CTA -->
-<div class="fcta fi">
-  <div class="pill">RM29.99/Tahun — RM2.50/Bulan</div>
-  <h2>JANGAN TUNGGU<br><span style="color:var(--red)">KEMALANGAN ITU.</span></h2>
-  <p>Daftar sekarang. Dua minit. Perlindungan bermula serta-merta.</p>
-  <a href="register.html" class="btn-green" style="font-size:1rem;padding:16px 44px">Daftar AWAS Sekarang</a>
-  <br><br>
-  <p style="font-size:0.78rem;color:var(--muted)">Sudah daftar? <a href="login.html" style="color:#64748b">Log Masuk →</a></p>
-</div>
-
-<footer>
-  <div class="flogo"><img src="awas-logo.png" alt="AWAS"></div>
-  <p>Accident Writ Automation System</p>
-  <p style="margin-top:6px">Membantu Malaysia &bull; Berkembang ke SEA</p>
-  <p style="margin-top:6px">SELAMAT &bull; KEKAL &bull; MEMATUHI PDPA &bull; SHA-256 DISAHKAN</p>
+<!-- FOOTER -->
+<footer style="padding: 80px 5%; border-top: 1px solid var(--border); text-align: center;">
+  <img src="awas-logo.png" alt="AWAS" style="height: 40px; margin-bottom: 20px; opacity: 0.5;">
+  <p style="color: var(--muted); font-size: 0.8rem; letter-spacing: 1px;">SECURE • PERMANENT • PDPA COMPLIANT • SHA-256 VERIFIED</p>
+  <p style="margin-top: 20px; font-size: 0.7rem; color: #334155;">&copy; 2024 AWAS SYSTEM. ALL RIGHTS RESERVED.</p>
 </footer>
 
 <script>
-const obs = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('on') }), {threshold:0.08});
-document.querySelectorAll('.fi').forEach(el => obs.observe(el));
+const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('on');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.fi').forEach(el => observer.observe(el));
 </script>
+
 </body>
 </html>
