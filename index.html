@@ -28,14 +28,18 @@ nav{
     backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
     border-bottom:1px solid var(--border)
 }
-.nav-logo img{height:30px;width:auto;display:block}
+.nav-logo{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:1.9rem;letter-spacing:3px;
+    color:#f1f5f9;line-height:1
+}
 .nav-btns{display:flex;gap:6px;align-items:center}
 .nav-btns a{
     font-family:'DM Sans',sans-serif;font-weight:700;
     text-decoration:none;text-transform:uppercase;
     letter-spacing:0.5px;text-align:center;
     border-radius:6px;transition:all 0.2s;white-space:nowrap;
-    padding:8px 14px;font-size:0.72rem;color:white;
+    padding:8px 14px;font-size:0.72rem;color:white
 }
 .nav-affiliate{background:var(--blue)}
 .nav-affiliate:hover{background:var(--blue-dark)}
@@ -44,11 +48,10 @@ nav{
 .nav-daftar{background:var(--red)}
 .nav-daftar:hover{background:var(--red-dark)}
 @media(max-width:480px){
-    nav{padding:10px 10px}
-    .nav-logo img{height:24px}
+    nav{padding:10px 12px}
+    .nav-logo{font-size:1.6rem}
     .nav-btns{gap:4px}
     .nav-btns a{padding:7px 10px;font-size:0.68rem;letter-spacing:0}
-    
 }
 
 /* HERO */
@@ -56,21 +59,33 @@ nav{
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0.2}
 .hero-overlay{position:absolute;inset:0;background:radial-gradient(circle,rgba(8,12,20,0.4) 0%,var(--bg) 80%);z-index:1}
 .hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;max-width:1000px}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);color:#fca5a5;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 16px;border-radius:100px;margin-bottom:24px;white-space:nowrap}
-.pulse{width:8px;height:8px;background:var(--red);border-radius:50%;animation:pulse 2s infinite}
+.hero-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);
+    color:#fca5a5;font-size:0.72rem;font-weight:700;
+    text-transform:uppercase;letter-spacing:1px;
+    padding:6px 16px;border-radius:100px;margin-bottom:24px;
+    white-space:nowrap
+}
+.pulse{width:8px;height:8px;background:var(--red);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
 .hero-malay{font-size:1.1rem;color:#94a3b8;font-style:italic;margin-bottom:24px;max-width:600px;text-align:center}
 .hero-malay span{color:#fca5a5;font-weight:700}
 
 /* CLARITY BOX */
 .clarity-box{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px;width:100%;max-width:800px}
-.clarity-item{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.clarity-item{
+    background:rgba(255,255,255,0.04);border:1px solid var(--border);
+    border-radius:12px;padding:16px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center
+}
 .clarity-icon{font-size:1.5rem;display:block;margin-bottom:8px}
 .clarity-text{font-size:0.8rem;color:#f1f5f9;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
 @media(max-width:600px){
-    .clarity-box{grid-template-columns:1fr;gap:8px}
-    .clarity-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;text-align:center}
-    .clarity-icon{margin-bottom:0}
+    .clarity-box{grid-template-columns:repeat(3,1fr);gap:8px}
+    .clarity-item{padding:14px 8px}
+    .clarity-icon{font-size:1.3rem;margin-bottom:6px}
+    .clarity-text{font-size:0.65rem;letter-spacing:0}
 }
 
 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,10vw,7rem);line-height:0.9;letter-spacing:1px;margin-bottom:24px;text-align:center}
@@ -89,54 +104,50 @@ h1 .dim{color:#334155;-webkit-text-stroke:1px rgba(255,255,255,0.1)}
 .btn-ghost:hover{background:rgba(255,255,255,0.05)}
 
 /* SECTIONS */
-.sec{padding:100px 24px;max-width:1100px;margin:0 auto}
-.sec-full{padding:100px 24px;background:var(--bg2)}
+.sec{padding:80px 24px;max-width:1100px;margin:0 auto}
+.sec-full{padding:80px 24px;background:var(--bg2)}
 .sec-full-inner{max-width:1100px;margin:0 auto}
 .sec-label{font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:3px;color:var(--red);margin-bottom:16px;display:block}
 h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,4rem);letter-spacing:1px;line-height:1;margin-bottom:24px}
 
-/* ACCIDENT IMAGE SECTION */
-.accident-section{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.accident-img{width:100%;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.5);border:1px solid var(--border);order:-1}
-.accident-img img{width:100%;height:100%;object-fit:cover;display:block}
-.accident-text p{font-size:1rem;color:#94a3b8;line-height:1.8;margin-bottom:20px}
-.accident-text .highlight{color:#fca5a5;font-style:italic;font-weight:600}
-@media(max-width:800px){.accident-section{grid-template-columns:1fr;text-align:center}.accident-text h2{text-align:center}}
+@media(max-width:768px){
+    .sec{padding:56px 20px}
+    .sec-full{padding:56px 20px}
+}
 
-/* PROBLEM CARDS */
-.prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:32px}
-.prob-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;position:relative}
-.prob-card::after{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--yellow);border-radius:12px 12px 0 0}
-.prob-card h4{font-weight:700;font-size:0.95rem;margin:12px 0 8px;text-align:center}
-.prob-card p{font-size:0.85rem;color:var(--muted);line-height:1.5;text-align:center}
-.prob-icon{font-size:1.8rem}
+/* ACCIDENT SECTION */
+.accident-section{display:flex;flex-direction:column;gap:32px}
+.accident-header{text-align:center}
+.accident-img{width:100%;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.5);border:1px solid var(--border)}
+.accident-img img{width:100%;height:auto;display:block}
+.accident-text p{font-size:1rem;color:#94a3b8;line-height:1.8;margin-bottom:20px;text-align:center}
+.accident-text .highlight{color:#fca5a5;font-style:italic;font-weight:600}
 
 /* VS */
 .vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--border);margin-top:40px}
-.vs-col{padding:40px 30px;background:var(--bg);text-align:center}
+.vs-col{padding:40px 30px;background:var(--bg)}
 .vs-col.awas{background:rgba(22,163,74,0.03);border-left:2px solid var(--green)}
 .vs-head{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;margin-bottom:24px;text-align:center}
 .vs-head.gray{color:var(--muted)}
 .vs-head.green{color:var(--green)}
-.vs-item{display:flex;gap:12px;margin-bottom:16px;align-items:flex-start;text-align:left}
+.vs-item{display:flex;gap:12px;margin-bottom:16px;align-items:flex-start}
 .vi{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:0.7rem;font-weight:900}
 .vi.x{background:rgba(220,38,38,0.15);color:var(--red)}
 .vi.ok{background:rgba(22,163,74,0.15);color:var(--green)}
-.vs-item p{font-size:0.9rem;color:#94a3b8;line-height:1.5;text-align:left}
+.vs-item p{font-size:0.9rem;color:#94a3b8;line-height:1.5}
 .vs-item p strong{color:var(--text)}
-@media(max-width:700px){.vs-grid{grid-template-columns:1fr}.vs-col{padding:30px 20px}}
+@media(max-width:700px){.vs-grid{grid-template-columns:1fr}.vs-col{padding:28px 20px}}
 
 /* WHO */
-.who-section{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center;margin-top:40px}
-.who-img{width:100%;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.5)}
-.who-img img{width:100%;display:block}
-.who-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.who-section{margin-top:32px}
+.who-img-wrap{width:100%;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.5);margin-bottom:24px}
+.who-img-wrap img{width:100%;display:block}
+.who-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .who-card{background:rgba(220,38,38,0.03);border:1px solid rgba(220,38,38,0.2);border-radius:12px;padding:20px;text-align:center}
 .tag{display:inline-block;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:4px;margin-bottom:12px;background:rgba(220,38,38,0.1);color:#fca5a5}
-.who-card h4{font-weight:700;font-size:1rem;margin-bottom:8px;text-align:center}
-.who-card p{font-size:0.85rem;color:var(--muted);line-height:1.5;text-align:center}
-@media(max-width:850px){.who-section{grid-template-columns:1fr}.who-cards{grid-template-columns:1fr 1fr}}
-@media(max-width:500px){.who-cards{grid-template-columns:1fr}}
+.who-card h4{font-weight:700;font-size:1rem;margin-bottom:8px}
+.who-card p{font-size:0.85rem;color:var(--muted);line-height:1.5}
+@media(max-width:500px){.who-cards{grid-template-columns:1fr;gap:10px}}
 
 /* PRICING */
 .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px}
@@ -163,7 +174,7 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,4rem);letter-s
 .pill{display:inline-block;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);color:#86efac;font-size:0.8rem;font-weight:800;padding:6px 20px;border-radius:100px;margin-bottom:24px;text-transform:uppercase;letter-spacing:1px}
 
 footer{border-top:1px solid var(--border);padding:60px 24px;text-align:center;color:var(--muted);font-size:0.8rem}
-footer .flogo img{height:40px;margin-bottom:20px;opacity:0.8}
+footer .flogo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#f1f5f9;opacity:0.8;margin-bottom:20px}
 
 .fi{opacity:0;transform:translateY(30px);transition:opacity 0.8s ease,transform 0.8s ease}
 .fi.on{opacity:1;transform:none}
@@ -173,9 +184,7 @@ footer .flogo img{height:40px;margin-bottom:20px;opacity:0.8}
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">
-    <span style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;color:#f1f5f9;line-height:1">AWAS</span>
-  </div>
+  <div class="nav-logo">AWAS</div>
   <div class="nav-btns">
     <a href="affiliate.html" class="nav-affiliate">Affiliate</a>
     <a href="login.html" class="nav-login">Log Masuk</a>
@@ -213,7 +222,6 @@ footer .flogo img{height:40px;margin-bottom:20px;opacity:0.8}
 
     <div class="hero-cta-group fi">
       <a href="register.html" class="btn-green">Daftar Sekarang — RM29.99/Tahun</a>
-    
     </div>
   </div>
 </div>
@@ -221,16 +229,16 @@ footer .flogo img{height:40px;margin-bottom:20px;opacity:0.8}
 <!-- THE MOMENT IT HAPPENS -->
 <div class="sec fi">
   <div class="accident-section">
-    <div class="accident-text">
+    <div class="accident-header">
+      <span class="sec-label">The Reality</span>
+      <h2 style="text-align:center">THE MOMENT IT HAPPENS</h2>
+    </div>
     <div class="accident-img">
       <img src="motor-vs-myvi.png" alt="Malaysian road accident scene">
     </div>
-      <span class="sec-label">The Reality</span>
-      <h2>THE MOMENT IT HAPPENS</h2>
+    <div class="accident-text">
       <p>Accident. Other driver says it's your fault. No witnesses. Police report filed — but the scene was never attended. Months later, insurance denies your claim.</p>
       <p class="highlight">Kemalangan. Pemandu lain kata salah anda. Tiada saksi. Polis report je tak cukup bila lawyer diorang cabar.</p>
-lass="prob-grid">
-
     </div>
   </div>
 </div>
@@ -264,12 +272,11 @@ lass="prob-grid">
 
 <!-- WHO NEEDS IT -->
 <div class="sec fi">
-  <div style="text-align:center;margin-bottom:40px">
-    <span class="sec-label">Siapa Yang Perlu AWAS?</span>
+  <div style="text-align:center;margin-bottom:32px">
     <h2>AWAS UNTUK SIAPA?</h2>
   </div>
   <div class="who-section">
-    <div class="who-img">
+    <div class="who-img-wrap">
       <img src="myvi-vs-x50.png" alt="Malaysian highway accident">
     </div>
     <div class="who-cards">
@@ -336,7 +343,7 @@ lass="prob-grid">
 </div>
 
 <footer>
-  <div class="flogo"><img src="awas-logo.png" alt="AWAS"></div>
+  <div class="flogo">AWAS</div>
   <p style="font-weight:700;color:var(--text)">Accident Writ Automation System</p>
   <p style="margin-top:8px">Membantu Malaysia &bull; Berkembang ke SEA</p>
   <p style="margin-top:8px;font-size:0.7rem;letter-spacing:1px">SELAMAT &bull; KEKAL &bull; MEMATUHI PDPA &bull; SHA-256 DISAHKAN</p>
