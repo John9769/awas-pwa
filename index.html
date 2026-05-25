@@ -111,8 +111,8 @@ h1 .dim{color:#334155;-webkit-text-stroke:1px rgba(255,255,255,0.1)}
 h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,4rem);letter-spacing:1px;line-height:1;margin-bottom:24px}
 
 @media(max-width:768px){
-    .sec{padding:56px 20px}
-    .sec-full{padding:56px 20px}
+    .sec{padding:36px 16px}
+    .sec-full{padding:36px 16px}
 }
 
 /* ACCIDENT SECTION */
@@ -136,7 +136,18 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,4rem);letter-s
 .vi.ok{background:rgba(22,163,74,0.15);color:var(--green)}
 .vs-item p{font-size:0.9rem;color:#94a3b8;line-height:1.5}
 .vs-item p strong{color:var(--text)}
-@media(max-width:700px){.vs-grid{grid-template-columns:1fr}.vs-col{padding:28px 20px}}
+@media(max-width:700px){
+    .vs-grid{grid-template-columns:1fr}
+    .vs-col{padding:20px 16px}
+    .vs-item{margin-bottom:10px}
+    h2{margin-bottom:16px}
+    .accident-section{gap:20px}
+    .who-section{margin-top:20px}
+    .who-img-wrap{margin-bottom:16px}
+    .aff-single{padding:28px 20px;margin:24px auto}
+    .price-grid{gap:12px}
+    .pc{padding:32px 20px}
+}
 
 /* WHO */
 .who-section{margin-top:32px}
@@ -147,7 +158,8 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,4rem);letter-s
 .tag{display:inline-block;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:4px;margin-bottom:12px;background:rgba(220,38,38,0.1);color:#fca5a5}
 .who-card h4{font-weight:700;font-size:1rem;margin-bottom:8px}
 .who-card p{font-size:0.85rem;color:var(--muted);line-height:1.5}
-@media(max-width:500px){.who-cards{grid-template-columns:1fr;gap:10px}}
+@media(max-width:768px){.who-cards{gap:8px}.who-card{padding:14px}}
+@media(max-width:500px){.who-cards{grid-template-columns:1fr;gap:8px}}
 
 /* PRICING */
 .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px}
