@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,75 +13,46 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
         .login-box { width: 100%; max-width: 400px; background: var(--card); padding: 32px 28px; border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid var(--border); }
-
         .logo-wrap { text-align: center; margin-bottom: 28px; }
         .logo-wrap img { height: 64px; width: auto; }
-
         h2 { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 6px; }
         .sub { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 28px; line-height: 1.5; }
-
         .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        .plate-input-wrap { position: relative; }
-        .plate-input-wrap input {
-            width: 100%;
-            background: #020617;
-            border: 2px solid var(--border);
-            padding: 14px 16px;
-            border-radius: 8px;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
-        }
+        .plate-input-wrap input { width: 100%; background: #020617; border: 2px solid var(--border); padding: 14px 16px; border-radius: 8px; color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
         .plate-input-wrap input:focus { border-color: var(--success); outline: none; }
         .plate-hint { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 6px; }
-
         .btn-login { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; transition: background 0.2s; }
         .btn-login:hover { background: var(--success-hover); }
         .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
-
         .status-box { margin-top: 16px; padding: 14px 16px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; text-align: center; display: none; line-height: 1.5; }
         .status-box.success { background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); color: #4ade80; }
         .status-box.error { background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3); color: #fca5a5; }
         .status-box.loading { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #fde68a; }
-
         .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; }
         .divider-line { flex: 1; height: 1px; background: var(--border); }
         .divider-text { font-size: 0.75rem; color: var(--text-muted); }
-
         .btn-register { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 12px; font-weight: 700; font-size: 0.88rem; border-radius: 8px; cursor: pointer; text-decoration: none; display: block; text-align: center; transition: all 0.2s; }
         .btn-register:hover { border-color: var(--primary); color: #fca5a5; }
-
         .back-link { text-align: center; margin-top: 20px; font-size: 0.78rem; color: var(--text-muted); }
         .back-link a { color: #64748b; text-decoration: none; }
-        .back-link a:hover { color: var(--text-muted); }
-
-        /* ACTIVE PROFILE BOX — shown after successful login */
         .profile-box { display: none; background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.3); border-radius: 10px; padding: 20px; margin-top: 16px; }
         .profile-plate { font-family: monospace; font-size: 1.8rem; font-weight: 900; color: #4ade80; text-align: center; letter-spacing: 3px; margin-bottom: 8px; }
         .profile-detail { font-size: 0.82rem; color: var(--text-muted); text-align: center; margin-bottom: 4px; }
         .profile-status { display: inline-block; background: rgba(22,163,74,0.15); color: #86efac; font-size: 0.72rem; font-weight: 700; padding: 3px 12px; border-radius: 100px; margin-bottom: 16px; }
         .btn-enter { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; text-decoration: none; display: block; text-align: center; }
         .btn-enter:hover { background: var(--success-hover); }
+        .affiliate-link { display: block; text-align: center; margin-top: 12px; font-size: 0.78rem; color: #60a5fa; text-decoration: none; }
     </style>
 </head>
 <body>
-
     <div class="login-box">
-
         <div class="logo-wrap">
             <img src="awas-logo.png" alt="AWAS">
         </div>
-
         <h2>Log Masuk AWAS</h2>
         <div class="sub">Masukkan nombor plat kenderaan anda yang telah didaftarkan.</div>
-
         <div class="form-group">
             <label>Nombor Plat Kenderaan</label>
             <div class="plate-input-wrap">
@@ -89,56 +60,44 @@
             </div>
             <div class="plate-hint">Contoh: WD519A, VBK2931, NL9129</div>
         </div>
-
         <button class="btn-login" id="btn-login">Log Masuk</button>
-
         <div class="status-box" id="status-box"></div>
-
-        <!-- PROFILE BOX — shown after success -->
         <div class="profile-box" id="profile-box">
             <div class="profile-plate" id="profile-plate">------</div>
             <div class="profile-detail" id="profile-model">------</div>
             <div class="profile-detail" id="profile-type">------</div>
             <br>
-            <div class="profile-status">ACTIVE / VERIFIED</div>
-            <a href="app.html" class="btn-enter" id="btn-enter">🔒 Masuk AWAS App</a>
+            <div class="profile-status">AKTIF / DISAHKAN</div>
+            <a href="app.html" class="btn-enter">🔒 Masuk AWAS App</a>
+            <a href="affiliate.html" class="affiliate-link">🔗 Dashboard Affiliate Saya →</a>
         </div>
-
         <div class="divider">
             <div class="divider-line"></div>
             <div class="divider-text">Belum daftar?</div>
             <div class="divider-line"></div>
         </div>
-
-        <a href="register.html" class="btn-register">Daftar Sekarang — RM15/Tahun</a>
-
+        <a href="register.html" class="btn-register">Daftar Sekarang — RM29.99/Tahun</a>
         <div class="back-link">
             <a href="index.html">← Kembali ke Laman Utama</a>
         </div>
-
     </div>
 
     <script>
         const API_BASE = 'https://awas-backend.onrender.com';
-
         const plateInput = document.getElementById('plate-input');
         const btnLogin = document.getElementById('btn-login');
         const statusBox = document.getElementById('status-box');
         const profileBox = document.getElementById('profile-box');
 
-        // Auto uppercase plate input
         plateInput.addEventListener('input', () => {
             plateInput.value = plateInput.value.toUpperCase().replace(/\s+/g, '');
         });
-
-        // Enter key support
         plateInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') btnLogin.click();
         });
 
         btnLogin.addEventListener('click', async () => {
             const plate = plateInput.value.trim().toUpperCase().replace(/\s+/g, '');
-
             if (!plate) {
                 showStatus('Sila masukkan nombor plat kenderaan anda.', 'error');
                 return;
@@ -154,23 +113,21 @@
                 const data = await res.json();
 
                 if (res.ok) {
-                    // Save to localStorage
                     localStorage.setItem('awas_vehicle_plate', data.vehiclePlate);
                     localStorage.setItem('awas_vehicle_model', data.vehicleMakeModel);
                     localStorage.setItem('awas_vehicle_type', data.vehicleType);
                     localStorage.setItem('awas_mykad_four', data.mykadLastFour);
+                    if (data.referralCode) localStorage.setItem('awas_referral_code', data.referralCode);
 
-                    // Show profile
                     statusBox.style.display = 'none';
                     document.getElementById('profile-plate').innerText = data.vehiclePlate;
                     document.getElementById('profile-model').innerText = data.vehicleMakeModel;
-                    document.getElementById('profile-type').innerText = data.vehicleType === 'MOTORCYCLE' ? '🏍️ Motorcycle' : '🚗 Car';
+                    document.getElementById('profile-type').innerText = data.vehicleType === 'MOTORCYCLE' ? '🏍️ Motosikal' : '🚗 Kereta';
                     profileBox.style.display = 'block';
-
                     btnLogin.innerText = '✅ Berjaya';
 
                 } else if (res.status === 403) {
-                    showStatus('Langganan anda telah tamat. Sila daftar semula untuk meneruskan perlindungan AWAS.', 'error');
+                    showStatus('Langganan anda telah tamat. Sila daftar semula.', 'error');
                     btnLogin.disabled = false;
                     btnLogin.innerText = 'Log Masuk';
                 } else {
@@ -178,7 +135,6 @@
                     btnLogin.disabled = false;
                     btnLogin.innerText = 'Log Masuk';
                 }
-
             } catch (err) {
                 showStatus('Masalah sambungan. Periksa internet anda dan cuba lagi.', 'error');
                 btnLogin.disabled = false;

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AWAS - Instant Accident Log</title>
+    <title>AWAS - Log Kemalangan Segera</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#dc2626">
+    <meta name="theme-color" content="#16a34a">
     <style>
         :root {
             --bg: #0f172a; --card: #1e293b; --primary: #dc2626;
@@ -29,7 +29,13 @@
         .report-banner-title { font-size: 0.85rem; font-weight: 800; color: #4ade80; margin-bottom: 4px; }
         .report-banner p { font-size: 0.78rem; color: #86efac; line-height: 1.6; }
 
-        /* SCREEN 1 — CAPTURE */
+        /* GPS WARNING */
+        .gps-warning { width: 100%; max-width: 440px; background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.4); border-radius: 10px; padding: 16px; text-align: center; display: none; margin-bottom: 16px; }
+        .gps-warning h4 { color: #fca5a5; font-size: 0.95rem; margin-bottom: 8px; }
+        .gps-warning p { color: #fca5a5; font-size: 0.82rem; line-height: 1.6; }
+        .btn-enable-gps { background: var(--primary); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 12px; }
+
+        /* SCREEN 1 */
         #capture-view { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 20px; margin: auto 0; }
         header { text-align: center; }
         h1 { font-size: 2rem; font-weight: 900; letter-spacing: 0.05em; }
@@ -47,7 +53,7 @@
         .cg-item p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
         .cg-item p strong { color: var(--text); }
 
-        /* SCREEN 2 — INCIDENT DETAILS */
+        /* SCREEN 2 */
         #incident-view { display: none; width: 100%; max-width: 440px; flex-direction: column; gap: 16px; margin: 20px 0; }
         .capture-success { background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); border-radius: 10px; padding: 16px; text-align: center; }
         .cs-icon { font-size: 2rem; margin-bottom: 6px; }
@@ -93,9 +99,21 @@
         .stamp-value { font-size: 0.85rem; font-weight: 800; color: #dc2626; font-family: monospace; }
         .stamp-sub { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
 
+        /* POST-REPORT CHECKLIST */
+        .checklist-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 16px 18px; margin-top: 16px; }
+        .checklist-title { font-size: 0.85rem; font-weight: 800; color: #166534; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .checklist-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+        .checklist-item:last-child { margin-bottom: 0; }
+        .checklist-num { width: 24px; height: 24px; border-radius: 50%; background: #16a34a; color: white; font-weight: 800; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+        .checklist-content h5 { font-size: 0.85rem; font-weight: 700; color: #166534; margin-bottom: 2px; }
+        .checklist-content p { font-size: 0.78rem; color: #4b7c59; line-height: 1.4; }
+        .writ-ref-box { background: #dcfce7; border: 1px dashed #16a34a; border-radius: 6px; padding: 10px 14px; text-align: center; margin-top: 12px; }
+        .writ-ref-label { font-size: 0.7rem; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .writ-ref-num { font-family: monospace; font-size: 1rem; font-weight: 900; color: #dc2626; }
+
         .btn-print { width: 100%; max-width: 600px; margin-top: 16px; background: var(--success); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; display: none; }
 
-        /* REPORT OPTIONS MODAL */
+        /* MODAL */
         .report-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: flex-end; justify-content: center; }
         .report-modal.show { display: flex; }
         .modal-box { background: #1e293b; border-radius: 20px 20px 0 0; padding: 28px 20px 36px; width: 100%; max-width: 480px; border-top: 1px solid #334155; }
@@ -122,7 +140,7 @@
 
         @media print {
             body { background: white !important; padding: 0 !important; }
-            #capture-view, #incident-view, .btn-print, footer, .test-banner, .report-banner, .seal-note { display: none !important; }
+            #capture-view, #incident-view, .btn-print, footer, .test-banner, .report-banner, .checklist-box { display: none !important; }
             #report-view { display: flex !important; width: 100% !important; max-width: 100% !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
         }
         footer { text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 20px 0; margin-top: auto; }
@@ -130,120 +148,126 @@
 </head>
 <body>
 
-    <!-- TEST BANNER — shown during capture & incident screens -->
     <div class="test-banner" id="test-banner">
-        <div class="test-banner-title">⚡ Test Mode — Try A Live AWAS Capture</div>
-        <p>This is exactly how AWAS works in a real accident. Test it now so you know what to do when it matters.</p>
+        <div class="test-banner-title">⚡ Mod Ujian — Cuba Rakaman AWAS Langsung</div>
+        <p>Ini adalah cara AWAS berfungsi dalam kemalangan sebenar. Cuba sekarang supaya anda tahu apa yang perlu dilakukan apabila ia berlaku.</p>
         <div class="test-steps">
-            <div class="test-step"><div class="test-step-num">1</div><span>Tap RECORD — take a short video of anything around you</span></div>
-            <div class="test-step"><div class="test-step-num">2</div><span>Allow location access — AWAS needs your GPS</span></div>
-            <div class="test-step"><div class="test-step-num">3</div><span>Fill in incident details, optionally record the other party</span></div>
-            <div class="test-step"><div class="test-step-num">4</div><span>Tap Generate — your forensic writ is sealed with <strong style="color:#fbbf24">real GPS</strong> and <strong style="color:#fbbf24">exact map</strong></span></div>
+            <div class="test-step"><div class="test-step-num">1</div><span>Tekan REKOD — ambil video pendek sesuatu di sekeliling anda</span></div>
+            <div class="test-step"><div class="test-step-num">2</div><span>Benarkan akses lokasi — AWAS perlukan GPS anda</span></div>
+            <div class="test-step"><div class="test-step-num">3</div><span>Isi butiran insiden, rakam kenderaan pihak lain secara pilihan</span></div>
+            <div class="test-step"><div class="test-step-num">4</div><span>Tekan Jana — writ forensik anda tersedia dengan <strong style="color:#fbbf24">GPS sebenar</strong> dan <strong style="color:#fbbf24">peta tepat</strong></span></div>
         </div>
     </div>
 
-    <!-- REPORT BANNER — shown only when report is generated -->
     <div class="report-banner" id="report-banner">
-        <div class="report-banner-title">✅ Your AWAS Forensic Writ Is Sealed</div>
-        <p>This is your official evidence document — exactly what police, insurers and lawyers will see. Your SHA-256 signature is server-confirmed and tamper-proof.</p>
+        <div class="report-banner-title">✅ Writ Forensik AWAS Anda Telah Tersedia</div>
+        <p>Ini adalah dokumen bukti rasmi anda — tepat seperti yang akan dilihat oleh polis, penanggung insurans dan peguam. Tandatangan SHA-256 anda disahkan pelayan dan kalis gangguan.</p>
     </div>
 
-    <!-- SCREEN 1: CAPTURE -->
+    <!-- GPS WARNING -->
+    <div class="gps-warning" id="gps-warning">
+        <h4>📍 GPS Tidak Aktif</h4>
+        <p>AWAS memerlukan lokasi GPS anda untuk meterai bukti kemalangan. Sila aktifkan GPS telefon anda sebelum merakam.</p>
+        <p style="margin-top:8px;font-size:0.78rem;">Pergi ke <strong>Tetapan → Lokasi → Hidupkan</strong></p>
+        <button class="btn-enable-gps" onclick="checkGPSAndProceed()">Cuba Semula</button>
+    </div>
+
+    <!-- SCREEN 1 -->
     <div id="capture-view">
         <header>
             <h1>AWAS</h1>
             <div class="tagline">Accident Writ Automation System</div>
         </header>
         <div id="status-display" class="status-box">
-            <strong>⚠️ HIGHWAY EMERGENCY STATE:</strong><br>
-            Tap below, take a 15-second video walkaround of plates and damage, then move to safety.
+            <strong>⚠️ KECEMASAN JALAN RAYA:</strong><br>
+            Tekan di bawah, rakam video 15 saat keliling plat dan kerosakan, kemudian pergi ke tempat selamat.
         </div>
         <input type="file" id="video-capture" accept="video/*" capture="environment">
         <input type="file" id="other-video-capture" accept="video/*" capture="environment">
-        <button type="button" id="record-trigger" class="btn-record">RECORD<span>EVIDENCE</span></button>
+        <button type="button" id="record-trigger" class="btn-record">REKOD<span>BUKTI</span></button>
         <div class="capture-guide">
-            <div class="capture-guide-title">What AWAS seals for you</div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>Video evidence</strong> — hashed and sealed permanently at capture</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>GPS coordinates</strong> — your exact location locked at the moment</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>Map location</strong> — pinned on map, printed in your writ</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>SHA-256 signature</strong> — tamper-proof, court-grade integrity</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>AWAS Writ Number</strong> — official reference for police and insurers</p></div>
+            <div class="capture-guide-title">Apa yang AWAS meterai untuk anda</div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>Bukti video</strong> — dihash dan dimeterai kekal semasa rakaman</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>Koordinat GPS</strong> — lokasi tepat anda dikunci pada ketika itu</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>Lokasi peta</strong> — dipinkan pada peta, dicetak dalam writ anda</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>Tandatangan SHA-256</strong> — kalis gangguan, integriti gred mahkamah</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>Nombor Writ AWAS</strong> — rujukan rasmi untuk polis dan penanggung insurans</p></div>
         </div>
     </div>
 
-    <!-- SCREEN 2: INCIDENT DETAILS -->
+    <!-- SCREEN 2 -->
     <div id="incident-view">
         <div class="capture-success">
             <div class="cs-icon">✅</div>
-            <div class="cs-title">Evidence Sealed</div>
-            <div class="cs-sub">Your video is hashed. GPS is locked. Complete the details below — then generate your official AWAS Writ.</div>
+            <div class="cs-title">Bukti Tersedia</div>
+            <div class="cs-sub">Video anda telah dihash. GPS dikunci. Lengkapkan butiran di bawah — kemudian jana Writ AWAS rasmi anda.</div>
         </div>
 
         <div class="incident-form-box">
-            <div class="if-title">📋 Incident Details — Optional but recommended</div>
+            <div class="if-title">📋 Butiran Insiden — Pilihan tetapi disyorkan</div>
             <div class="if-group">
-                <label class="if-label">Road Condition</label>
+                <label class="if-label">Keadaan Jalan</label>
                 <select id="road-condition" class="if-select">
-                    <option value="UNKNOWN">Not sure</option>
-                    <option value="DRY">Dry</option>
-                    <option value="WET">Wet — after rain</option>
-                    <option value="FLOODED">Flooded</option>
-                    <option value="UNDER_CONSTRUCTION">Under construction</option>
+                    <option value="UNKNOWN">Tidak Pasti</option>
+                    <option value="DRY">Kering</option>
+                    <option value="WET">Basah — Selepas Hujan</option>
+                    <option value="FLOODED">Banjir</option>
+                    <option value="UNDER_CONSTRUCTION">Dalam Pembinaan</option>
                 </select>
             </div>
             <div class="if-group">
-                <label class="if-label">Weather at Time of Incident</label>
+                <label class="if-label">Cuaca Semasa Kejadian</label>
                 <select id="weather-condition" class="if-select">
-                    <option value="UNKNOWN">Not sure</option>
-                    <option value="CLEAR">Clear / Sunny</option>
-                    <option value="RAINY">Rainy</option>
-                    <option value="FOGGY">Foggy</option>
-                    <option value="HAZY">Hazy</option>
-                    <option value="NIGHT">Night / Low visibility</option>
+                    <option value="UNKNOWN">Tidak Pasti</option>
+                    <option value="CLEAR">Cerah / Panas</option>
+                    <option value="RAINY">Hujan</option>
+                    <option value="FOGGY">Kabus Nipis</option>
+                    <option value="HAZY">Jerebu</option>
+                    <option value="NIGHT">Malam / Jarak Penglihatan Rendah</option>
                 </select>
             </div>
             <div class="if-group">
-                <label class="if-label">Injuries Involved?</label>
+                <label class="if-label">Kecederaan Terlibat?</label>
                 <select id="injury-status" class="if-select">
-                    <option value="NONE">No injuries</option>
-                    <option value="MINOR">Minor injuries</option>
-                    <option value="SERIOUS">Serious injuries</option>
+                    <option value="NONE">Tiada Kecederaan</option>
+                    <option value="MINOR">Kecederaan Ringan</option>
+                    <option value="SERIOUS">Kecederaan Serius</option>
                 </select>
             </div>
             <div class="if-group">
-                <label class="if-label">Brief Description (Optional)</label>
-                <textarea id="incident-description" class="if-textarea" placeholder="e.g., Other vehicle changed lanes without signal and hit my left side..." rows="3"></textarea>
+                <label class="if-label">Penerangan Ringkas (Pilihan)</label>
+                <textarea id="incident-description" class="if-textarea" placeholder="cth: Kenderaan lain menukar lorong tanpa isyarat dan melanggar bahagian kiri saya..." rows="3"></textarea>
             </div>
         </div>
 
         <div class="other-party-box">
-            <div class="op-title">📹 Other Party's Vehicle</div>
-            <div class="op-sub">Record the other vehicle to strengthen your evidence as the claimant. Their plate and model will be noted in your report.</div>
+            <div class="op-title">📹 Kenderaan Pihak Lain</div>
+            <div class="op-sub">Rakam kenderaan lain untuk mengukuhkan bukti anda sebagai pengadu. Plat dan model mereka akan dicatat dalam laporan anda.</div>
             <div id="other-party-pending">
-                <button type="button" id="btn-record-other" class="btn-record-other">Record Other Vehicle (Optional)</button>
+                <button type="button" id="btn-record-other" class="btn-record-other">Rakam Kenderaan Lain (Pilihan)</button>
             </div>
             <div id="other-party-captured" style="display:none;">
-                <div class="op-success">✅ Other vehicle recorded by claimant</div>
+                <div class="op-success">✅ Kenderaan lain dirakam oleh pengadu</div>
                 <div class="if-group">
-                    <label class="if-label">Other Vehicle Plate</label>
-                    <input type="text" id="other-plate" class="if-input" placeholder="e.g., ABC1234">
+                    <label class="if-label">Plat Kenderaan Lain</label>
+                    <input type="text" id="other-plate" class="if-input" placeholder="cth: ABC1234">
                 </div>
                 <div class="if-group">
-                    <label class="if-label">Other Vehicle Make & Model</label>
-                    <input type="text" id="other-model" class="if-input" placeholder="e.g., Toyota Vios 1.5">
+                    <label class="if-label">Jenama & Model Kenderaan Lain</label>
+                    <input type="text" id="other-model" class="if-input" placeholder="cth: Toyota Vios 1.5">
                 </div>
             </div>
         </div>
 
-        <button type="button" id="btn-generate-report" class="btn-generate">🔒 Generate AWAS Forensic Writ</button>
+        <button type="button" id="btn-generate-report" class="btn-generate">🔒 Jana Writ Forensik AWAS</button>
     </div>
 
-    <!-- SCREEN 3: REPORT -->
+    <!-- SCREEN 3 -->
     <div id="report-view">
         <div class="report-header">
             <div>
-                <div class="report-title">AWAS Forensic Writ</div>
-                <div class="report-subtitle">Accident Writ Automation System — Dokumen Bukti Digital</div>
+                <div class="report-title">Writ Forensik AWAS</div>
+                <div class="report-subtitle">Accident Writ Automation System — Bukti Dokumen Digital</div>
             </div>
             <div class="report-meta-box">
                 <div class="writ-number" id="pdf-writ-number">AWAS/MY/----/------</div>
@@ -264,23 +288,31 @@
                 <div class="data-value" id="pdf-model">------</div>
             </div>
             <div>
+                <div class="data-label">Jenis Kenderaan</div>
+                <div class="data-value" id="pdf-vtype">------</div>
+            </div>
+            <div>
                 <div class="data-label">MyKad (4 Angka Terakhir)</div>
                 <div class="data-value" id="pdf-mykad">------</div>
             </div>
             <div>
+                <div class="data-label">Nombor WhatsApp</div>
+                <div class="data-value" id="pdf-phone">------</div>
+            </div>
+            <div>
                 <div class="data-label">Status AWAS</div>
-                <div class="data-value" style="color:#16a34a;">ACTIVE / VERIFIED</div>
+                <div class="data-value" style="color:#16a34a;">AKTIF / DISAHKAN</div>
             </div>
         </div>
 
         <div class="section-title">2. Telemetri Lokasi Satelit GPS</div>
         <div class="data-grid" style="margin-bottom:10px;">
             <div>
-                <div class="data-label">Latitude</div>
+                <div class="data-label">Latitud</div>
                 <div class="data-value" id="pdf-lat">0.000000</div>
             </div>
             <div>
-                <div class="data-label">Longitude</div>
+                <div class="data-label">Longitud</div>
                 <div class="data-value" id="pdf-lng">0.000000</div>
             </div>
         </div>
@@ -306,7 +338,6 @@
             <div class="data-value" id="pdf-description" style="margin-top:4px;font-size:0.85rem;line-height:1.5;">—</div>
         </div>
 
-        <!-- OTHER PARTY — plate & model only, NO hash -->
         <div id="pdf-other-party-section" style="display:none;">
             <div class="section-title">4. Kenderaan Pihak Lain (Catatan Pengadu)</div>
             <div class="data-grid">
@@ -324,21 +355,20 @@
             </div>
         </div>
 
-        <!-- SHA-256 — OWN USER ONLY -->
         <div class="section-title"><span id="sha-section-num">4.</span> Tandatangan Digital SHA-256</div>
         <div class="hash-box">
-            <div class="hash-label">✅ YOUR VEHICLE FORENSIC SIGNATURE</div>
+            <div class="hash-label">✅ TANDATANGAN FORENSIK KENDERAAN ANDA</div>
             <span id="pdf-hash">—</span>
         </div>
 
         <div class="awas-stamp">
-            <div class="stamp-title">AWAS Certified Writ</div>
+            <div class="stamp-title">Writ Bertauliah AWAS</div>
             <div class="stamp-value" id="stamp-writ">AWAS/MY/----/------</div>
-            <div class="stamp-sub">AWAS Ltd — United Kingdom | Accident Writ Automation System</div>
+            <div class="stamp-sub">Accident Writ Automation System</div>
         </div>
 
         <div class="seal-note">
-            ✅ <strong>Evidence Sealed.</strong> This document was generated at the moment of capture. The SHA-256 signature above proves this data has not been altered. Any modification to the video, GPS, or timestamp will produce a completely different hash — making tampering instantly detectable by police, insurers, and courts.
+            ✅ <strong>Bukti Tersedia.</strong> Dokumen ini dihasilkan pada masa kejadian berlaku. Tandatangan SHA-256 di atas membuktikan data ini tidak diubah. Sebarang pengubahan pada video, GPS atau cap masa akan menghasilkan hash yang berbeza — menjadikan sebarang gangguan boleh dikesan serta-merta oleh polis, penanggung insurans dan mahkamah.
         </div>
 
         <div style="font-size:0.62rem;color:#64748b;text-align:center;margin-top:4px;font-weight:600;text-transform:uppercase;">
@@ -346,47 +376,96 @@
         </div>
     </div>
 
-    <button type="button" id="print-btn" class="btn-print">📄 Get Official Balai Writ — RM8</button>
-
-    <!-- REPORT OPTIONS MODAL -->
-    <div class="report-modal" id="report-modal">
-        <div class="modal-box">
-            <div class="modal-title">How would you like to use your writ?</div>
-            <div class="modal-sub">Your evidence is sealed. Choose how you want to present it.</div>
-            <div class="options-grid">
-                <div class="option-card free">
-                    <div class="option-label gray">Free</div>
-                    <div class="option-price free-price">RM0</div>
-                    <ul class="option-list">
-                        <li class="yes"><span class="li-icon">✓</span>Show on mobile to police</li>
-                        <li class="yes"><span class="li-icon">✓</span>GPS & hash visible</li>
-                        <li class="no"><span class="li-icon">✗</span>No official AWAS stamp</li>
-                        <li class="no"><span class="li-icon">✗</span>Not submittable to insurer</li>
-                        <li class="no"><span class="li-icon">✗</span>Not verifiable by lawyers</li>
-                    </ul>
-                </div>
-                <div class="option-card paid">
-                    <div class="option-label green">Certified Writ</div>
-                    <div class="option-price paid-price">RM8</div>
-                    <ul class="option-list">
-                        <li class="yes"><span class="li-icon">✓</span>Official AWAS Writ PDF</li>
-                        <li class="yes"><span class="li-icon">✓</span>Printable Balai document</li>
-                        <li class="yes"><span class="li-icon">✓</span>Submittable to insurer</li>
-                        <li class="yes"><span class="li-icon">✓</span>Verifiable by lawyers</li>
-                        <li class="yes"><span class="li-icon">✓</span>AWAS Writ Number stamped</li>
-                    </ul>
-                </div>
+    <!-- POST REPORT CHECKLIST -->
+    <div class="checklist-box" id="checklist-box" style="display:none;width:100%;max-width:600px;">
+        <div class="checklist-title">✅ Bukti Tersedia — Apa Perlu Buat Selepas Ini?</div>
+        <div class="checklist-item">
+            <div class="checklist-num">1</div>
+            <div class="checklist-content">
+                <h5>📹 Simpan Video Asal Dalam Telefon Anda</h5>
+                <p>Jangan padam. Ini adalah bukti asal anda yang tidak boleh diganti.</p>
             </div>
-            <button class="btn-paid" id="btn-get-certified">Pay RM8 — Save as PDF</button>
-            <div style="font-size:0.72rem;color:#64748b;text-align:center;margin-bottom:10px;">Select <strong style="color:#94a3b8;">"Save as PDF"</strong> on the next screen.</div>
-            <button class="btn-free" id="btn-use-screen">Continue With Screen Only</button>
-            <button class="btn-close-modal" id="btn-close-modal">Cancel</button>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-num">2</div>
+            <div class="checklist-content">
+                <h5>📄 Muat Turun PDF Writ Forensik AWAS</h5>
+                <p>Tekan butang hijau di atas. RM8 sahaja. Tunjukkan kepada polis semasa membuat laporan.</p>
+            </div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-num">3</div>
+            <div class="checklist-content">
+                <h5>🚔 Buat Laporan Polis Dalam 24 Jam</h5>
+                <p>Bawa PDF Writ AWAS bersama. Nombor writ AWAS boleh dirujuk sebagai rujukan bukti digital.</p>
+            </div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-num">4</div>
+            <div class="checklist-content">
+                <h5>📞 Hubungi Syarikat Insurans Anda</h5>
+                <p>Maklumkan kemalangan. Berikan nombor writ AWAS sebagai rujukan bukti digital anda.</p>
+            </div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-num">5</div>
+            <div class="checklist-content">
+                <h5>🏥 Dapatkan Rawatan Perubatan</h5>
+                <p>Walaupun tiada kecederaan ketara, dapatkan pemeriksaan doktor untuk rekod perubatan.</p>
+            </div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-num">6</div>
+            <div class="checklist-content">
+                <h5>📱 Simpan Nombor Writ AWAS Anda</h5>
+                <p>Ini adalah nombor rujukan rasmi bukti digital anda.</p>
+            </div>
+        </div>
+        <div class="writ-ref-box">
+            <div class="writ-ref-label">Nombor Writ Rasmi Anda</div>
+            <div class="writ-ref-num" id="checklist-writ-num">AWAS/MY/----/------</div>
         </div>
     </div>
 
-    <footer>SECURE &bull; IMMUTABLE &bull; PDPA COMPLIANT &bull; AWAS LTD UK</footer>
+    <button type="button" id="print-btn" class="btn-print">📄 Dapatkan Writ Balai Rasmi — RM8</button>
 
-    <!-- PDF Generation Libraries -->
+    <div class="report-modal" id="report-modal">
+        <div class="modal-box">
+            <div class="modal-title">Bagaimana anda ingin menggunakan writ anda?</div>
+            <div class="modal-sub">Bukti anda tersedia. Pilih cara anda ingin membentangkannya.</div>
+            <div class="options-grid">
+                <div class="option-card free">
+                    <div class="option-label gray">Percuma</div>
+                    <div class="option-price free-price">RM0</div>
+                    <ul class="option-list">
+                        <li class="yes"><span class="li-icon">✓</span>Tunjuk di telefon kepada polis</li>
+                        <li class="yes"><span class="li-icon">✓</span>GPS & hash kelihatan</li>
+                        <li class="no"><span class="li-icon">✗</span>Tiada cop rasmi AWAS</li>
+                        <li class="no"><span class="li-icon">✗</span>Tidak boleh hantar ke insurans</li>
+                        <li class="no"><span class="li-icon">✗</span>Tidak boleh disahkan peguam</li>
+                    </ul>
+                </div>
+                <div class="option-card paid">
+                    <div class="option-label green">Writ Bertauliah</div>
+                    <div class="option-price paid-price">RM8</div>
+                    <ul class="option-list">
+                        <li class="yes"><span class="li-icon">✓</span>PDF Writ AWAS Rasmi</li>
+                        <li class="yes"><span class="li-icon">✓</span>Dokumen Balai boleh cetak</li>
+                        <li class="yes"><span class="li-icon">✓</span>Boleh hantar ke insurans</li>
+                        <li class="yes"><span class="li-icon">✓</span>Boleh disahkan peguam</li>
+                        <li class="yes"><span class="li-icon">✓</span>Nombor Writ AWAS dicop</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn-paid" id="btn-get-certified">Bayar RM8 — Simpan sebagai PDF</button>
+            <div style="font-size:0.72rem;color:#64748b;text-align:center;margin-bottom:10px;">Pilih <strong style="color:#94a3b8;">"Simpan sebagai PDF"</strong> pada skrin seterusnya.</div>
+            <button class="btn-free" id="btn-use-screen">Teruskan Dengan Skrin Sahaja</button>
+            <button class="btn-close-modal" id="btn-close-modal">Batal</button>
+        </div>
+    </div>
+
+    <footer>SELAMAT &bull; KEKAL &bull; MEMATUHI PDPA &bull; AWAS</footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="app.js"></script>

@@ -16,12 +16,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(8,12,20,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav-logo img{height:36px;width:auto;display:block}
 .nav-btns{display:flex;gap:8px;align-items:center}
+.nav-affiliate{background:#1d4ed8;color:white;border:none;padding:9px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px}
+.nav-affiliate:hover{background:#1e40af}
 .nav-login{background:var(--green);color:white;border:none;padding:9px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px}
 .nav-login:hover{background:var(--green-dark)}
 .nav-daftar{background:var(--red);color:white;border:none;padding:9px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px}
 .nav-daftar:hover{background:var(--red-dark)}
 
-/* HERO — VIDEO BACKGROUND */
+/* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:100px 24px 60px;text-align:center;position:relative;overflow:hidden}
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0.25}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,20,0.7) 0%,rgba(8,12,20,0.5) 50%,rgba(8,12,20,0.9) 100%);z-index:1}
@@ -29,8 +31,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);color:#fca5a5;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:5px 14px;border-radius:100px;margin-bottom:24px}
 .pulse{width:7px;height:7px;background:var(--red);border-radius:50%;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-.hero-malay{font-size:1rem;color:#94a3b8;font-style:italic;margin-bottom:10px}
+.hero-malay{font-size:1rem;color:#94a3b8;font-style:italic;margin-bottom:16px}
 .hero-malay span{color:#fca5a5}
+
+/* 3-SECOND CLARITY BOX */
+.clarity-box{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;width:100%;max-width:400px}
+.clarity-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;text-align:left}
+.clarity-icon{font-size:1.3rem;flex-shrink:0}
+.clarity-text{font-size:0.88rem;color:#f1f5f9;font-weight:600}
+
 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,9vw,6.5rem);line-height:0.95;letter-spacing:2px;margin-bottom:20px}
 h1 .red{color:var(--red)}
 h1 .dim{color:var(--muted)}
@@ -73,7 +82,7 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,3.2rem);letter
 .prob-card p{font-size:0.8rem;color:var(--muted);line-height:1.5}
 .prob-icon{font-size:1.4rem}
 
-/* VS — SIMPLIFIED */
+/* VS */
 .vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
 .vs-col{padding:24px 20px}
 .vs-col.dashcam{background:var(--bg2)}
@@ -133,6 +142,15 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,3.2rem);letter
 .dot.y{background:var(--yellow)}
 .dot.r{background:var(--red)}
 
+/* AFFILIATE SECTION */
+.affiliate-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;max-width:700px;margin:0 auto 32px}
+.aff-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center}
+.aff-num{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;margin-bottom:8px}
+.aff-num.green{color:var(--green)}
+.aff-num.yellow{color:var(--yellow)}
+.aff-num.red{color:var(--red)}
+.aff-label{font-size:0.78rem;color:var(--muted);line-height:1.5}
+
 /* FINAL CTA */
 .fcta{text-align:center;padding:72px 24px;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(22,163,74,0.07),transparent 70%)}
 .fcta h2{margin-bottom:10px}
@@ -145,7 +163,7 @@ footer .flogo img{height:36px;margin-bottom:8px}
 .fi{opacity:0;transform:translateY(18px);transition:opacity 0.55s ease,transform 0.55s ease}
 .fi.on{opacity:1;transform:none}
 
-@media(max-width:600px){nav{padding:10px 14px}.hero{padding:80px 16px 48px}.sec{padding:48px 16px}.sec-full-inner{padding:0 16px}.vs-col,.pc{padding:16px 14px}.tbadge{min-width:calc(50% - 5px)}}
+@media(max-width:600px){nav{padding:10px 14px}.hero{padding:80px 16px 48px}.sec{padding:48px 16px}.sec-full-inner{padding:0 16px}.vs-col,.pc{padding:16px 14px}.tbadge{min-width:calc(50% - 5px)}.nav-affiliate{display:none}}
 </style>
 </head>
 <body>
@@ -156,12 +174,13 @@ footer .flogo img{height:36px;margin-bottom:8px}
     <img src="awas-logo.png" alt="AWAS">
   </div>
   <div class="nav-btns">
+    <a href="affiliate.html" class="nav-affiliate">Affiliate</a>
     <a href="login.html" class="nav-login">Log Masuk</a>
-    <a href="register.html" class="nav-daftar">Daftar — RM15</a>
+    <a href="register.html" class="nav-daftar">Daftar — RM29.99</a>
   </div>
 </nav>
 
-<!-- HERO — VIDEO BACKGROUND -->
+<!-- HERO -->
 <div class="hero">
   <video class="hero-video" autoplay muted loop playsinline>
     <source src="awas-logo-animation.mp4" type="video/mp4">
@@ -170,21 +189,38 @@ footer .flogo img{height:36px;margin-bottom:8px}
   <div class="hero-content">
     <div class="hero-badge"><div class="pulse"></div>Accident Writ Automation System</div>
     <div class="hero-malay">Kemalangan. Pemandu lain kata salah anda? <span>Tiada saksi. Tiada bukti.</span></div>
+
+    <!-- 3-SECOND CLARITY BOX -->
+    <div class="clarity-box">
+      <div class="clarity-item">
+        <span class="clarity-icon">📱</span>
+        <span class="clarity-text">Rakam video kemalangan</span>
+      </div>
+      <div class="clarity-item">
+        <span class="clarity-icon">🔐</span>
+        <span class="clarity-text">Digital Code SHA-256 tersedia automatik</span>
+      </div>
+      <div class="clarity-item">
+        <span class="clarity-icon">📄</span>
+        <span class="clarity-text">PDF Laporan Forensik Tersedia</span>
+      </div>
+    </div>
+
     <h1>YOUR ACCIDENT.<br><span class="red">YOUR PROOF.</span><br><span class="dim">YOUR RIGHTS.</span></h1>
-    <p class="hero-sub">AWAS seals your accident evidence with a <strong>tamper-proof digital signature</strong> the moment it happens. Video. GPS. Timestamp. Locked forever.</p>
+    <p class="hero-sub">AWAS meterai bukti kemalangan anda dengan <strong>tandatangan digital kalis gangguan</strong> pada detik ia berlaku. Video. GPS. Cap Masa. Terkunci selama-lamanya.</p>
     <div class="hero-cta-group">
-      <a href="register.html" class="btn-green">Daftar Sekarang — RM15/Year</a>
-      <a href="#how" class="btn-ghost">See How It Works</a>
+      <a href="register.html" class="btn-green">Daftar Sekarang — RM29.99/Tahun</a>
+      <a href="#how" class="btn-ghost">Lihat Cara Kerja</a>
     </div>
     <div class="hero-stats">
-      <div><div class="stat-num red">400K+</div><div class="stat-label">Road accidents yearly</div></div>
-      <div><div class="stat-num yellow">60%</div><div class="stat-label">Motorcycle fatalities</div></div>
-      <div><div class="stat-num green">RM0.41</div><div class="stat-label">Per day protection</div></div>
+      <div><div class="stat-num red">400K+</div><div class="stat-label">Kemalangan setahun</div></div>
+      <div><div class="stat-num yellow">60%</div><div class="stat-label">Kematian motosikal</div></div>
+      <div><div class="stat-num green">RM29.99</div><div class="stat-label">Perlindungan setahun</div></div>
     </div>
   </div>
 </div>
 
-<!-- THE MOMENT IT HAPPENS — WITH ACCIDENT IMAGE -->
+<!-- THE MOMENT IT HAPPENS -->
 <div class="sec fi">
   <div class="accident-section">
     <div class="accident-img">
@@ -234,31 +270,31 @@ footer .flogo img{height:36px;margin-bottom:8px}
 
 <!-- HOW IT WORKS -->
 <div class="sec fi" id="how">
-  <div class="sec-label">Three Steps</div>
-  <h2>HOW AWAS WORKS</h2>
-  <p class="sec-sub">Accident happens. You have 60 seconds. AWAS handles the rest.</p>
+  <div class="sec-label">Tiga Langkah</div>
+  <h2>CARA AWAS BERFUNGSI</h2>
+  <p class="sec-sub">Kemalangan berlaku. Anda ada 60 saat. AWAS uruskan selebihnya.</p>
   <div class="steps">
-    <div class="step"><div class="step-num">01</div><div class="step-icon">📱</div><h4>Tap RECORD</h4><p>Open AWAS. Hit the green button. Record a 15-second walkaround. GPS locked automatically.</p></div>
-    <div class="step"><div class="step-num">02</div><div class="step-icon">🔐</div><h4>Evidence Sealed</h4><p>SHA-256 hash generated from video, GPS, timestamp. Immutable. Permanent. Unbreakable.</p></div>
-    <div class="step"><div class="step-num">03</div><div class="step-icon">📄</div><h4>Get Your Balai Writ</h4><p>Official forensic PDF. RM8. Walk into the police station with proof nobody can dispute.</p></div>
+    <div class="step"><div class="step-num">01</div><div class="step-icon">📱</div><h4>Tekan REKOD</h4><p>Buka AWAS. Tekan butang hijau. Rakam 15 saat keliling kenderaan. GPS dikunci automatik.</p></div>
+    <div class="step"><div class="step-num">02</div><div class="step-icon">🔐</div><h4>Bukti Tersedia</h4><p>Hash SHA-256 dijana dari video, GPS, cap masa. Kekal. Tetap. Tidak boleh diubah.</p></div>
+    <div class="step"><div class="step-num">03</div><div class="step-icon">📄</div><h4>Dapatkan Writ Balai</h4><p>PDF forensik rasmi. RM8. Masuk balai polis dengan bukti yang tidak boleh dipertikaikan.</p></div>
   </div>
 </div>
 
-<!-- WHO NEEDS IT — WITH HIGHWAY IMAGE -->
+<!-- WHO NEEDS IT -->
 <div class="sec-full fi">
   <div class="sec-full-inner">
-    <div class="sec-label">Who Is AWAS For?</div>
-    <h2>EVERYONE ON MALAYSIAN ROADS</h2>
+    <div class="sec-label">Siapa AWAS Untuk?</div>
+    <h2>SEMUA PENGGUNA JALAN MALAYSIA</h2>
     <div class="who-section" style="margin-top:32px">
       <div class="who-img">
         <img src="myvi-vs-x50.png" alt="Malaysian highway accident">
       </div>
       <div>
         <div class="who-cards">
-          <div class="who-card"><div class="tag">Most At Risk</div><h4>🏍️ E-Hailing Riders</h4><p>10 hours daily on Malaysian roads. Zero dashcam. AWAS is your only protection.</p></div>
-          <div class="who-card"><div class="tag">Daily Commuters</div><h4>🚗 Car Drivers</h4><p>Dashcam records. AWAS certifies. Together — bulletproof.</p></div>
-          <div class="who-card"><div class="tag">B40 / M40</div><h4>👷 Low Income</h4><p>RM0.41 sehari. Harga teh tarik. Worth every sen when it counts.</p></div>
-          <div class="who-card"><div class="tag">Everyone</div><h4>🏢 All Road Users</h4><p>Accidents don't check your income. Nobody knows when it happens.</p></div>
+          <div class="who-card"><div class="tag">Paling Berisiko</div><h4>🏍️ Rider E-Hailing</h4><p>10 jam sehari di jalan Malaysia. Tiada dashcam. AWAS adalah perlindungan satu-satunya.</p></div>
+          <div class="who-card"><div class="tag">Pemandu Harian</div><h4>🚗 Pemandu Kereta</h4><p>Dashcam merakam. AWAS mengesahkan. Bersama — tidak boleh dipertikaikan.</p></div>
+          <div class="who-card"><div class="tag">B40 / M40</div><h4>👷 Pekerja</h4><p>RM29.99 setahun. Lebih murah dari servis kereta. Berbaloi apabila diperlukan.</p></div>
+          <div class="who-card"><div class="tag">Semua</div><h4>🏢 Semua Pengguna Jalan</h4><p>Kemalangan tidak memilih. Tiada siapa tahu bila ia berlaku.</p></div>
         </div>
       </div>
     </div>
@@ -267,38 +303,63 @@ footer .flogo img{height:36px;margin-bottom:8px}
 
 <!-- PRICING -->
 <div class="sec fi">
-  <div class="sec-label">Simple Pricing</div>
-  <h2>CHEAPER THAN YOUR NEXT TEH TARIK</h2>
+  <div class="sec-label">Harga Mudah</div>
+  <h2>LEBIH MURAH DARI TEH TARIK ANDA</h2>
   <div class="price-grid">
     <div class="pc">
-      <div class="pc-label">Annual Membership</div>
-      <div class="pc-amount green">RM15</div>
-      <div class="pc-per">per year — RM1.25/month — RM0.41/day</div>
-      <h4>Full AWAS Protection</h4>
-      <p>Register. Record unlimited incidents. GPS sealing on every capture.</p>
+      <div class="pc-label">Keahlian Tahunan</div>
+      <div class="pc-amount green">RM29.99</div>
+      <div class="pc-per">setahun — RM2.50/bulan</div>
+      <h4>Perlindungan AWAS Penuh</h4>
+      <p>Daftar. Rakam insiden tanpa had. GPS tersedia pada setiap rakaman.</p>
     </div>
     <div class="pc hl">
-      <div class="pc-label">Per Forensic Writ</div>
+      <div class="pc-label">Setiap Writ Forensik</div>
       <div class="pc-amount yellow">RM8</div>
-      <div class="pc-per">only when you need it</div>
-      <h4>Official Evidence Document</h4>
-      <p>SHA-256 certified. Balai-formatted. Accepted by police, insurers, lawyers.</p>
+      <div class="pc-per">hanya apabila diperlukan</div>
+      <h4>Dokumen Bukti Rasmi</h4>
+      <p>Disahkan SHA-256. Format Balai. Diterima polis, insurans, peguam.</p>
     </div>
   </div>
   <div class="math-box">
-    <p>Disputed claim without evidence: <strong>RM5,000 – RM30,000</strong></p>
+    <p>Tuntutan yang dipertikaikan tanpa bukti: <strong>RM5,000 – RM30,000</strong></p>
     <span class="vs-text">VS</span>
-    <p>AWAS: <strong>RM15/year</strong> + <strong>RM8</strong> writ when needed</p>
+    <p>AWAS: <strong>RM29.99/tahun</strong> + <strong>RM8</strong> writ apabila diperlukan</p>
     <br>
     <span class="malay">Ini bukan perbelanjaan. Ini perlindungan.</span>
   </div>
 </div>
 
+<!-- AFFILIATE SECTION -->
+<div class="sec-full fi">
+  <div class="sec-full-inner" style="text-align:center;">
+    <div class="sec-label">Jana Pendapatan Pasif</div>
+    <h2>JADI AFFILIATE AWAS</h2>
+    <p class="sec-sub" style="margin:0 auto 32px;">Daftar AWAS. Kongsi pautan anda. Setiap orang yang mendaftar melalui pautan anda — anda terima RM9.99 serta-merta. Apabila mereka memperbaharui tahun depan — anda terima lagi.</p>
+    <div class="affiliate-cards">
+      <div class="aff-card">
+        <div class="aff-num green">RM9.99</div>
+        <div class="aff-label">Setiap pendaftaran baru melalui pautan anda</div>
+      </div>
+      <div class="aff-card">
+        <div class="aff-num yellow">∞</div>
+        <div class="aff-label">Berulang setiap tahun — selagi mereka aktif</div>
+      </div>
+      <div class="aff-card">
+        <div class="aff-num red">RM0</div>
+        <div class="aff-label">Kos untuk sertai — percuma untuk pengguna berdaftar</div>
+      </div>
+    </div>
+    <a href="affiliate.html" class="btn-green" style="font-size:1rem;padding:16px 44px;display:inline-block;">Papar Dashboard Affiliate Saya</a>
+    <p style="margin-top:12px;font-size:0.78rem;color:var(--muted);">Mesti daftar sebagai pengguna AWAS dahulu. <a href="register.html" style="color:#64748b;">Daftar sekarang →</a></p>
+  </div>
+</div>
+
 <!-- TRUST -->
 <div class="sec fi" style="text-align:center;padding-bottom:48px">
-  <div class="sec-label">Built With Integrity</div>
-  <h2>YOUR DATA. YOUR RIGHTS.</h2>
-  <p class="sec-sub" style="margin:0 auto">Minimal data. Maximum protection. No data ever sold.</p>
+  <div class="sec-label">Dibina Dengan Integriti</div>
+  <h2>DATA ANDA. HAK ANDA.</h2>
+  <p class="sec-sub" style="margin:0 auto">Data minimum. Perlindungan maksimum. Tiada data dijual.</p>
   <div class="trust-row">
     <div class="tbadge"><div class="dot g"></div>PDPA Compliant</div>
     <div class="tbadge"><div class="dot r"></div>SHA-256 Tamper-Proof</div>
@@ -311,19 +372,19 @@ footer .flogo img{height:36px;margin-bottom:8px}
 
 <!-- FINAL CTA -->
 <div class="fcta fi">
-  <div class="pill">RM15/Year — RM0.41/Day</div>
-  <h2>DON'T WAIT FOR<br><span style="color:var(--red)">THE ACCIDENT.</span></h2>
-  <p>Register now. Two minutes. Protection starts immediately.</p>
+  <div class="pill">RM29.99/Tahun — RM2.50/Bulan</div>
+  <h2>JANGAN TUNGGU<br><span style="color:var(--red)">KEMALANGAN ITU.</span></h2>
+  <p>Daftar sekarang. Dua minit. Perlindungan bermula serta-merta.</p>
   <a href="register.html" class="btn-green" style="font-size:1rem;padding:16px 44px">Daftar AWAS Sekarang</a>
   <br><br>
-  <p style="font-size:0.78rem;color:var(--muted)">Already registered? <a href="app.html" style="color:#64748b">Log Masuk →</a></p>
+  <p style="font-size:0.78rem;color:var(--muted)">Sudah daftar? <a href="login.html" style="color:#64748b">Log Masuk →</a></p>
 </div>
 
 <footer>
   <div class="flogo"><img src="awas-logo.png" alt="AWAS"></div>
   <p>Accident Writ Automation System</p>
-  <p style="margin-top:6px">AWAS Ltd — United Kingdom &bull; Serving Malaysia &bull; Expanding SEA</p>
-  <p style="margin-top:6px">SECURE &bull; IMMUTABLE &bull; PDPA COMPLIANT &bull; SHA-256 VERIFIED</p>
+  <p style="margin-top:6px">Membantu Malaysia &bull; Berkembang ke SEA</p>
+  <p style="margin-top:6px">SELAMAT &bull; KEKAL &bull; MEMATUHI PDPA &bull; SHA-256 DISAHKAN</p>
 </footer>
 
 <script>

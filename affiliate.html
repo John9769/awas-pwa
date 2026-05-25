@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWAS — Dashboard Affiliate</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
+            --text-muted: #94a3b8; --success: #16a34a;
+            --success-hover: #15803d; --border: #334155;
+            --blue: #2563eb; --warn: #eab308;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .logo-wrap { text-align: center; margin-bottom: 20px; margin-top: 10px; }
+        .logo-wrap img { height: 48px; }
+
+        .page-title { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 4px; }
+        .page-sub { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 24px; }
+
+        /* LOGIN BOX */
+        .login-box { width: 100%; max-width: 400px; background: var(--card); padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        .plate-input { width: 100%; background: #020617; border: 2px solid var(--border); padding: 14px 16px; border-radius: 8px; color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+        .plate-input:focus { border-color: var(--success); outline: none; }
+        .btn-load { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        .btn-load:hover { background: var(--success-hover); }
+        .btn-load:disabled { opacity: 0.6; cursor: not-allowed; }
+        .status-msg { margin-top: 12px; padding: 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-align: center; display: none; }
+        .status-msg.error { background: rgba(220,38,38,0.1); color: #fca5a5; border: 1px solid rgba(220,38,38,0.3); }
+        .status-msg.loading { background: rgba(234,179,8,0.1); color: #fde68a; border: 1px solid rgba(234,179,8,0.3); }
+
+        /* DASHBOARD */
+        #dashboard { display: none; width: 100%; max-width: 440px; }
+
+        /* STATS GRID */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--card); border-radius: 10px; padding: 16px; border: 1px solid var(--border); text-align: center; }
+        .stat-card.green { border-color: rgba(22,163,74,0.4); background: rgba(22,163,74,0.06); }
+        .stat-card.yellow { border-color: rgba(234,179,8,0.4); background: rgba(234,179,8,0.06); }
+        .stat-card.blue { border-color: rgba(37,99,235,0.4); background: rgba(37,99,235,0.06); }
+        .stat-num { font-size: 1.8rem; font-weight: 900; margin-bottom: 4px; }
+        .stat-num.green { color: #4ade80; }
+        .stat-num.yellow { color: #fbbf24; }
+        .stat-num.blue { color: #60a5fa; }
+        .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* REFERRAL LINK BOX */
+        .ref-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(37,99,235,0.3); }
+        .ref-box-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #60a5fa; margin-bottom: 12px; }
+        .ref-code-big { font-family: monospace; font-size: 2rem; font-weight: 900; color: #93c5fd; letter-spacing: 4px; text-align: center; margin-bottom: 12px; }
+        .ref-link-display { background: #020617; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font-size: 0.72rem; font-family: monospace; color: #60a5fa; word-break: break-all; margin-bottom: 12px; }
+        .btn-copy { width: 100%; background: var(--blue); border: none; color: white; padding: 12px; font-weight: 700; font-size: 0.88rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        .btn-copy:hover { background: #1d4ed8; }
+        .copy-note { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 8px; }
+
+        /* PAYOUT BOX */
+        .payout-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .payout-box-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; }
+        .payout-amount { font-size: 2.5rem; font-weight: 900; color: #4ade80; margin-bottom: 4px; }
+        .payout-label { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px; }
+        .bank-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .bank-input { background: #020617; border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; color: white; font-size: 0.9rem; width: 100%; }
+        .bank-input:focus { border-color: var(--success); outline: none; }
+        .btn-save-bank { background: #334155; border: none; color: white; padding: 10px; font-weight: 700; font-size: 0.82rem; border-radius: 6px; cursor: pointer; width: 100%; margin-bottom: 10px; }
+        .btn-payout { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        .btn-payout:hover { background: var(--success-hover); }
+        .btn-payout:disabled { opacity: 0.5; cursor: not-allowed; }
+        .payout-note { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 8px; line-height: 1.5; }
+
+        /* EARNINGS TABLE */
+        .earnings-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .earnings-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 14px; }
+        .earning-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+        .earning-row:last-child { border-bottom: none; }
+        .earning-plate { font-family: monospace; font-weight: 700; color: var(--text); }
+        .earning-type { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; }
+        .earning-amount { font-weight: 800; color: #4ade80; }
+        .no-earnings { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px 0; }
+
+        /* JOIN BOX */
+        .join-box { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.3); border-radius: 12px; padding: 24px; margin-bottom: 20px; text-align: center; }
+        .join-title { font-size: 1.1rem; font-weight: 800; color: #4ade80; margin-bottom: 8px; }
+        .join-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+        .join-highlight { color: #4ade80; font-weight: 700; }
+        .btn-join { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        .btn-join:hover { background: var(--success-hover); }
+
+        .back-link { text-align: center; margin-top: 10px; font-size: 0.78rem; color: var(--text-muted); }
+        .back-link a { color: #64748b; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="logo-wrap">
+        <img src="awas-logo.png" alt="AWAS">
+    </div>
+
+    <div class="page-title">Dashboard Affiliate AWAS</div>
+    <div class="page-sub">Kongsi pautan. Jana pendapatan. Automatik.</div>
+
+    <!-- LOGIN TO LOAD DASHBOARD -->
+    <div class="login-box" id="login-box">
+        <div class="form-group">
+            <label>Nombor Plat Kenderaan Anda</label>
+            <input type="text" class="plate-input" id="plate-input" placeholder="VBK2931" maxlength="10" autocapitalize="characters">
+        </div>
+        <button class="btn-load" id="btn-load">Papar Dashboard Saya</button>
+        <div class="status-msg" id="status-msg"></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card green">
+                <div class="stat-num green" id="stat-referrals">0</div>
+                <div class="stat-label">Jumlah Rujukan</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-num yellow" id="stat-total">RM0</div>
+                <div class="stat-label">Jumlah Pendapatan</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-num blue" id="stat-pending">RM0</div>
+                <div class="stat-label">Belum Dibayar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num" id="stat-paidout" style="color:#94a3b8;">RM0</div>
+                <div class="stat-label">Telah Dibayar</div>
+            </div>
+        </div>
+
+        <!-- REFERRAL LINK -->
+        <div class="ref-box">
+            <div class="ref-box-title">🔗 Pautan Rujukan Anda</div>
+            <div class="ref-code-big" id="ref-code-display">--------</div>
+            <div class="ref-link-display" id="ref-link-display">https://awas-pwa.vercel.app/register.html?ref=XXXXXXXX</div>
+            <button class="btn-copy" id="btn-copy">📋 Salin Pautan</button>
+            <div class="copy-note">Kongsi pautan ini kepada rakan. Setiap pendaftaran = <strong style="color:#4ade80;">RM9.99 untuk anda</strong>. Termasuk pembaharuan tahunan.</div>
+        </div>
+
+        <!-- JOIN AFFILIATE (shown if not yet affiliate) -->
+        <div class="join-box" id="join-box" style="display:none;">
+            <div class="join-title">🚀 Sertai Program Affiliate AWAS</div>
+            <div class="join-sub">Anda sudah berdaftar. Kini jadilah affiliate. Kongsi pautan anda. Setiap orang yang mendaftar melalui pautan anda — <span class="join-highlight">anda terima RM9.99 serta-merta</span>. Apabila mereka memperbaharui tahun depan — <span class="join-highlight">anda terima lagi</span>.</div>
+            <button class="btn-join" id="btn-join">Jadi Affiliate Sekarang — Percuma</button>
+        </div>
+
+        <!-- PAYOUT -->
+        <div class="payout-box" id="payout-section">
+            <div class="payout-box-title">💰 Pengeluaran Pendapatan</div>
+            <div class="payout-amount" id="payout-amount-display">RM0.00</div>
+            <div class="payout-label">Baki belum dibayar</div>
+
+            <div class="bank-form">
+                <input type="text" class="bank-input" id="bank-name" placeholder="Nama Bank (cth: Maybank)">
+                <input type="text" class="bank-input" id="bank-account-number" placeholder="Nombor Akaun Bank">
+                <input type="text" class="bank-input" id="bank-account-name" placeholder="Nama Pemilik Akaun">
+                <input type="text" class="bank-input" id="duitnow-number" placeholder="Nombor DuitNow (No. Telefon/IC)">
+            </div>
+            <button class="btn-save-bank" id="btn-save-bank">💾 Simpan Butiran Bank</button>
+            <button class="btn-payout" id="btn-request-payout" disabled>Mohon Pengeluaran</button>
+            <div class="payout-note">Minimum pengeluaran RM10. Diproses dalam 3 hari bekerja melalui DuitNow atau IBG.</div>
+        </div>
+
+        <!-- RECENT EARNINGS -->
+        <div class="earnings-box">
+            <div class="earnings-title">📊 Pendapatan Terkini</div>
+            <div id="earnings-list">
+                <div class="no-earnings">Tiada pendapatan lagi. Mula kongsi pautan anda!</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="back-link">
+        <a href="index.html">← Kembali ke Laman Utama</a>
+    </div>
+
+    <script>
+        const API_BASE = 'https://awas-backend.onrender.com';
+        let currentPlate = '';
+
+        // Auto uppercase
+        document.getElementById('plate-input').addEventListener('input', function() {
+            this.value = this.value.toUpperCase().replace(/\s+/g, '');
+        });
+
+        document.getElementById('btn-load').addEventListener('click', async () => {
+            const plate = document.getElementById('plate-input').value.trim().toUpperCase();
+            if (!plate) return;
+
+            currentPlate = plate;
+            const btn = document.getElementById('btn-load');
+            const msg = document.getElementById('status-msg');
+
+            btn.disabled = true;
+            btn.innerText = '⏳ Memuatkan...';
+            msg.style.display = 'block';
+            msg.className = 'status-msg loading';
+            msg.innerText = 'Memeriksa akaun anda...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/affiliate/dashboard/${plate}`);
+                const data = await res.json();
+
+                if (res.ok) {
+                    loadDashboard(data);
+                } else if (res.status === 404 && data.error && data.error.includes('Not an affiliate')) {
+                    // Driver exists but not affiliate yet — show join box
+                    document.getElementById('login-box').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('join-box').style.display = 'block';
+                    document.getElementById('payout-section').style.display = 'none';
+                } else {
+                    msg.className = 'status-msg error';
+                    msg.innerText = data.error || 'Akaun tidak dijumpai. Sila daftar dahulu.';
+                    btn.disabled = false;
+                    btn.innerText = 'Papar Dashboard Saya';
+                }
+            } catch {
+                msg.className = 'status-msg error';
+                msg.innerText = 'Ralat sambungan. Cuba lagi.';
+                btn.disabled = false;
+                btn.innerText = 'Papar Dashboard Saya';
+            }
+        });
+
+        function loadDashboard(data) {
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('join-box').style.display = 'none';
+
+            document.getElementById('stat-referrals').innerText = data.stats.totalReferrals;
+            document.getElementById('stat-total').innerText = `RM${data.stats.totalEarnings.toFixed(2)}`;
+            document.getElementById('stat-pending').innerText = `RM${data.stats.pendingPayout.toFixed(2)}`;
+            document.getElementById('stat-paidout').innerText = `RM${data.stats.paidOut.toFixed(2)}`;
+            document.getElementById('payout-amount-display').innerText = `RM${data.stats.pendingPayout.toFixed(2)}`;
+
+            document.getElementById('ref-code-display').innerText = data.referralCode;
+            document.getElementById('ref-link-display').innerText = data.referralLink;
+
+            // Bank details
+            if (data.bankDetails.bankName) document.getElementById('bank-name').value = data.bankDetails.bankName;
+            if (data.bankDetails.bankAccountNumber) document.getElementById('bank-account-number').value = data.bankDetails.bankAccountNumber;
+            if (data.bankDetails.bankAccountName) document.getElementById('bank-account-name').value = data.bankDetails.bankAccountName;
+            if (data.bankDetails.duitnowNumber) document.getElementById('duitnow-number').value = data.bankDetails.duitnowNumber;
+
+            // Enable payout if enough balance
+            if (data.stats.pendingPayout >= 10) {
+                document.getElementById('btn-request-payout').disabled = false;
+            }
+
+            // Earnings list
+            const earningsList = document.getElementById('earnings-list');
+            if (data.recentEarnings && data.recentEarnings.length > 0) {
+                earningsList.innerHTML = data.recentEarnings.map(e => `
+                    <div class="earning-row">
+                        <div>
+                            <div class="earning-plate">${e.referredPlate}</div>
+                            <div class="earning-type">${e.type === 'REGISTRATION' ? 'Pendaftaran Baru' : 'Pembaharuan'} • ${new Date(e.date).toLocaleDateString('ms-MY')}</div>
+                        </div>
+                        <div class="earning-amount">+RM${e.amount.toFixed(2)}</div>
+                    </div>
+                `).join('');
+            } else {
+                earningsList.innerHTML = '<div class="no-earnings">Tiada pendapatan lagi. Mula kongsi pautan anda!</div>';
+            }
+        }
+
+        // Copy referral link
+        document.getElementById('btn-copy').addEventListener('click', () => {
+            const link = document.getElementById('ref-link-display').innerText;
+            navigator.clipboard.writeText(link).then(() => {
+                const btn = document.getElementById('btn-copy');
+                btn.innerText = '✅ Pautan Disalin!';
+                setTimeout(() => { btn.innerText = '📋 Salin Pautan'; }, 2000);
+            });
+        });
+
+        // Join affiliate
+        document.getElementById('btn-join').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-join');
+            btn.disabled = true;
+            btn.innerText = '⏳ Mendaftar...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/affiliate/join`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ vehiclePlate: currentPlate })
+                });
+                const data = await res.json();
+
+                if (res.ok || res.status === 200) {
+                    // Reload dashboard
+                    const dashRes = await fetch(`${API_BASE}/api/affiliate/dashboard/${currentPlate}`);
+                    const dashData = await dashRes.json();
+                    if (dashRes.ok) loadDashboard(dashData);
+                } else {
+                    alert(data.error || 'Gagal mendaftar. Cuba lagi.');
+                    btn.disabled = false;
+                    btn.innerText = 'Jadi Affiliate Sekarang — Percuma';
+                }
+            } catch {
+                alert('Ralat sambungan.');
+                btn.disabled = false;
+                btn.innerText = 'Jadi Affiliate Sekarang — Percuma';
+            }
+        });
+
+        // Save bank details
+        document.getElementById('btn-save-bank').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-save-bank');
+            btn.innerText = '⏳ Menyimpan...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/affiliate/bank`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        vehiclePlate: currentPlate,
+                        bankName: document.getElementById('bank-name').value,
+                        bankAccountNumber: document.getElementById('bank-account-number').value,
+                        bankAccountName: document.getElementById('bank-account-name').value,
+                        duitnowNumber: document.getElementById('duitnow-number').value
+                    })
+                });
+                if (res.ok) {
+                    btn.innerText = '✅ Butiran Disimpan';
+                    setTimeout(() => { btn.innerText = '💾 Simpan Butiran Bank'; }, 2000);
+                } else {
+                    btn.innerText = '💾 Simpan Butiran Bank';
+                    alert('Gagal menyimpan. Cuba lagi.');
+                }
+            } catch {
+                btn.innerText = '💾 Simpan Butiran Bank';
+                alert('Ralat sambungan.');
+            }
+        });
+
+        // Request payout
+        document.getElementById('btn-request-payout').addEventListener('click', async () => {
+            if (!confirm('Adakah anda pasti untuk memohon pengeluaran?')) return;
+            const btn = document.getElementById('btn-request-payout');
+            btn.disabled = true;
+            btn.innerText = '⏳ Memproses...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/affiliate/payout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ vehiclePlate: currentPlate })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert(data.message);
+                    document.getElementById('stat-pending').innerText = 'RM0.00';
+                    document.getElementById('payout-amount-display').innerText = 'RM0.00';
+                    btn.innerText = '✅ Permohonan Dihantar';
+                } else {
+                    alert(data.error || 'Gagal memohon pengeluaran.');
+                    btn.disabled = false;
+                    btn.innerText = 'Mohon Pengeluaran';
+                }
+            } catch {
+                alert('Ralat sambungan.');
+                btn.disabled = false;
+                btn.innerText = 'Mohon Pengeluaran';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,6 @@
 
 const API_BASE = 'https://awas-backend.onrender.com';
 
-// State variables
 let gpsCoordinates = null;
 let ownVideoBase64 = null;
 let ownHash = null;
@@ -16,7 +15,34 @@ let currentWritNumber = null;
 let currentLat = null;
 let currentLng = null;
 
+// GPS CHECK
+function checkGPSAndProceed() {
+    const gpsWarning = document.getElementById('gps-warning');
+    const captureView = document.getElementById('capture-view');
+
+    if (!navigator.geolocation) {
+        gpsWarning.style.display = 'block';
+        captureView.style.display = 'none';
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        () => {
+            gpsWarning.style.display = 'none';
+            captureView.style.display = 'flex';
+        },
+        () => {
+            gpsWarning.style.display = 'block';
+            captureView.style.display = 'none';
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Check GPS on load
+    checkGPSAndProceed();
+
     const recordTrigger = document.getElementById('record-trigger');
     const videoCapture = document.getElementById('video-capture');
     const otherVideoCapture = document.getElementById('other-video-capture');
@@ -27,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const printBtn = document.getElementById('print-btn');
     const testBanner = document.getElementById('test-banner');
     const reportBanner = document.getElementById('report-banner');
+    const checklistBox = document.getElementById('checklist-box');
 
-    // Report field refs
     const pdfWritNum = document.getElementById('pdf-writ-number');
     const pdfLogId = document.getElementById('pdf-log-id');
     const pdfDate = document.getElementById('pdf-date');
@@ -45,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const pdfInjury = document.getElementById('pdf-injury');
     const pdfDescription = document.getElementById('pdf-description');
 
-    // Step 1 — Own vehicle record
     recordTrigger.addEventListener('click', () => videoCapture.click());
 
     videoCapture.addEventListener('change', async (event) => {
@@ -53,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!files || files.length === 0) return;
 
         recordTrigger.style.display = 'none';
-        statusDisplay.innerHTML = '⚡ <strong>SEALING YOUR EVIDENCE...</strong><br>Locking GPS, hashing video, stamping timestamp.';
+        statusDisplay.innerHTML = '⚡ <strong>METERAI BUKTI ANDA...</strong><br>Mengunci GPS, menghash video, mencap masa.';
 
         try {
             eventTimestamp = new Date();
@@ -81,11 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (fault) {
             console.error('AWAS Capture Fault:', fault);
             recordTrigger.style.display = 'flex';
-            statusDisplay.innerHTML = `⚠️ <strong>CAPTURE FAILED:</strong><br>${fault.message}. Try again.`;
+            statusDisplay.innerHTML = `⚠️ <strong>RAKAMAN GAGAL:</strong><br>${fault.message}. Cuba lagi.`;
         }
     });
 
-    // Step 2 — Other party record (optional)
     document.getElementById('btn-record-other').addEventListener('click', () => {
         otherVideoCapture.click();
     });
@@ -94,12 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const files = event.target.files;
         if (!files || files.length === 0) return;
 
-        document.getElementById('btn-record-other').innerText = '⏳ Recording other vehicle...';
+        document.getElementById('btn-record-other').innerText = '⏳ Merakam kenderaan lain...';
         document.getElementById('btn-record-other').disabled = true;
 
         try {
             otherVideoBase64 = await readVideoAsBase64(files[0]);
-
             const otherPayload = {
                 videoBase64: otherVideoBase64,
                 linkedToHash: ownHash,
@@ -112,20 +135,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error('Other party capture fault:', err);
-            document.getElementById('btn-record-other').innerText = '📹 Record Other Vehicle';
+            document.getElementById('btn-record-other').innerText = '📹 Rakam Kenderaan Lain';
             document.getElementById('btn-record-other').disabled = false;
         }
     });
 
-    // Step 3 — Generate report
     document.getElementById('btn-generate-report').addEventListener('click', async () => {
         const btn = document.getElementById('btn-generate-report');
-        btn.innerText = '⏳ Generating Forensic Writ...';
+        btn.innerText = '⏳ Menjana Writ Forensik...';
         btn.disabled = true;
 
         const cachedPlate = localStorage.getItem('awas_vehicle_plate') || 'WD519A';
         const cachedModel = localStorage.getItem('awas_vehicle_model') || 'Perodua Myvi 1.5';
         const cachedMykad = localStorage.getItem('awas_mykad_four') || '5678';
+        const cachedVType = localStorage.getItem('awas_vehicle_type') || 'CAR';
+        const cachedPhone = localStorage.getItem('awas_phone') || '—';
 
         const incidentDescription = document.getElementById('incident-description').value.trim() || null;
         const roadCondition = document.getElementById('road-condition').value;
@@ -163,38 +187,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const result = await response.json();
             currentWritNumber = result.writNumber || 'AWAS/MY/PENDING';
-
-            // Store lat/lng for PDF static map
             currentLat = gpsCoordinates.latitude.toFixed(6);
             currentLng = gpsCoordinates.longitude.toFixed(6);
 
-            // Populate report fields
             pdfWritNum.innerText = currentWritNumber;
             document.getElementById('stamp-writ').innerText = currentWritNumber;
+            document.getElementById('checklist-writ-num').innerText = currentWritNumber;
             pdfLogId.innerText = ownHash.substring(0, 8).toUpperCase();
-            pdfDate.innerText = eventTimestamp.toLocaleDateString('en-MY');
-            pdfTime.innerText = eventTimestamp.toLocaleTimeString('en-MY') + ' MYT';
+            pdfDate.innerText = eventTimestamp.toLocaleDateString('ms-MY');
+            pdfTime.innerText = eventTimestamp.toLocaleTimeString('ms-MY') + ' MYT';
             pdfPlate.innerText = cachedPlate;
             pdfModel.innerText = cachedModel;
+            document.getElementById('pdf-vtype').innerText = cachedVType === 'MOTORCYCLE' ? 'Motosikal' : 'Kereta';
             pdfMykad.innerText = `******-XX-${cachedMykad}`;
+            document.getElementById('pdf-phone').innerText = cachedPhone || '—';
             pdfLat.innerText = currentLat;
             pdfLng.innerText = currentLng;
             pdfHash.innerText = ownHash;
 
-            // Incident details
-            pdfRoad.innerText = formatCondition(roadCondition);
-            pdfWeather.innerText = formatCondition(weatherCondition);
-            pdfInjury.innerText = formatInjury(injuryStatus);
+            pdfRoad.innerText = formatKeadaanJalan(roadCondition);
+            pdfWeather.innerText = formatCuaca(weatherCondition);
+            pdfInjury.innerText = formatKecederaan(injuryStatus);
             pdfDescription.innerText = incidentDescription || '—';
 
-            // Map — interactive iframe for on-screen view
             mapContainer.innerHTML = `<iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
                 loading="lazy">
             </iframe>`;
 
-            // Other party
             if (otherPlate) {
                 document.getElementById('pdf-other-party-section').style.display = 'block';
                 document.getElementById('pdf-other-plate').innerText = otherPlate;
@@ -205,25 +226,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('sha-section-num').innerText = '4.';
             }
 
-            // Switch banners
             testBanner.style.display = 'none';
             reportBanner.style.display = 'block';
-
             incidentView.style.display = 'none';
             reportView.style.display = 'flex';
+            checklistBox.style.display = 'block';
             printBtn.style.display = 'block';
 
             window.scrollTo(0, 0);
 
         } catch (fault) {
             console.error('AWAS Submit Fault:', fault);
-            btn.innerText = '🔒 Generate AWAS Forensic Writ';
+            btn.innerText = '🔒 Jana Writ Forensik AWAS';
             btn.disabled = false;
-            alert('Failed to submit evidence. Check your connection and try again.');
+            alert('Gagal menghantar bukti. Periksa sambungan anda dan cuba lagi.');
         }
     });
 
-    // Report modal
     printBtn.addEventListener('click', () => {
         document.getElementById('report-modal').classList.add('show');
     });
@@ -234,24 +253,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('report-modal').classList.remove('show');
     });
 
-    // PDF DOWNLOAD — replaces window.print()
     document.getElementById('btn-get-certified').addEventListener('click', async () => {
         document.getElementById('report-modal').classList.remove('show');
 
         const downloadBtn = document.getElementById('print-btn');
-        downloadBtn.innerText = '⏳ Preparing your PDF...';
+        downloadBtn.innerText = '⏳ Menyediakan PDF anda...';
         downloadBtn.disabled = true;
 
         try {
-            // Swap iframe map → static image for PDF capture
             const staticMapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${currentLat},${currentLng}&zoom=16&size=560x200&markers=${currentLat},${currentLng},lightblue1`;
-            mapContainer.innerHTML = `<img src="${staticMapUrl}" style="width:100%;height:100%;object-fit:cover;border:none;" alt="GPS Location Map" crossorigin="anonymous">`;
+            mapContainer.innerHTML = `<img src="${staticMapUrl}" style="width:100%;height:100%;object-fit:cover;border:none;" alt="Peta Lokasi GPS" crossorigin="anonymous">`;
 
-            // Wait for map image to load
             await new Promise(resolve => setTimeout(resolve, 2000));
 
             const reportEl = document.getElementById('report-view');
-
             const canvas = await html2canvas(reportEl, {
                 scale: 2,
                 useCORS: true,
@@ -282,17 +297,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 heightLeft -= pageHeight;
             }
 
-            const fileName = `AWAS-WRIT-${(currentWritNumber || 'REPORT').replace(/\//g, '-')}.pdf`;
+            const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
             pdf.save(fileName);
 
-            // Restore interactive map after PDF save
             mapContainer.innerHTML = `<iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
                 loading="lazy">
             </iframe>`;
 
-            downloadBtn.innerText = '✅ PDF Downloaded — Check Your Files';
+            downloadBtn.innerText = '✅ PDF Dimuat Turun — Semak Fail Anda';
             downloadBtn.disabled = false;
 
         } catch (err) {
@@ -302,26 +316,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
                 loading="lazy">
             </iframe>`;
-            downloadBtn.innerText = '📄 Get Official Balai Writ — RM8';
+            downloadBtn.innerText = '📄 Dapatkan Writ Balai Rasmi — RM8';
             downloadBtn.disabled = false;
-            alert('PDF generation failed. Please try again.');
+            alert('Jana PDF gagal. Sila cuba lagi.');
         }
     });
 
-    // Helpers
-    function formatCondition(val) {
+    // MALAY FORMAT HELPERS
+    function formatKeadaanJalan(val) {
         const map = {
-            DRY: 'Dry', WET: 'Wet / After Rain', FLOODED: 'Flooded',
-            UNDER_CONSTRUCTION: 'Under Construction', UNKNOWN: '—',
-            CLEAR: 'Clear / Sunny', RAINY: 'Rainy', FOGGY: 'Foggy',
-            HAZY: 'Hazy', NIGHT: 'Night / Low Visibility'
+            DRY: 'Kering',
+            WET: 'Basah — Selepas Hujan',
+            FLOODED: 'Banjir',
+            UNDER_CONSTRUCTION: 'Dalam Pembinaan',
+            UNKNOWN: 'Tidak Pasti'
         };
-        return map[val] || '—';
+        return map[val] || 'Tidak Pasti';
     }
 
-    function formatInjury(val) {
-        const map = { NONE: 'No Injuries', MINOR: 'Minor Injuries', SERIOUS: 'Serious Injuries' };
-        return map[val] || '—';
+    function formatCuaca(val) {
+        const map = {
+            CLEAR: 'Cerah / Panas',
+            RAINY: 'Hujan',
+            FOGGY: 'Kabus Nipis',
+            HAZY: 'Jerebu',
+            NIGHT: 'Malam / Jarak Penglihatan Rendah',
+            UNKNOWN: 'Tidak Pasti'
+        };
+        return map[val] || 'Tidak Pasti';
+    }
+
+    function formatKecederaan(val) {
+        const map = {
+            NONE: 'Tiada Kecederaan',
+            MINOR: 'Kecederaan Ringan',
+            SERIOUS: 'Kecederaan Serius'
+        };
+        return map[val] || 'Tiada Kecederaan';
     }
 
     function acquirePreciseLocation() {
@@ -333,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
             navigator.geolocation.getCurrentPosition(
                 (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
                 () => resolve({ latitude: 2.661800, longitude: 101.875900 }),
-                { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+                { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
             );
         });
     }
@@ -357,6 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.1.1').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js?v=1.1.3').catch(err => console.error(err));
     });
 }
