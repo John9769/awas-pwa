@@ -14,9 +14,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
         body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        .logo-wrap { text-align: center; margin-bottom: 20px; margin-top: 10px; }
-        .logo-wrap img { height: 48px; }
-
+        .logo-text { font-family: -apple-system, sans-serif; font-size: 2.2rem; font-weight: 900; letter-spacing: 4px; color: #f8fafc; text-align: center; margin-bottom: 20px; margin-top: 10px; }
         .page-title { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 4px; }
         .page-sub { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 24px; }
 
@@ -37,7 +35,7 @@
         #dashboard { display: none; width: 100%; max-width: 440px; }
 
         /* STATS GRID */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
         .stat-card { background: var(--card); border-radius: 10px; padding: 16px; border: 1px solid var(--border); text-align: center; }
         .stat-card.green { border-color: rgba(22,163,74,0.4); background: rgba(22,163,74,0.06); }
         .stat-card.yellow { border-color: rgba(234,179,8,0.4); background: rgba(234,179,8,0.06); }
@@ -48,6 +46,10 @@
         .stat-num.blue { color: #60a5fa; }
         .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
+        /* SETTLEMENT NOTE */
+        .settlement-note { background: rgba(234,179,8,0.06); border: 1px solid rgba(234,179,8,0.25); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; font-size: 0.78rem; color: #fde68a; line-height: 1.6; }
+        .settlement-note strong { color: #fbbf24; display: block; margin-bottom: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
         /* REFERRAL LINK BOX */
         .ref-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(37,99,235,0.3); }
         .ref-box-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #60a5fa; margin-bottom: 12px; }
@@ -57,19 +59,15 @@
         .btn-copy:hover { background: #1d4ed8; }
         .copy-note { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 8px; }
 
-        /* PAYOUT BOX */
-        .payout-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .payout-box-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; }
-        .payout-amount { font-size: 2.5rem; font-weight: 900; color: #4ade80; margin-bottom: 4px; }
-        .payout-label { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px; }
-        .bank-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        /* BANK DETAILS BOX */
+        .bank-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .bank-box-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
+        .bank-box-sub { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+        .bank-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
         .bank-input { background: #020617; border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; color: white; font-size: 0.9rem; width: 100%; }
         .bank-input:focus { border-color: var(--success); outline: none; }
-        .btn-save-bank { background: #334155; border: none; color: white; padding: 10px; font-weight: 700; font-size: 0.82rem; border-radius: 6px; cursor: pointer; width: 100%; margin-bottom: 10px; }
-        .btn-payout { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
-        .btn-payout:hover { background: var(--success-hover); }
-        .btn-payout:disabled { opacity: 0.5; cursor: not-allowed; }
-        .payout-note { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 8px; line-height: 1.5; }
+        .btn-save-bank { background: #334155; border: none; color: white; padding: 12px; font-weight: 700; font-size: 0.88rem; border-radius: 6px; cursor: pointer; width: 100%; }
+        .btn-save-bank:hover { background: #475569; }
 
         /* EARNINGS TABLE */
         .earnings-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
@@ -77,8 +75,12 @@
         .earning-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
         .earning-row:last-child { border-bottom: none; }
         .earning-plate { font-family: monospace; font-weight: 700; color: var(--text); }
-        .earning-type { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; }
+        .earning-type { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+        .earning-right { text-align: right; }
         .earning-amount { font-weight: 800; color: #4ade80; }
+        .earning-status { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-top: 2px; }
+        .earning-status.paid { color: #4ade80; }
+        .earning-status.pending { color: #fbbf24; }
         .no-earnings { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px 0; }
 
         /* JOIN BOX */
@@ -95,10 +97,7 @@
 </head>
 <body>
 
-    <div class="logo-wrap">
-        <img src="awas-logo.png" alt="AWAS">
-    </div>
-
+    <div class="logo-text">AWAS</div>
     <div class="page-title">Dashboard Affiliate AWAS</div>
     <div class="page-sub">Kongsi pautan. Jana pendapatan. Automatik.</div>
 
@@ -135,6 +134,12 @@
             </div>
         </div>
 
+        <!-- SETTLEMENT NOTE -->
+        <div class="settlement-note">
+            <strong>⏱ Jadual Pembayaran Komisen</strong>
+            Pendapatan anda diproses secara automatik mengikut jadual penyelesaian bank Malaysia. Pembayaran yang diterima pada <strong style="color:#fbbf24">Isnin–Khamis</strong> akan dikreditkan ke akaun anda pada hari bekerja berikutnya. Pembayaran yang diterima pada <strong style="color:#fbbf24">Jumaat, Sabtu, Ahad atau Cuti Umum</strong> akan dikreditkan pada hari Isnin berikutnya. Tiada tindakan diperlukan daripada anda — pembayaran dihantar terus ke akaun bank anda secara automatik.
+        </div>
+
         <!-- REFERRAL LINK -->
         <div class="ref-box">
             <div class="ref-box-title">🔗 Pautan Rujukan Anda</div>
@@ -147,25 +152,20 @@
         <!-- JOIN AFFILIATE (shown if not yet affiliate) -->
         <div class="join-box" id="join-box" style="display:none;">
             <div class="join-title">🚀 Sertai Program Affiliate AWAS</div>
-            <div class="join-sub">Anda sudah berdaftar. Kini jadilah affiliate. Kongsi pautan anda. Setiap orang yang mendaftar melalui pautan anda — <span class="join-highlight">anda terima RM9.99 serta-merta</span>. Apabila mereka memperbaharui tahun depan — <span class="join-highlight">anda terima lagi</span>.</div>
+            <div class="join-sub">Anda sudah berdaftar. Kini jadilah affiliate. Kongsi pautan anda. Setiap orang yang mendaftar melalui pautan anda — <span class="join-highlight">anda terima RM9.99</span>. Apabila mereka memperbaharui tahun depan — <span class="join-highlight">anda terima lagi</span>.</div>
             <button class="btn-join" id="btn-join">Jadi Affiliate Sekarang — Percuma</button>
         </div>
 
-        <!-- PAYOUT -->
-        <div class="payout-box" id="payout-section">
-            <div class="payout-box-title">💰 Pengeluaran Pendapatan</div>
-            <div class="payout-amount" id="payout-amount-display">RM0.00</div>
-            <div class="payout-label">Baki belum dibayar</div>
-
+        <!-- BANK DETAILS -->
+        <div class="bank-box" id="bank-section">
+            <div class="bank-box-title">🏦 Butiran Bank Anda</div>
+            <div class="bank-box-sub">Masukkan butiran akaun bank anda. Komisen akan dihantar terus ke akaun ini secara automatik apabila pembayaran diselesaikan.</div>
             <div class="bank-form">
-                <input type="text" class="bank-input" id="bank-name" placeholder="Nama Bank (cth: Maybank)">
+                <input type="text" class="bank-input" id="bank-name" placeholder="Nama Bank (cth: Maybank, CIMB, RHB)">
                 <input type="text" class="bank-input" id="bank-account-number" placeholder="Nombor Akaun Bank">
-                <input type="text" class="bank-input" id="bank-account-name" placeholder="Nama Pemilik Akaun">
-                <input type="text" class="bank-input" id="duitnow-number" placeholder="Nombor DuitNow (No. Telefon/IC)">
+                <input type="text" class="bank-input" id="bank-account-name" placeholder="Nama Pemilik Akaun (seperti dalam buku bank)">
             </div>
             <button class="btn-save-bank" id="btn-save-bank">💾 Simpan Butiran Bank</button>
-            <button class="btn-payout" id="btn-request-payout" disabled>Mohon Pengeluaran</button>
-            <div class="payout-note">Minimum pengeluaran RM10. Diproses dalam 3 hari bekerja melalui DuitNow atau IBG.</div>
         </div>
 
         <!-- RECENT EARNINGS -->
@@ -212,11 +212,10 @@
                 if (res.ok) {
                     loadDashboard(data);
                 } else if (res.status === 404 && data.error && data.error.includes('Not an affiliate')) {
-                    // Driver exists but not affiliate yet — show join box
                     document.getElementById('login-box').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'block';
                     document.getElementById('join-box').style.display = 'block';
-                    document.getElementById('payout-section').style.display = 'none';
+                    document.getElementById('bank-section').style.display = 'none';
                 } else {
                     msg.className = 'status-msg error';
                     msg.innerText = data.error || 'Akaun tidak dijumpai. Sila daftar dahulu.';
@@ -240,7 +239,6 @@
             document.getElementById('stat-total').innerText = `RM${data.stats.totalEarnings.toFixed(2)}`;
             document.getElementById('stat-pending').innerText = `RM${data.stats.pendingPayout.toFixed(2)}`;
             document.getElementById('stat-paidout').innerText = `RM${data.stats.paidOut.toFixed(2)}`;
-            document.getElementById('payout-amount-display').innerText = `RM${data.stats.pendingPayout.toFixed(2)}`;
 
             document.getElementById('ref-code-display').innerText = data.referralCode;
             document.getElementById('ref-link-display').innerText = data.referralLink;
@@ -249,12 +247,6 @@
             if (data.bankDetails.bankName) document.getElementById('bank-name').value = data.bankDetails.bankName;
             if (data.bankDetails.bankAccountNumber) document.getElementById('bank-account-number').value = data.bankDetails.bankAccountNumber;
             if (data.bankDetails.bankAccountName) document.getElementById('bank-account-name').value = data.bankDetails.bankAccountName;
-            if (data.bankDetails.duitnowNumber) document.getElementById('duitnow-number').value = data.bankDetails.duitnowNumber;
-
-            // Enable payout if enough balance
-            if (data.stats.pendingPayout >= 10) {
-                document.getElementById('btn-request-payout').disabled = false;
-            }
 
             // Earnings list
             const earningsList = document.getElementById('earnings-list');
@@ -265,7 +257,10 @@
                             <div class="earning-plate">${e.referredPlate}</div>
                             <div class="earning-type">${e.type === 'REGISTRATION' ? 'Pendaftaran Baru' : 'Pembaharuan'} • ${new Date(e.date).toLocaleDateString('ms-MY')}</div>
                         </div>
-                        <div class="earning-amount">+RM${e.amount.toFixed(2)}</div>
+                        <div class="earning-right">
+                            <div class="earning-amount">+RM${e.amount.toFixed(2)}</div>
+                            <div class="earning-status ${e.isPaid ? 'paid' : 'pending'}">${e.isPaid ? '✓ Telah Dibayar' : '⏳ Belum Dibayar'}</div>
+                        </div>
                     </div>
                 `).join('');
             } else {
@@ -298,7 +293,6 @@
                 const data = await res.json();
 
                 if (res.ok || res.status === 200) {
-                    // Reload dashboard
                     const dashRes = await fetch(`${API_BASE}/api/affiliate/dashboard/${currentPlate}`);
                     const dashData = await dashRes.json();
                     if (dashRes.ok) loadDashboard(dashData);
@@ -328,7 +322,7 @@
                         bankName: document.getElementById('bank-name').value,
                         bankAccountNumber: document.getElementById('bank-account-number').value,
                         bankAccountName: document.getElementById('bank-account-name').value,
-                        duitnowNumber: document.getElementById('duitnow-number').value
+                        duitnowNumber: null
                     })
                 });
                 if (res.ok) {
@@ -341,38 +335,6 @@
             } catch {
                 btn.innerText = '💾 Simpan Butiran Bank';
                 alert('Ralat sambungan.');
-            }
-        });
-
-        // Request payout
-        document.getElementById('btn-request-payout').addEventListener('click', async () => {
-            if (!confirm('Adakah anda pasti untuk memohon pengeluaran?')) return;
-            const btn = document.getElementById('btn-request-payout');
-            btn.disabled = true;
-            btn.innerText = '⏳ Memproses...';
-
-            try {
-                const res = await fetch(`${API_BASE}/api/affiliate/payout`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ vehiclePlate: currentPlate })
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    alert(data.message);
-                    document.getElementById('stat-pending').innerText = 'RM0.00';
-                    document.getElementById('payout-amount-display').innerText = 'RM0.00';
-                    btn.innerText = '✅ Permohonan Dihantar';
-                } else {
-                    alert(data.error || 'Gagal memohon pengeluaran.');
-                    btn.disabled = false;
-                    btn.innerText = 'Mohon Pengeluaran';
-                }
-            } catch {
-                alert('Ralat sambungan.');
-                btn.disabled = false;
-                btn.innerText = 'Mohon Pengeluaran';
             }
         });
     </script>
