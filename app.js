@@ -261,19 +261,12 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtn.disabled = true;
 
         try {
-            const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLat},${currentLng}&zoom=16&size=560x200&markers=color:red%7C${currentLat},${currentLng}&key=AIzaSyB3bFsSpPNzev3zafGTFlXjahkqjU-vgjA`;
-            mapContainer.innerHTML = `<img id="map-static-img" src="${staticMapUrl}&v=${Date.now()}" style="width:100%;height:100%;object-fit:cover;border:none;" alt="Peta Lokasi GPS" crossorigin="anonymous">`;
-
-            await new Promise((resolve) => {
-    const img = document.getElementById('map-static-img');
-    if (img && !img.complete) {
-        img.onload = resolve;
-        img.onerror = resolve;
-        setTimeout(resolve, 5000);
-    } else {
-        setTimeout(resolve, 1000);
-    }
-});
+            const mapRes = await fetch(`${API_BASE}/api/maps/static?lat=${currentLat}&lng=${currentLng}`);
+            const mapData = await mapRes.json();
+            if (mapData.mapBase64) {
+                mapContainer.innerHTML = `<img id="map-static-img" src="${mapData.mapBase64}" style="width:100%;height:100%;object-fit:cover;border:none;" alt="Peta Lokasi GPS">`;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             const reportEl = document.getElementById('report-view');
             const canvas = await html2canvas(reportEl, {
