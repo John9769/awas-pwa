@@ -40,7 +40,6 @@ function checkGPSAndProceed() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Check GPS on load
     checkGPSAndProceed();
 
     const recordTrigger = document.getElementById('record-trigger');
@@ -210,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfInjury.innerText = formatKecederaan(injuryStatus);
             pdfDescription.innerText = incidentDescription || '—';
 
+            // On-screen map — OSM iframe for viewing
             mapContainer.innerHTML = `<iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -253,79 +253,75 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('report-modal').classList.remove('show');
     });
 
-    document.getElementById('btn-get-certified').addEventListener('click', async () => {
+    // PDF GENERATION — GEMINI APPROACH: sync handler, onload callback, src set last
+    document.getElementById('btn-get-certified').addEventListener('click', () => {
         document.getElementById('report-modal').classList.remove('show');
 
         const downloadBtn = document.getElementById('print-btn');
         downloadBtn.innerText = '⏳ Menyediakan PDF anda...';
         downloadBtn.disabled = true;
 
-        try {
-            let mapImg = document.getElementById('pdf-map-tag');
-            if (!mapImg) {
-                mapImg = document.createElement('img');
-                mapImg.id = 'pdf-map-tag';
-                mapImg.crossOrigin = 'anonymous';
-                mapImg.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-                document.getElementById('map-frame-container').appendChild(mapImg);
-            } else {
-                mapImg.crossOrigin = 'anonymous';
-                mapImg.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-            }
+        // Step 1: Clear container completely — remove iframe
+        mapContainer.innerHTML = '';
 
-            await new Promise((resolve) => {
-                mapImg.onload = resolve;
-                mapImg.onerror = resolve;
-                setTimeout(resolve, 8000);
-                mapImg.src = `${API_BASE}/api/maps/static?lat=${currentLat}&lng=${currentLng}&t=${Date.now()}`;
-            });
+        // Step 2: Create img, set crossOrigin BEFORE src — critical for CORS
+        const mapImg = document.createElement('img');
+        mapImg.id = 'pdf-map-tag';
+        mapImg.crossOrigin = 'anonymous';
+        mapImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;';
 
-            const reportEl = document.getElementById('report-view');
-            const canvas = await html2canvas(reportEl, {
+        // Step 3: All PDF logic inside onload — image is guaranteed painted before html2canvas
+        mapImg.onload = () => {
+            html2canvas(document.getElementById('report-view'), {
                 scale: 2,
                 useCORS: true,
                 allowTaint: false,
                 backgroundColor: '#ffffff',
-                logging: false,
-                useOverflow: false
-            });
-
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const imgWidth = pageWidth;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-            let heightLeft = imgHeight;
-            let position = 0;
-
-            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
+                logging: false
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = pageWidth;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
                 pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
-            }
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
+                pdf.save(fileName);
 
-            const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
-            pdf.save(fileName);
+                // Restore OSM iframe after PDF saved
+                mapContainer.innerHTML = `<iframe
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
+                    style="width:100%;height:300px;border:none;margin-bottom:-80px;"
+                    loading="lazy">
+                </iframe>`;
 
-            mapContainer.innerHTML = `<iframe
-                src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
-                style="width:100%;height:300px;border:none;margin-bottom:-80px;"
-                loading="lazy">
-            </iframe>`;
+                downloadBtn.innerText = '✅ PDF Dimuat Turun — Semak Fail Anda';
+                downloadBtn.disabled = false;
 
-            downloadBtn.innerText = '✅ PDF Dimuat Turun — Semak Fail Anda';
-            downloadBtn.disabled = false;
+            }).catch(err => {
+                mapContainer.innerHTML = `<iframe
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
+                    style="width:100%;height:300px;border:none;margin-bottom:-80px;"
+                    loading="lazy">
+                </iframe>`;
+                downloadBtn.innerText = '📄 Dapatkan Writ Balai Rasmi — RM8';
+                downloadBtn.disabled = false;
+                alert('RALAT html2canvas: ' + err.message);
+            });
+        };
 
-        } catch (err) {
-            console.error('PDF generation fault:', err);
+        mapImg.onerror = () => {
             mapContainer.innerHTML = `<iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -333,8 +329,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </iframe>`;
             downloadBtn.innerText = '📄 Dapatkan Writ Balai Rasmi — RM8';
             downloadBtn.disabled = false;
-            alert('RALAT: ' + err.message + ' | ' + err.name);
-        }
+            alert('RALAT peta: Gagal memuatkan imej peta. Cuba lagi.');
+        };
+
+        // Step 4: Append to DOM, then set src LAST — triggers fetch with correct CORS headers
+        mapContainer.appendChild(mapImg);
+        mapImg.src = `${API_BASE}/api/maps/static?lat=${currentLat}&lng=${currentLng}&t=${Date.now()}`;
     });
 
     // MALAY FORMAT HELPERS
