@@ -261,9 +261,14 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtn.disabled = true;
 
         try {
-            const mapImg = document.getElementById('pdf-map-tag');
+            let mapImg = document.getElementById('pdf-map-tag');
+            if (!mapImg) {
+                mapImg = document.createElement('img');
+                mapImg.id = 'pdf-map-tag';
+                document.getElementById('map-frame-container').appendChild(mapImg);
+            }
+            mapImg.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
             mapImg.crossOrigin = 'anonymous';
-            mapImg.style.display = 'block';
 
             await new Promise((resolve) => {
                 mapImg.onload = resolve;
@@ -278,7 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 useCORS: true,
                 allowTaint: false,
                 backgroundColor: '#ffffff',
-                logging: false
+                logging: false,
+                useOverflow: false
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -324,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </iframe>`;
             downloadBtn.innerText = '📄 Dapatkan Writ Balai Rasmi — RM8';
             downloadBtn.disabled = false;
-            alert('Jana PDF gagal. Sila cuba lagi.');
+            alert('RALAT: ' + err.message + ' | ' + err.name);
         }
     });
 
