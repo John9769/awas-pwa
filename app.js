@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtn.disabled = true;
 
         try {
-            const staticMapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${currentLat},${currentLng}&zoom=16&size=560x200&markers=${currentLat},${currentLng},lightblue1`;
+            const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLat},${currentLng}&zoom=16&size=560x200&markers=color:red%7C${currentLat},${currentLng}&key=AIzaSyB3bFsSpPNzev3zafGTFlXjahkqjU-vgjA`;
             mapContainer.innerHTML = `<img src="${staticMapUrl}" style="width:100%;height:100%;object-fit:cover;border:none;" alt="Peta Lokasi GPS" crossorigin="anonymous">`;
 
             await new Promise(resolve => setTimeout(resolve, 2000));
