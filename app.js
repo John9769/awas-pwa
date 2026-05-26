@@ -261,12 +261,16 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtn.disabled = true;
 
         try {
-            const mapRes = await fetch(`${API_BASE}/api/maps/static?lat=${currentLat}&lng=${currentLng}`);
-            const mapData = await mapRes.json();
-            if (mapData.mapBase64) {
-                mapContainer.innerHTML = `<img id="map-static-img" src="${mapData.mapBase64}" style="width:100%;height:100%;object-fit:cover;border:none;" alt="Peta Lokasi GPS">`;
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const mapImg = document.getElementById('pdf-map-tag');
+            mapImg.crossOrigin = 'anonymous';
+            mapImg.style.display = 'block';
+
+            await new Promise((resolve) => {
+                mapImg.onload = resolve;
+                mapImg.onerror = resolve;
+                setTimeout(resolve, 8000);
+                mapImg.src = `${API_BASE}/api/maps/static?lat=${currentLat}&lng=${currentLng}&t=${Date.now()}`;
+            });
 
             const reportEl = document.getElementById('report-view');
             const canvas = await html2canvas(reportEl, {
