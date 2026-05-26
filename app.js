@@ -265,10 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!mapImg) {
                 mapImg = document.createElement('img');
                 mapImg.id = 'pdf-map-tag';
+                mapImg.crossOrigin = 'anonymous';
+                mapImg.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
                 document.getElementById('map-frame-container').appendChild(mapImg);
+            } else {
+                mapImg.crossOrigin = 'anonymous';
+                mapImg.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
             }
-            mapImg.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-            mapImg.crossOrigin = 'anonymous';
 
             await new Promise((resolve) => {
                 mapImg.onload = resolve;
