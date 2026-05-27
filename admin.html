@@ -367,7 +367,7 @@ async function loadWrits() {
             <td class="mono" style="font-size:0.68rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;">${w.videoHash?w.videoHash.substring(0,20)+'...':'—'}</td>
             <td class="mono">${fmtDate(w.videoSealedAt)}</td>
             <td class="mono">${fmtDate(w.createdAt)}</td>
-            <td>${w.videoStatus==='VERIFIED'?`<button class="btn-sm btn-play" onclick="playVideo('${w.logHash}','${w.writNumber}','${w.videoHash}','${w.vehiclePlate}')">▶ Play</button>`:'—'}</td>
+            <td>${w.videoStatus==='VERIFIED'?`<button class="btn-sm btn-play" onclick="playVideo('${w.logHash}','${w.writNumber}','${w.videoHash}','${w.vehiclePlate}','${w.sealedVideoUrl}')">▶ Play</button>`:'—'}</td>
         </tr>
     `).join('');
 }
@@ -472,8 +472,8 @@ async function loadRequests() {
 }
 
 // VIDEO MODAL
-function playVideo(logHash, writNumber, videoHash, plate) {
-    const videoUrl = `${API_BASE}/api/admin/video/${logHash}?key=${encodeURIComponent(ADMIN_KEY)}`;
+function playVideo(logHash, writNumber, videoHash, plate, sealedUrl) {
+    const videoUrl = sealedUrl;
     document.getElementById('modal-writ-title').innerText = `${writNumber} — ${plate}`;
     document.getElementById('modal-video').src = videoUrl;
     document.getElementById('modal-meta').innerHTML = `
