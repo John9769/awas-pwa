@@ -235,6 +235,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             window.scrollTo(0, 0);
 
+            // Upload video to AWAS server in background — fire and forget
+            if (ownVideoBase64) {
+                uploadVideoToAWAS(ownHash, ownVideoBase64);
+            }
+
         } catch (fault) {
             console.error('AWAS Submit Fault:', fault);
             btn.innerText = '🔒 Jana Writ Forensik AWAS';
@@ -391,6 +396,39 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.onload = () => resolve(reader.result);
             reader.onerror = (err) => reject(err);
         });
+    }
+
+    // BACKGROUND VIDEO UPLOAD — fire and forget, does not block writ generation
+    async function uploadVideoToAWAS(logHash, videoBase64) {
+        try {
+            // Convert base64 to blob
+            const base64Data = videoBase64.split(',')[1];
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const videoBlob = new Blob([byteArray], { type: 'video/mp4' });
+
+            const formData = new FormData();
+            formData.append('logHash', logHash);
+            formData.append('video', videoBlob, `awas_${logHash.substring(0, 8)}.mp4`);
+
+            const res = await fetch(`${API_BASE}/api/logs/upload-video`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                console.log('AWAS Video sealed:', data.videoHash);
+            } else {
+                console.error('AWAS Video upload failed:', data.error);
+            }
+        } catch (err) {
+            console.error('AWAS Video upload error:', err.message);
+        }
     }
 
     async function executeLocalSHA256(inputMessageString) {
