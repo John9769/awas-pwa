@@ -473,7 +473,7 @@ async function loadRequests() {
 
 // VIDEO MODAL
 function playVideo(logHash, writNumber, videoHash, plate, sealedUrl) {
-    const videoUrl = sealedUrl;
+    const videoUrl = `${API_BASE}/api/admin/video/${logHash}?key=${encodeURIComponent(ADMIN_KEY)}`;
     document.getElementById('modal-writ-title').innerText = `${writNumber} — ${plate}`;
     document.getElementById('modal-video').src = videoUrl;
     document.getElementById('modal-meta').innerHTML = `
