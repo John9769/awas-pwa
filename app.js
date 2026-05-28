@@ -278,57 +278,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Step 3: All PDF logic inside onload — image is guaranteed painted before html2canvas
         mapImg.onload = () => {
-            html2canvas(document.getElementById('report-view'), {
-                scale: 2,
-                useCORS: true,
-                allowTaint: false,
-                backgroundColor: '#ffffff',
-                logging: false
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                const imgWidth = pageWidth;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                pdf.setFillColor(255, 255, 255);
-                pdf.rect(0, pageHeight - 1, pageWidth, 2, 'F');
-                heightLeft -= pageHeight;
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                    pdf.setFillColor(255, 255, 255);
-                    pdf.rect(0, 0, pageWidth, 2, 'F');
-                    pdf.rect(0, pageHeight - 1, pageWidth, 2, 'F');
-                    heightLeft -= pageHeight;
-                }
-                const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
-                pdf.save(fileName);
+            const { jsPDF } = window.jspdf;
+            const reportEl = document.getElementById('report-view');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
 
-                // Restore OSM iframe after PDF saved
-                mapContainer.innerHTML = `<iframe
-                    src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
-                    style="width:100%;height:300px;border:none;margin-bottom:-80px;"
-                    loading="lazy">
-                </iframe>`;
-
-                downloadBtn.innerText = '✅ PDF Dimuat Turun — Semak Fail Anda';
-                downloadBtn.disabled = false;
-
-            }).catch(err => {
-                mapContainer.innerHTML = `<iframe
-                    src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
-                    style="width:100%;height:300px;border:none;margin-bottom:-80px;"
-                    loading="lazy">
-                </iframe>`;
-                downloadBtn.innerText = '📄 Dapatkan Writ Balai Rasmi — RM8';
-                downloadBtn.disabled = false;
-                alert('RALAT html2canvas: ' + err.message);
+            pdf.html(reportEl, {
+                callback: function(doc) {
+                    doc.save(fileName);
+                    mapContainer.innerHTML = `<iframe
+                        src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
+                        style="width:100%;height:300px;border:none;margin-bottom:-80px;"
+                        loading="lazy">
+                    </iframe>`;
+                    downloadBtn.innerText = '✅ PDF Dimuat Turun — Semak Fail Anda';
+                    downloadBtn.disabled = false;
+                },
+                margin: [10, 10, 10, 10],
+                autoPaging: 'text',
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                },
+                x: 10,
+                y: 10,
+                width: 190,
+                windowWidth: reportEl.scrollWidth
             });
         };
 
