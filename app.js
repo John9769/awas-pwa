@@ -295,11 +295,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 let heightLeft = imgHeight;
                 let position = 0;
                 pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                pdf.setFillColor(255, 255, 255);
+                pdf.rect(0, pageHeight - 1, pageWidth, 2, 'F');
                 heightLeft -= pageHeight;
                 while (heightLeft > 0) {
                     position = heightLeft - imgHeight;
                     pdf.addPage();
                     pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                    pdf.setFillColor(255, 255, 255);
+                    pdf.rect(0, 0, pageWidth, 2, 'F');
+                    pdf.rect(0, pageHeight - 1, pageWidth, 2, 'F');
                     heightLeft -= pageHeight;
                 }
                 const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
