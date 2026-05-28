@@ -291,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 for (let i = 0; i < sections.length; i++) {
                     const section = sections[i];
+                    if (section.offsetWidth === 0 || section.offsetHeight === 0) continue;
                     const canvas = await html2canvas(section, {
                         scale: 2,
                         useCORS: true,
