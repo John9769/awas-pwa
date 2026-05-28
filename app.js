@@ -232,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reportView.style.display = 'flex';
             checklistBox.style.display = 'block';
             printBtn.style.display = 'block';
+            document.getElementById('btn-back-home').style.display = 'block';
 
             window.scrollTo(0, 0);
 
