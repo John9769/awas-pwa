@@ -277,31 +277,37 @@ document.addEventListener('DOMContentLoaded', () => {
         mapImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;';
 
         // Step 3: All PDF logic inside onload — image is guaranteed painted before html2canvas
-        mapImg.onload = () => {
-            html2canvas(document.getElementById('report-view'), {
-                scale: 2,
-                useCORS: true,
-                allowTaint: false,
-                backgroundColor: '#ffffff',
-                logging: false
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        mapImg.onload = async () => {
+            try {
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                const imgWidth = pageWidth;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
+                const reportView = document.getElementById('report-view');
+                const sections = reportView.querySelectorAll('.report-section');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const margin = 10;
+                const contentWidth = pdfWidth - (margin * 2);
+                let currentY = margin;
+
+                for (let i = 0; i < sections.length; i++) {
+                    const section = sections[i];
+                    const canvas = await html2canvas(section, {
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: false,
+                        backgroundColor: '#ffffff',
+                        logging: false
+                    });
+                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                    const imgHeight = (canvas.height * contentWidth) / canvas.width;
+                    if (currentY + imgHeight > pdfHeight - margin) {
+                        pdf.addPage();
+                        currentY = margin;
+                    }
+                    pdf.addImage(imgData, 'JPEG', margin, currentY, contentWidth, imgHeight);
+                    currentY += imgHeight + 3;
                 }
+
                 const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
                 pdf.save(fileName);
                 mapContainer.innerHTML = `<iframe
@@ -311,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </iframe>`;
                 downloadBtn.innerText = '✅ PDF Dimuat Turun — Semak Fail Anda';
                 downloadBtn.disabled = false;
-            }).catch(err => {
+            } catch (err) {
                 mapContainer.innerHTML = `<iframe
                     src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                     style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -319,8 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </iframe>`;
                 downloadBtn.innerText = '📄 Dapatkan Writ Balai Rasmi — RM8';
                 downloadBtn.disabled = false;
-                alert('RALAT html2canvas: ' + err.message);
-            });
+                alert('RALAT: ' + err.message);
+            }
         };
 
         mapImg.onerror = () => {

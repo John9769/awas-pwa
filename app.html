@@ -81,6 +81,7 @@
 
         /* SCREEN 3 — REPORT */
         #report-view { display: none; width: 100%; max-width: 600px; background: white; color: #000; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-direction: column; gap: 16px; }
+        .report-section { page-break-inside: avoid; break-inside: avoid; }
         .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; }
         .report-title { font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .report-subtitle { font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase; margin-top: 2px; }
@@ -264,7 +265,7 @@
 
     <!-- SCREEN 3 -->
     <div id="report-view">
-        <div class="report-header">
+        <div class="report-section report-header">
             <div>
                 <div class="report-title">Writ Forensik AWAS</div>
                 <div class="report-subtitle">Accident Writ Automation System — Bukti Dokumen Digital</div>
@@ -277,6 +278,7 @@
             </div>
         </div>
 
+        <div class="report-section">
         <div class="section-title">1. Maklumat Pemandu & Kenderaan (Pengadu)</div>
         <div class="data-grid">
             <div>
@@ -305,6 +307,8 @@
             </div>
         </div>
 
+        </div>
+        <div class="report-section">
         <div class="section-title">2. Telemetri Lokasi Satelit GPS</div>
         <div class="data-grid" style="margin-bottom:10px;">
             <div>
@@ -320,6 +324,8 @@
             <img id="pdf-map-tag" src="" style="width:100%;height:100%;object-fit:cover;display:none;" alt="Peta Lokasi GPS" crossorigin="anonymous">
         </div>
 
+        </div>
+        <div class="report-section">
         <div class="section-title">3. Butiran Insiden</div>
         <div class="data-grid">
             <div>
@@ -340,7 +346,8 @@
             <div class="data-value" id="pdf-description" style="margin-top:4px;font-size:0.85rem;line-height:1.5;">—</div>
         </div>
 
-        <div id="pdf-other-party-section" style="display:none;">
+        </div>
+        <div id="pdf-other-party-section" class="report-section" style="display:none;">
             <div class="section-title">4. Kenderaan Pihak Lain (Catatan Pengadu)</div>
             <div class="data-grid">
                 <div>
@@ -357,19 +364,21 @@
             </div>
         </div>
 
+        <div class="report-section">
         <div class="section-title"><span id="sha-section-num">4.</span> Tandatangan Digital <span style="white-space:nowrap">SHA-256</span></div>
         <div class="hash-box">
             <div class="hash-label">✅ TANDATANGAN FORENSIK<br>KENDERAAN ANDA</div>
             <span id="pdf-hash">—</span>
         </div>
 
-        <div class="awas-stamp">
+        </div>
+        <div class="report-section awas-stamp">
             <div class="stamp-title">Writ Bertauliah AWAS</div>
             <div class="stamp-value" id="stamp-writ">AWAS/MY/----/------</div>
             <div class="stamp-sub">Accident Writ Automation System</div>
         </div>
 
-        <div class="seal-note">
+        <div class="report-section seal-note">
             ✅ <strong>Bukti Tersedia.</strong> Dokumen ini dihasilkan pada masa kejadian berlaku. Tandatangan SHA-256 di atas membuktikan data ini tidak diubah. Sebarang pengubahan pada video, GPS atau cap masa akan menghasilkan hash yang berbeza — menjadikan sebarang gangguan boleh dikesan serta-merta oleh polis, penanggung insurans dan mahkamah.
         </div>
 
