@@ -93,6 +93,9 @@
                 <select id="vehicle-type" required>
                     <option value="CAR">Kereta</option>
                     <option value="MOTORCYCLE">Motosikal</option>
+                    <option value="LORRY">Lori</option>
+                    <option value="BUS">Bas</option>
+                    <option value="VAN">Van</option>
                 </select>
             </div>
             <div class="form-group">
@@ -141,7 +144,7 @@
             <div class="referral-badge" id="referral-badge" style="display:none;">
                 <div class="referral-badge-title">🔗 Kod Affiliate Anda</div>
                 <div class="referral-code-display" id="my-referral-code">--------</div>
-                <div class="referral-badge-sub">Kongsi kod ini. Setiap pendaftaran baru melalui kod anda — anda terima <strong style="color:#4ade80;">RM9.99 setiap kali</strong>. Termasuk pembaharuan tahunan.</div>
+                <div class="referral-badge-sub">Kongsi kod ini. Setiap pendaftaran baru melalui kod anda — anda terima <strong style="color:#4ade80;">RM4.99 setiap kali</strong>. Termasuk pembaharuan tahunan.</div>
                 <div class="referral-link-box" id="my-referral-link">https://awas-pwa.vercel.app/register.html?ref=AWASXXXX</div>
             </div>
         </div>
@@ -212,7 +215,7 @@
                 const data = await res.json();
                 if (res.ok && data.valid) {
                     statusEl.className = 'ref-status valid';
-                    statusEl.innerText = '✅ Kod sah! RM9.99 akan dikreditkan kepada pemilik kod ini.';
+                    statusEl.innerText = '✅ Kod sah!';
                 } else {
                     statusEl.className = 'ref-status invalid';
                     statusEl.innerText = '❌ Kod tidak sah atau tidak aktif.';

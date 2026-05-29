@@ -197,7 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfTime.innerText = eventTimestamp.toLocaleTimeString('ms-MY') + ' MYT';
             pdfPlate.innerText = cachedPlate;
             pdfModel.innerText = cachedModel;
-            document.getElementById('pdf-vtype').innerText = cachedVType === 'MOTORCYCLE' ? 'Motosikal' : 'Kereta';
+            const vtypeMap = { CAR: 'Kereta', MOTORCYCLE: 'Motosikal', LORRY: 'Lori', BUS: 'Bas', VAN: 'Van' };
+            document.getElementById('pdf-vtype').innerText = vtypeMap[cachedVType] || 'Kereta';
             pdfMykad.innerText = `******-XX-${cachedMykad}`;
             document.getElementById('pdf-phone').innerText = cachedPhone || '—';
             pdfLat.innerText = currentLat;

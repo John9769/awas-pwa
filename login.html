@@ -122,7 +122,8 @@
                     statusBox.style.display = 'none';
                     document.getElementById('profile-plate').innerText = data.vehiclePlate;
                     document.getElementById('profile-model').innerText = data.vehicleMakeModel;
-                    document.getElementById('profile-type').innerText = data.vehicleType === 'MOTORCYCLE' ? '🏍️ Motosikal' : '🚗 Kereta';
+                    const vtypeMap = { CAR: '🚗 Kereta', MOTORCYCLE: '🏍️ Motosikal', LORRY: '🚛 Lori', BUS: '🚌 Bas', VAN: '🚐 Van' };
+                    document.getElementById('profile-type').innerText = vtypeMap[data.vehicleType] || '🚗 Kereta';
                     profileBox.style.display = 'block';
                     btnLogin.innerText = '✅ Berjaya';
 
