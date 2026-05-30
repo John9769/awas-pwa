@@ -7,6 +7,7 @@ const API_BASE = 'https://awas-backend.onrender.com';
 
 let gpsCoordinates = null;
 let ownVideoBase64 = null;
+let ownVideoFile = null;
 let ownHash = null;
 let otherVideoBase64 = null;
 let otherHash = null;
@@ -77,10 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!files || files.length === 0) return;
 
         recordTrigger.style.display = 'none';
-        statusDisplay.innerHTML = '⚡ <strong>METERAI BUKTI ANDA...</strong><br>Mengunci GPS, menghash video, mencap masa.';
+        statusDisplay.innerHTML = '\u26a1 <strong>METERAI BUKTI ANDA...</strong><br>Mengunci GPS, menghash video, mencap masa.';
 
         try {
             eventTimestamp = new Date();
+            ownVideoFile = files[0];
 
             [gpsCoordinates, ownVideoBase64] = await Promise.all([
                 acquirePreciseLocation(),
@@ -105,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (fault) {
             console.error('AWAS Capture Fault:', fault);
             recordTrigger.style.display = 'flex';
-            statusDisplay.innerHTML = `⚠️ <strong>RAKAMAN GAGAL:</strong><br>${fault.message}. Cuba lagi.`;
+            statusDisplay.innerHTML = `\u26a0\ufe0f <strong>RAKAMAN GAGAL:</strong><br>${fault.message}. Cuba lagi.`;
         }
     });
 
@@ -117,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const files = event.target.files;
         if (!files || files.length === 0) return;
 
-        document.getElementById('btn-record-other').innerText = '⏳ Merakam kenderaan lain...';
+        document.getElementById('btn-record-other').innerText = '\u23f3 Merakam kenderaan lain...';
         document.getElementById('btn-record-other').disabled = true;
 
         try {
@@ -134,21 +136,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error('Other party capture fault:', err);
-            document.getElementById('btn-record-other').innerText = '📹 Rakam Kenderaan Lain';
+            document.getElementById('btn-record-other').innerText = '\ud83d\udcf9 Rakam Kenderaan Lain';
             document.getElementById('btn-record-other').disabled = false;
         }
     });
 
+    // GENERATE WRIT - now gated by LPR verification on the server.
+    // The video is uploaded to /verify-seal. The server reads the plate from the
+    // video, checks it against the registered (paid, active) account, and ONLY
+    // issues a writ if the plate is readable AND matches. We WAIT for that verdict
+    // before showing anything. No pass = no writ.
     document.getElementById('btn-generate-report').addEventListener('click', async () => {
         const btn = document.getElementById('btn-generate-report');
-        btn.innerText = '⏳ Menjana Writ Forensik...';
+
+        if (!ownVideoFile) {
+            showGateError('Tiada video untuk disahkan. Sila rakam video kenderaan anda dahulu.');
+            return;
+        }
+
+        btn.innerText = '\ud83d\udd0d Mengesahkan plat kenderaan anda...';
         btn.disabled = true;
+        showGateStatus('\ud83d\udd0d <strong>MENGESAHKAN PLAT KENDERAAN...</strong><br>AWAS sedang membaca plat dari video anda. Ini mengambil masa 15-40 saat. Jangan tutup skrin.');
 
         const cachedPlate = localStorage.getItem('awas_vehicle_plate') || 'WD519A';
         const cachedModel = localStorage.getItem('awas_vehicle_model') || 'Perodua Myvi 1.5';
         const cachedMykad = localStorage.getItem('awas_mykad_four') || '5678';
         const cachedVType = localStorage.getItem('awas_vehicle_type') || 'CAR';
-        const cachedPhone = localStorage.getItem('awas_phone') || '—';
+        const cachedPhone = localStorage.getItem('awas_phone') || '\u2014';
 
         const incidentDescription = document.getElementById('incident-description').value.trim() || null;
         const roadCondition = document.getElementById('road-condition').value;
@@ -157,34 +171,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const otherPlate = document.getElementById('other-plate').value.toUpperCase().replace(/\s+/g, '') || null;
         const otherModel = document.getElementById('other-model').value.trim() || null;
-
-        const videoUrl = `https://awas.media/${ownHash}.mp4`;
         const otherVideoUrl = otherHash ? `https://awas.media/${otherHash}.mp4` : null;
 
-        const submissionBody = {
-            logHash: ownHash,
-            vehiclePlate: cachedPlate,
-            latitude: gpsCoordinates.latitude,
-            longitude: gpsCoordinates.longitude,
-            videoUrl,
-            incidentDescription,
-            roadCondition,
-            weatherCondition,
-            injuryStatus,
-            otherVehiclePlate: otherPlate,
-            otherVehicleMakeModel: otherModel,
-            otherVehicleVideoUrl: otherVideoUrl,
-            otherVehicleHash: otherHash || null
-        };
+        const formData = new FormData();
+        formData.append('video', ownVideoFile, `awas_${ownHash.substring(0, 8)}.mp4`);
+        formData.append('logHash', ownHash);
+        formData.append('claimedPlate', cachedPlate);
+        formData.append('latitude', gpsCoordinates.latitude);
+        formData.append('longitude', gpsCoordinates.longitude);
+        if (incidentDescription) formData.append('incidentDescription', incidentDescription);
+        formData.append('roadCondition', roadCondition);
+        formData.append('weatherCondition', weatherCondition);
+        formData.append('injuryStatus', injuryStatus);
+        if (otherPlate) formData.append('otherVehiclePlate', otherPlate);
+        if (otherModel) formData.append('otherVehicleMakeModel', otherModel);
+        if (otherVideoUrl) formData.append('otherVehicleVideoUrl', otherVideoUrl);
+        if (otherHash) formData.append('otherVehicleHash', otherHash);
 
         try {
-            const response = await fetch(`${API_BASE}/api/logs/submit`, {
+            const response = await fetch(`${API_BASE}/api/logs/verify-seal`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(submissionBody)
+                body: formData
             });
 
             const result = await response.json();
+
+            // GATE REJECTED - no writ. Show clear reason, let user retry.
+            if (!response.ok) {
+                let msg = result.error || 'Pengesahan gagal. Cuba lagi.';
+                if (result.reason === 'UNREADABLE') {
+                    msg = '\u274c Plat kenderaan tidak dapat dibaca dari video. Pastikan plat anda kelihatan jelas dan terang. Rakam semula video kenderaan anda.';
+                } else if (result.reason === 'NOT_REGISTERED') {
+                    msg = '\u274c Plat dalam video bukan akaun AWAS berdaftar. Hanya kenderaan yang telah didaftarkan diterima.';
+                } else if (result.reason === 'MISMATCH') {
+                    msg = '\u274c Plat dalam video tidak sepadan dengan akaun log masuk anda. Hanya video kenderaan anda sendiri diterima.';
+                } else if (result.reason === 'SUBSCRIPTION_INACTIVE') {
+                    msg = '\u274c Langganan AWAS anda tidak aktif. Sila perbaharui sebelum menjana writ.';
+                }
+                showGateError(msg);
+                btn.innerText = '\ud83d\udd12 Jana Writ Forensik AWAS';
+                btn.disabled = false;
+                return;
+            }
+
+            // GATE PASSED - writ issued by the server. Render it.
+            clearGateStatus();
             currentWritNumber = result.writNumber || 'AWAS/MY/PENDING';
             currentLat = gpsCoordinates.latitude.toFixed(6);
             currentLng = gpsCoordinates.longitude.toFixed(6);
@@ -195,12 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfLogId.innerText = ownHash.substring(0, 8).toUpperCase();
             pdfDate.innerText = eventTimestamp.toLocaleDateString('ms-MY');
             pdfTime.innerText = eventTimestamp.toLocaleTimeString('ms-MY') + ' MYT';
-            pdfPlate.innerText = cachedPlate;
-            pdfModel.innerText = cachedModel;
+            pdfPlate.innerText = result.verifiedPlate || cachedPlate;
+            pdfModel.innerText = result.vehicleMakeModel || cachedModel;
             const vtypeMap = { CAR: 'Kereta', MOTORCYCLE: 'Motosikal', LORRY: 'Lori', BUS: 'Bas', VAN: 'Van' };
-            document.getElementById('pdf-vtype').innerText = vtypeMap[cachedVType] || 'Kereta';
+            document.getElementById('pdf-vtype').innerText = vtypeMap[result.vehicleType || cachedVType] || 'Kereta';
             pdfMykad.innerText = `******-XX-${cachedMykad}`;
-            document.getElementById('pdf-phone').innerText = cachedPhone || '—';
+            document.getElementById('pdf-phone').innerText = cachedPhone || '\u2014';
             pdfLat.innerText = currentLat;
             pdfLng.innerText = currentLng;
             pdfHash.innerText = ownHash;
@@ -208,9 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfRoad.innerText = formatKeadaanJalan(roadCondition);
             pdfWeather.innerText = formatCuaca(weatherCondition);
             pdfInjury.innerText = formatKecederaan(injuryStatus);
-            pdfDescription.innerText = incidentDescription || '—';
+            pdfDescription.innerText = incidentDescription || '\u2014';
 
-            // On-screen map — OSM iframe for viewing
             mapContainer.innerHTML = `<iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -220,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (otherPlate) {
                 document.getElementById('pdf-other-party-section').style.display = 'block';
                 document.getElementById('pdf-other-plate').innerText = otherPlate;
-                document.getElementById('pdf-other-model').innerText = otherModel || '—';
+                document.getElementById('pdf-other-model').innerText = otherModel || '\u2014';
                 document.getElementById('sha-section-num').innerText = '5.';
             } else {
                 document.getElementById('pdf-other-party-section').style.display = 'none';
@@ -237,18 +267,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
             window.scrollTo(0, 0);
 
-            // Upload video to AWAS server in background — fire and forget
-            if (ownVideoBase64) {
-                uploadVideoToAWAS(ownHash, ownVideoBase64);
-            }
-
         } catch (fault) {
-            console.error('AWAS Submit Fault:', fault);
-            btn.innerText = '🔒 Jana Writ Forensik AWAS';
+            console.error('AWAS Verify Fault:', fault);
+            showGateError('\u26a0\ufe0f Masalah sambungan semasa pengesahan. Periksa internet anda dan cuba lagi. Jika pelayan baru bangun, cuba sekali lagi dalam beberapa saat.');
+            btn.innerText = '\ud83d\udd12 Jana Writ Forensik AWAS';
             btn.disabled = false;
-            alert('Gagal menghantar bukti. Periksa sambungan anda dan cuba lagi.');
         }
     });
+
+    function showGateStatus(html) {
+        let box = document.getElementById('gate-status-box');
+        if (!box) {
+            box = document.createElement('div');
+            box.id = 'gate-status-box';
+            box.style.cssText = 'width:100%;background:#1e293b;border-left:5px solid #eab308;padding:16px;border-radius:8px;font-size:0.9rem;line-height:1.5;color:#fde68a;margin-bottom:4px;';
+            const genBtn = document.getElementById('btn-generate-report');
+            genBtn.parentNode.insertBefore(box, genBtn);
+        }
+        box.style.borderLeftColor = '#eab308';
+        box.style.color = '#fde68a';
+        box.innerHTML = html;
+        box.style.display = 'block';
+    }
+
+    function showGateError(msg) {
+        let box = document.getElementById('gate-status-box');
+        if (!box) {
+            box = document.createElement('div');
+            box.id = 'gate-status-box';
+            box.style.cssText = 'width:100%;background:#1e293b;border-left:5px solid #dc2626;padding:16px;border-radius:8px;font-size:0.9rem;line-height:1.5;margin-bottom:4px;';
+            const genBtn = document.getElementById('btn-generate-report');
+            genBtn.parentNode.insertBefore(box, genBtn);
+        }
+        box.style.borderLeftColor = '#dc2626';
+        box.style.color = '#fca5a5';
+        box.innerHTML = msg;
+        box.style.display = 'block';
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function clearGateStatus() {
+        const box = document.getElementById('gate-status-box');
+        if (box) box.style.display = 'none';
+    }
 
     printBtn.addEventListener('click', () => {
         document.getElementById('report-modal').classList.add('show');
@@ -260,30 +321,27 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('report-modal').classList.remove('show');
     });
 
-    // PDF GENERATION — GEMINI APPROACH: sync handler, onload callback, src set last
+    // PDF GENERATION - sync handler, onload callback, src set last
     document.getElementById('btn-get-certified').addEventListener('click', () => {
         document.getElementById('report-modal').classList.remove('show');
 
         const downloadBtn = document.getElementById('print-btn');
-        downloadBtn.innerText = '⏳ Menyediakan PDF anda...';
+        downloadBtn.innerText = '\u23f3 Menyediakan PDF anda...';
         downloadBtn.disabled = true;
 
-        // Step 1: Clear container completely — remove iframe
         mapContainer.innerHTML = '';
 
-        // Step 2: Create img, set crossOrigin BEFORE src — critical for CORS
         const mapImg = document.createElement('img');
         mapImg.id = 'pdf-map-tag';
         mapImg.crossOrigin = 'anonymous';
         mapImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;';
 
-        // Step 3: All PDF logic inside onload — image is guaranteed painted before html2canvas
         mapImg.onload = async () => {
             try {
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const reportView = document.getElementById('report-view');
-                const sections = reportView.querySelectorAll('.report-section');
+                const reportViewEl = document.getElementById('report-view');
+                const sections = reportViewEl.querySelectorAll('.report-section');
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 const margin = 10;
@@ -317,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     style="width:100%;height:300px;border:none;margin-bottom:-80px;"
                     loading="lazy">
                 </iframe>`;
-                downloadBtn.innerText = '✅ PDF Dimuat Turun — Semak Fail Anda';
+                downloadBtn.innerText = '\u2705 PDF Dimuat Turun - Semak Fail Anda';
                 downloadBtn.disabled = false;
             } catch (err) {
                 mapContainer.innerHTML = `<iframe
@@ -325,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     style="width:100%;height:300px;border:none;margin-bottom:-80px;"
                     loading="lazy">
                 </iframe>`;
-                downloadBtn.innerText = '📄 Dapatkan Writ Balai Rasmi — RM8';
+                downloadBtn.innerText = '\ud83d\udcc4 Dapatkan Writ Balai Rasmi - RM8';
                 downloadBtn.disabled = false;
                 alert('RALAT: ' + err.message);
             }
@@ -337,21 +395,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
                 loading="lazy">
             </iframe>`;
-            downloadBtn.innerText = '📄 Dapatkan Writ Balai Rasmi — RM8';
+            downloadBtn.innerText = '\ud83d\udcc4 Dapatkan Writ Balai Rasmi - RM8';
             downloadBtn.disabled = false;
             alert('RALAT peta: Gagal memuatkan imej peta. Cuba lagi.');
         };
 
-        // Step 4: Append to DOM, then set src LAST — triggers fetch with correct CORS headers
         mapContainer.appendChild(mapImg);
         mapImg.src = `${API_BASE}/api/maps/static?lat=${currentLat}&lng=${currentLng}&t=${Date.now()}`;
     });
 
-    // MALAY FORMAT HELPERS
     function formatKeadaanJalan(val) {
         const map = {
             DRY: 'Kering',
-            WET: 'Basah — Selepas Hujan',
+            WET: 'Basah - Selepas Hujan',
             FLOODED: 'Banjir',
             UNDER_CONSTRUCTION: 'Dalam Pembinaan',
             UNKNOWN: 'Tidak Pasti'
@@ -403,39 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // BACKGROUND VIDEO UPLOAD — fire and forget, does not block writ generation
-    async function uploadVideoToAWAS(logHash, videoBase64) {
-        try {
-            // Convert base64 to blob
-            const base64Data = videoBase64.split(',')[1];
-            const byteCharacters = atob(base64Data);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            const videoBlob = new Blob([byteArray], { type: 'video/mp4' });
-
-            const formData = new FormData();
-            formData.append('logHash', logHash);
-            formData.append('video', videoBlob, `awas_${logHash.substring(0, 8)}.mp4`);
-
-            const res = await fetch(`${API_BASE}/api/logs/upload-video`, {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await res.json();
-            if (res.ok) {
-                console.log('AWAS Video sealed:', data.videoHash);
-            } else {
-                console.error('AWAS Video upload failed:', data.error);
-            }
-        } catch (err) {
-            console.error('AWAS Video upload error:', err.message);
-        }
-    }
-
     async function executeLocalSHA256(inputMessageString) {
         const msgBuffer = new TextEncoder().encode(inputMessageString);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -446,6 +469,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.1.3').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js?v=1.2.0').catch(err => console.error(err));
     });
 }
