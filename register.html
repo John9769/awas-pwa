@@ -23,6 +23,12 @@
         input:focus, select:focus { border-color: var(--primary); outline: none; }
         select option { background: #020617; }
 
+        /* PASSWORD FIELD WITH EYE TOGGLE */
+        .password-wrap { position: relative; }
+        .password-wrap input { padding-right: 44px; }
+        .eye-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px; line-height: 1; }
+        .pw-hint { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
+
         /* REFERRAL CODE */
         .referral-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
         .referral-input-wrap { display: flex; gap: 8px; }
@@ -39,6 +45,10 @@
         .btn-submit { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
         .btn-submit:hover { background: #15803d; }
         #message { text-align: center; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
+
+        /* LOGIN LINK */
+        .login-link { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--text-muted); }
+        .login-link a { color: #60a5fa; font-weight: 700; text-decoration: none; }
 
         /* SUCCESS SCREEN */
         #success-screen { display: none; width: 100%; max-width: 420px; margin: auto 0; }
@@ -112,6 +122,16 @@
                 <small style="color:#64748b;font-size:0.72rem;">AWAS akan hubungi anda apabila penanggung insurans atau peguam memohon akses laporan anda. Kebenaran anda sentiasa diperlukan terlebih dahulu.</small>
             </div>
 
+            <!-- PASSWORD -->
+            <div class="form-group">
+                <label>Kata Laluan (untuk log masuk)</label>
+                <div class="password-wrap">
+                    <input type="password" id="password" placeholder="Minimum 6 aksara" required autocomplete="new-password">
+                    <button type="button" class="eye-btn" id="toggle-password" aria-label="Tunjuk kata laluan">👁️</button>
+                </div>
+                <div class="pw-hint">Anda akan log masuk dengan nombor plat + kata laluan ini.</div>
+            </div>
+
             <!-- REFERRAL CODE -->
             <div class="referral-group">
                 <label>Kod Rujukan Affiliate (Pilihan)</label>
@@ -131,6 +151,10 @@
             <button type="submit" class="btn-submit">Daftar & Aktifkan Perlindungan</button>
         </form>
         <div id="message"></div>
+
+        <div class="login-link">
+            Sudah ada akaun? <a href="login.html">Log masuk di sini</a>
+        </div>
     </main>
 
     <div id="success-screen">
@@ -155,7 +179,7 @@
                 <div class="step-num">1</div>
                 <div class="step-content">
                     <h4>Bila Kemalangan — Tekan REKOD</h4>
-                    <p>Buka aplikasi AWAS. Tekan butang hijau. <span class="highlight">Rakam video 15 saat</span> — tangkap plat, kerosakan dan kedudukan jalan kenderaan lain. Tenang. Selamat.</p>
+                    <p>Buka aplikasi AWAS. Tekan butang hijau. <span class="highlight">Rakam video 15 saat kenderaan anda sahaja</span> — tangkap plat dan kerosakan. Tenang. Selamat.</p>
                 </div>
             </div>
             <div class="guide-step">
@@ -192,6 +216,19 @@
 
     <script>
         const API_BASE = 'https://awas-backend.onrender.com';
+
+        // Eye toggle for password
+        document.getElementById('toggle-password').addEventListener('click', () => {
+            const input = document.getElementById('password');
+            const btn = document.getElementById('toggle-password');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️';
+            }
+        });
 
         // Auto-fill referral code from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -245,10 +282,17 @@
             const vehicleMakeModel = document.getElementById('vehicle-model').value;
             const mykadLastFour = document.getElementById('mykad-four').value;
             const phone = document.getElementById('phone').value.trim() || null;
+            const password = document.getElementById('password').value;
             const consentGiven = document.getElementById('pdpa-check').checked;
             const referredByCode = document.getElementById('referral-code').value.trim().toUpperCase() || null;
 
-            const payload = { vehiclePlate, vehicleType, vehicleMakeModel, mykadLastFour, phone, consentGiven, referredByCode };
+            if (!password || password.length < 6) {
+                msgDiv.style.color = 'var(--primary)';
+                msgDiv.innerText = 'Kata laluan diperlukan (minimum 6 aksara).';
+                return;
+            }
+
+            const payload = { vehiclePlate, vehicleType, vehicleMakeModel, mykadLastFour, phone, password, consentGiven, referredByCode };
 
             try {
                 const res = await fetch(`${API_BASE}/api/drivers/register`, {
@@ -272,7 +316,6 @@
                     document.getElementById('success-screen').style.display = 'block';
                     document.getElementById('expiry-display').innerText = `Aktif sehingga ${new Date(data.expiry).toLocaleDateString('ms-MY')}`;
 
-                    // Show referral code
                     if (data.referralCode) {
                         document.getElementById('my-referral-code').innerText = data.referralCode;
                         document.getElementById('my-referral-link').innerText = `https://awas-pwa.vercel.app/register.html?ref=${data.referralCode}`;
