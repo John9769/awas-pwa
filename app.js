@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             captureView.style.display = 'none';
             incidentView.style.display = 'flex';
+            testBanner.style.display = 'none';
 
         } catch (fault) {
             console.error('AWAS Capture Fault:', fault);
@@ -469,6 +470,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.2.0').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js?v=1.2.1').catch(err => console.error(err));
     });
 }
