@@ -15,23 +15,19 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; padding: 20px; align-items: center; }
-
         .test-banner { width: 100%; max-width: 440px; background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.4); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
         .test-banner-title { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #fbbf24; margin-bottom: 8px; }
         .test-banner p { font-size: 0.82rem; color: #fde68a; line-height: 1.6; }
         .test-steps { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
         .test-step { display: flex; gap: 8px; align-items: flex-start; font-size: 0.8rem; color: #fde68a; }
         .test-step-num { background: rgba(234,179,8,0.3); color: #fbbf24; font-weight: 800; font-size: 0.7rem; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-
         .report-banner { display: none; width: 100%; max-width: 600px; background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; text-align: center; }
         .report-banner-title { font-size: 0.85rem; font-weight: 800; color: #4ade80; margin-bottom: 4px; }
         .report-banner p { font-size: 0.78rem; color: #86efac; line-height: 1.6; }
-
         .gps-warning { width: 100%; max-width: 440px; background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.4); border-radius: 10px; padding: 16px; text-align: center; display: none; margin-bottom: 16px; }
         .gps-warning h4 { color: #fca5a5; font-size: 0.95rem; margin-bottom: 8px; }
         .gps-warning p { color: #fca5a5; font-size: 0.82rem; line-height: 1.6; }
         .btn-enable-gps { background: var(--primary); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 12px; }
-
         /* SCREEN 1 */
         #capture-view { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 20px; margin: auto 0; }
         header { text-align: center; }
@@ -39,20 +35,9 @@
         .tagline { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-top: 4px; }
         .status-box { width: 100%; background: var(--card); border-left: 5px solid var(--primary); padding: 16px; border-radius: 8px; font-size: 0.95rem; line-height: 1.5; }
         #video-capture, #other-video-capture, #image-capture { display: none; }
-
-        /* Record + Photo buttons side by side */
-        .capture-buttons { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
         .btn-record { width: 160px; height: 160px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); border: 6px solid rgba(22,163,74,0.2); color: white; font-size: 1.1rem; font-weight: 900; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; box-shadow: 0 0 30px rgba(22,163,74,0.4); animation: record-pulse 2s infinite; }
         .btn-record span { font-size: 0.7rem; font-weight: 500; opacity: 0.8; }
         @keyframes record-pulse { 0%,100% { box-shadow: 0 0 30px rgba(22,163,74,0.4), 0 0 0 0 rgba(22,163,74,0.4); } 50% { box-shadow: 0 0 40px rgba(22,163,74,0.6), 0 0 0 20px rgba(22,163,74,0); } }
-
-        /* Photo button */
-        .btn-photo { display: flex; align-items: center; justify-content: center; gap: 8px; background: #1e293b; border: 2px solid #334155; color: #94a3b8; padding: 12px 24px; border-radius: 50px; font-size: 0.88rem; font-weight: 700; cursor: pointer; width: 100%; max-width: 300px; }
-        .btn-photo:active { background: #334155; }
-
-        /* Image thumbnail strip */
-        #image-thumbnail-strip { display: none; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%; }
-
         .capture-guide { width: 100%; background: var(--card); border-radius: 10px; padding: 16px; }
         .capture-guide-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
         .cg-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
@@ -60,7 +45,16 @@
         .cg-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; margin-top: 7px; }
         .cg-item p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
         .cg-item p strong { color: var(--text); }
-
+        /* PHOTO SECTION — shown after video recorded, before incident details */
+        #photo-section { display: none; width: 100%; max-width: 440px; flex-direction: column; gap: 12px; }
+        .photo-box { background: var(--card); border-radius: 10px; padding: 18px; border: 1px solid rgba(22,163,74,0.3); }
+        .photo-box-title { font-size: 0.9rem; font-weight: 800; color: #4ade80; margin-bottom: 4px; }
+        .photo-box-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+        .btn-photo { display: flex; align-items: center; justify-content: center; gap: 8px; background: #1e293b; border: 2px solid #334155; color: #94a3b8; padding: 12px 24px; border-radius: 50px; font-size: 0.88rem; font-weight: 700; cursor: pointer; width: 100%; }
+        .btn-photo:active { background: #334155; }
+        #image-thumbnail-strip { display: none; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .btn-proceed { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        .btn-proceed:hover { background: #15803d; }
         /* SCREEN 2 */
         #incident-view { display: none; width: 100%; max-width: 440px; flex-direction: column; gap: 16px; margin: 20px 0; }
         .capture-success { background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); border-radius: 10px; padding: 16px; text-align: center; }
@@ -86,8 +80,7 @@
         .btn-generate { width: 100%; background: var(--success); border: none; color: white; padding: 16px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
         .btn-generate:hover { background: #15803d; }
         .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        /* SCREEN 3 — REPORT */
+        /* SCREEN 3 */
         #report-view { display: none; width: 100%; max-width: 600px; background: white; color: #000; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-direction: column; gap: 0; }
         .report-section { page-break-inside: avoid; break-inside: avoid; margin-bottom: 12px; }
         .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; }
@@ -108,7 +101,6 @@
         .stamp-value { font-size: 0.85rem; font-weight: 800; color: #dc2626; font-family: monospace; }
         .stamp-sub { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
         .footer-disclaimer { font-size: 0.62rem; color: #64748b; text-align: center; font-weight: 600; text-transform: uppercase; padding: 4px 0; }
-
         .checklist-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 16px 18px; margin-top: 16px; }
         .checklist-title { font-size: 0.85rem; font-weight: 800; color: #166534; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         .checklist-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
@@ -119,9 +111,7 @@
         .writ-ref-box { background: #dcfce7; border: 1px dashed #16a34a; border-radius: 6px; padding: 10px 14px; text-align: center; margin-top: 12px; }
         .writ-ref-label { font-size: 0.7rem; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
         .writ-ref-num { font-family: monospace; font-size: 1rem; font-weight: 900; color: #dc2626; }
-
         .btn-print { width: 100%; max-width: 600px; margin-top: 16px; background: var(--success); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; display: none; }
-
         .report-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: flex-end; justify-content: center; }
         .report-modal.show { display: flex; }
         .modal-box { background: #1e293b; border-radius: 20px 20px 0 0; padding: 28px 20px 36px; width: 100%; max-width: 480px; border-top: 1px solid #334155; }
@@ -145,10 +135,9 @@
         .btn-free { width: 100%; background: transparent; border: 1px solid #334155; color: #94a3b8; padding: 12px; font-weight: 700; font-size: 0.85rem; border-radius: 8px; cursor: pointer; margin-bottom: 8px; }
         .btn-paid { width: 100%; background: #16a34a; border: none; color: white; padding: 14px; font-weight: 800; font-size: 0.95rem; border-radius: 8px; cursor: pointer; }
         .btn-close-modal { width: 100%; background: transparent; border: none; color: #475569; padding: 10px; font-size: 0.8rem; cursor: pointer; margin-top: 4px; }
-
         @media print {
             body { background: white !important; padding: 0 !important; }
-            #capture-view, #incident-view, .btn-print, footer, .test-banner, .report-banner, .checklist-box { display: none !important; }
+            #capture-view, #photo-section, #incident-view, .btn-print, footer, .test-banner, .report-banner, .checklist-box { display: none !important; }
             #report-view { display: flex !important; width: 100% !important; max-width: 100% !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
         }
         footer { text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 20px 0; margin-top: auto; }
@@ -156,13 +145,14 @@
 </head>
 <body>
 
+    <!-- TEST BANNER — SS3 fixes -->
     <div class="test-banner" id="test-banner">
         <div class="test-banner-title">⚡ Mod Ujian — Cuba Rakaman AWAS Langsung</div>
         <p>Ini adalah cara AWAS berfungsi dalam kemalangan sebenar. Cuba sekarang supaya anda tahu apa yang perlu dilakukan apabila ia berlaku.</p>
         <div class="test-steps">
-            <div class="test-step"><div class="test-step-num">1</div><span>Tekan REKOD — ambil video pendek kenderaan anda. <strong style="color:#fbbf24">HANYA KENDERAAN ANDA dibenarkan.</strong></span></div>
+            <div class="test-step"><div class="test-step-num">1</div><span>Tekan REKOD — ambil video pendek kenderaan anda.</span></div>
             <div class="test-step"><div class="test-step-num">2</div><span>Benarkan akses lokasi — AWAS perlukan GPS anda</span></div>
-            <div class="test-step"><div class="test-step-num">3</div><span>Snap gambar bukti kerosakan (pilihan, maks 4)</span></div>
+            <div class="test-step"><div class="test-step-num">3</div><span>Snap gambar bukti kerosakan (pilihan, maksimum 4)</span></div>
             <div class="test-step"><div class="test-step-num">4</div><span>Tekan Jana — writ forensik anda tersedia dengan <strong style="color:#fbbf24">GPS sebenar</strong> dan <strong style="color:#fbbf24">peta tepat</strong></span></div>
         </div>
     </div>
@@ -179,7 +169,7 @@
         <button class="btn-enable-gps" onclick="checkGPSAndProceed()">Cuba Semula</button>
     </div>
 
-    <!-- SCREEN 1 -->
+    <!-- SCREEN 1 — Record video -->
     <div id="capture-view">
         <header>
             <h1>AWAS</h1>
@@ -192,17 +182,11 @@
         <input type="file" id="video-capture" accept="video/*" capture="environment">
         <input type="file" id="other-video-capture" accept="video/*" capture="environment">
         <input type="file" id="image-capture" accept="image/*" capture="environment">
-
-        <div class="capture-buttons">
-            <button type="button" id="record-trigger" class="btn-record">REKOD<span>BUKTI</span></button>
-            <button type="button" id="photo-trigger" class="btn-photo">📷 <span>Gambar Bukti (Maks 4)</span></button>
-            <div id="image-thumbnail-strip"></div>
-        </div>
-
+        <button type="button" id="record-trigger" class="btn-record">REKOD<span>BUKTI</span></button>
         <div class="capture-guide">
             <div class="capture-guide-title">Apa yang AWAS meterai untuk anda</div>
             <div class="cg-item"><div class="cg-dot"></div><p><strong>Bukti video</strong> — dihash dan dimeterai kekal semasa rakaman</p></div>
-            <div class="cg-item"><div class="cg-dot"></div><p><strong>Gambar bukti</strong> — sehingga 4 gambar, setiap satu dihash berasingan</p></div>
+            <div class="cg-item"><div class="cg-dot"></div><p><strong>Bukti gambar</strong> — sehingga 4 gambar, setiap satu dihash berasingan</p></div>
             <div class="cg-item"><div class="cg-dot"></div><p><strong>Koordinat GPS</strong> — lokasi tepat anda dikunci pada ketika itu</p></div>
             <div class="cg-item"><div class="cg-dot"></div><p><strong>Lokasi peta</strong> — dipinkan pada peta, dicetak dalam writ anda</p></div>
             <div class="cg-item"><div class="cg-dot"></div><p><strong>Tandatangan SHA-256</strong> — kalis gangguan, integriti gred mahkamah</p></div>
@@ -210,12 +194,23 @@
         </div>
     </div>
 
-    <!-- SCREEN 2 -->
+    <!-- PHOTO SECTION — shown after video recorded, before incident details -->
+    <div id="photo-section">
+        <div class="photo-box">
+            <div class="photo-box-title">📷 Snap Bukti Gambar</div>
+            <div class="photo-box-sub">Snap gambar kerosakan kenderaan anda sekarang. Setiap gambar akan dihash berasingan sebagai bukti tambahan. Maksimum 4 gambar. Ini adalah pilihan — tekan Teruskan jika tidak perlu.</div>
+            <button type="button" id="photo-trigger" class="btn-photo">📷 <span>Bukti Gambar (Maks 4)</span></button>
+            <div id="image-thumbnail-strip"></div>
+        </div>
+        <button type="button" id="btn-proceed-incident" class="btn-proceed">Teruskan ke Butiran Insiden →</button>
+    </div>
+
+    <!-- SCREEN 2 — Incident details -->
     <div id="incident-view">
         <div class="capture-success">
             <div class="cs-icon">✅</div>
             <div class="cs-title">Bukti Tersedia</div>
-            <div class="cs-sub">Video anda telah dihash. GPS dikunci. Lengkapkan butiran di bawah — kemudian jana Writ AWAS rasmi anda.</div>
+            <div class="cs-sub">Video/Gambar anda telah dihash. GPS dikunci. Lengkapkan butiran di bawah — kemudian jana Writ AWAS rasmi anda.</div>
         </div>
         <div class="incident-form-box">
             <div class="if-title">📋 Butiran Insiden — Pilihan tetapi disyorkan</div>
@@ -253,9 +248,10 @@
                 <textarea id="incident-description" class="if-textarea" placeholder="cth: Kenderaan lain menukar lorong tanpa isyarat dan melanggar bahagian kiri saya..." rows="3"></textarea>
             </div>
         </div>
+        <!-- SS7 — Other party section with liability reminder -->
         <div class="other-party-box">
             <div class="op-title">📹 Kenderaan Pihak Lain</div>
-            <div class="op-sub">Rakam kenderaan lain untuk mengukuhkan bukti anda sebagai pengadu. Plat dan model mereka akan dicatat dalam laporan anda.</div>
+            <div class="op-sub">Adalah menjadi tanggungjawab anda di atas video pihak ketiga yang anda rakam di sini. AWAS tidak bertanggungjawab di atas klaim pihak ketiga dari video yang anda rakam di ruangan ini.</div>
             <div id="other-party-pending">
                 <button type="button" id="btn-record-other" class="btn-record-other">Rakam Kenderaan Lain (Pilihan)</button>
             </div>
@@ -276,7 +272,6 @@
 
     <!-- SCREEN 3 — REPORT VIEW -->
     <div id="report-view">
-
         <div class="report-section report-header">
             <div>
                 <div class="report-title">Writ Forensik AWAS</div>
@@ -289,7 +284,6 @@
                 <div id="pdf-time">00:00:00 MYT</div>
             </div>
         </div>
-
         <div class="report-section">
             <div class="section-title">1. Maklumat Pemandu &amp; Kenderaan (Pengadu)</div>
             <div class="data-grid">
@@ -301,7 +295,6 @@
                 <div><div class="data-label">Status AWAS</div><div class="data-value" style="color:#16a34a;">AKTIF / DISAHKAN</div></div>
             </div>
         </div>
-
         <div class="report-section">
             <div class="section-title">2. Telemetri Lokasi Satelit GPS</div>
             <div class="data-grid">
@@ -312,7 +305,6 @@
                 <img id="pdf-map-tag" src="" style="width:100%;height:100%;object-fit:cover;display:none;" alt="Peta Lokasi GPS" crossorigin="anonymous">
             </div>
         </div>
-
         <div class="report-section">
             <div class="section-title">3. Butiran Insiden</div>
             <div class="data-grid">
@@ -325,7 +317,6 @@
                 <div class="data-value" id="pdf-description" style="margin-top:4px;font-size:0.85rem;line-height:1.5;">—</div>
             </div>
         </div>
-
         <div id="pdf-other-party-section" class="report-section" style="display:none;">
             <div class="section-title">4. Kenderaan Pihak Lain (Catatan Pengadu)</div>
             <div class="data-grid">
@@ -336,25 +327,22 @@
                 * Bahagian ini adalah <strong>dakwaan pengadu (claimant's statement)</strong> semasa kejadian. AWAS <strong>tidak mengesahkan</strong> maklumat kenderaan pihak lain. Tandatangan kriptografi SHA-256 hanya terpakai pada kenderaan pengadu sahaja.
             </div>
         </div>
-
-        <!-- SHA-256 VIDEO + IMAGES -->
+        <!-- SS8 + SS9 — Hash section, note lines hidden in PDF -->
         <div class="report-section">
             <div class="section-title"><span id="sha-section-num">4.</span> Tandatangan Digital <span style="white-space:nowrap">SHA-256</span></div>
             <div class="hash-box">
                 <div class="hash-label">✅ TANDATANGAN FORENSIK VIDEO<br>KENDERAAN ANDA</div>
                 <span id="pdf-hash">—</span>
-                <div style="margin-top:8px;font-size:0.68rem;color:#166534;font-style:italic;">🔒 Hash penuh tersedia dalam PDF Writ Rasmi RM8</div>
+                <div class="hash-note-line" style="margin-top:8px;font-size:0.68rem;color:#166534;font-style:italic;">🔒 Hash penuh tersedia dalam PDF Writ Rasmi</div>
             </div>
-            <!-- Image hashes — shown only if images uploaded -->
             <div id="pdf-image-hashes-section" style="display:none;margin-top:10px;">
                 <div class="hash-box" style="border-color:#2563eb;background:#eff6ff;">
-                    <div class="hash-label" style="color:#1e40af;">📷 TANDATANGAN FORENSIK GAMBAR BUKTI</div>
+                    <div class="hash-label" style="color:#1e40af;">📷 TANDATANGAN FORENSIK BUKTI GAMBAR</div>
                     <div id="pdf-image-hashes-list" style="font-size:0.7rem;line-height:1.8;color:#1e40af;"></div>
-                    <div style="margin-top:8px;font-size:0.68rem;color:#1e40af;font-style:italic;">🔒 Hash penuh tersedia dalam PDF Writ Rasmi RM8</div>
+                    <div class="hash-note-line" style="margin-top:8px;font-size:0.68rem;color:#1e40af;font-style:italic;">🔒 Hash penuh tersedia dalam PDF Writ Rasmi</div>
                 </div>
             </div>
         </div>
-
         <div class="report-section">
             <div class="awas-stamp">
                 <div class="stamp-title">Writ Bertauliah AWAS</div>
@@ -362,19 +350,16 @@
                 <div class="stamp-sub">Accident Writ Automation System</div>
             </div>
         </div>
-
         <div class="report-section">
             <div class="seal-note">
                 ✅ <strong>Bukti Tersedia.</strong> Dokumen ini dihasilkan pada masa kejadian berlaku. Tandatangan SHA-256 di atas membuktikan data ini tidak diubah. Sebarang pengubahan pada video, gambar, GPS atau cap masa akan menghasilkan hash yang berbeza — menjadikan sebarang gangguan boleh dikesan serta-merta oleh polis, penanggung insurans dan mahkamah.
             </div>
         </div>
-
         <div class="report-section">
             <div class="footer-disclaimer">
                 Dokumen ini dihasilkan secara automatik oleh sistem AWAS. Data visual dan koordinat dikunci pada masa kejadian. Sebarang pindaan akan merosakkan integriti hash.
             </div>
         </div>
-
     </div>
 
     <div class="checklist-box" id="checklist-box" style="display:none;width:100%;max-width:600px;">
