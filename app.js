@@ -9,6 +9,7 @@ let gpsCoordinates = null;
 let ownVideoBase64 = null;
 let ownVideoFile = null;
 let ownHash = null;
+let ownHashFull = null;
 let otherVideoBase64 = null;
 let otherHash = null;
 let eventTimestamp = null;
@@ -142,11 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // GENERATE WRIT - now gated by LPR verification on the server.
-    // The video is uploaded to /verify-seal. The server reads the plate from the
-    // video, checks it against the registered (paid, active) account, and ONLY
-    // issues a writ if the plate is readable AND matches. We WAIT for that verdict
-    // before showing anything. No pass = no writ.
     document.getElementById('btn-generate-report').addEventListener('click', async () => {
         const btn = document.getElementById('btn-generate-report');
 
@@ -197,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const result = await response.json();
 
-            // GATE REJECTED - no writ. Show clear reason, let user retry.
             if (!response.ok) {
                 let msg = result.error || 'Pengesahan gagal. Cuba lagi.';
                 if (result.reason === 'UNREADABLE') {
@@ -215,11 +210,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // GATE PASSED - writ issued by the server. Render it.
             clearGateStatus();
             currentWritNumber = result.writNumber || 'AWAS/MY/PENDING';
             currentLat = gpsCoordinates.latitude.toFixed(6);
             currentLng = gpsCoordinates.longitude.toFixed(6);
+
+            // Store full hash — never shown on screen, only revealed in PDF
+            ownHashFull = ownHash;
+            const maskedHash = ownHash.substring(0, 8) + '\u2022'.repeat(56);
 
             pdfWritNum.innerText = currentWritNumber;
             document.getElementById('stamp-writ').innerText = currentWritNumber;
@@ -235,7 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('pdf-phone').innerText = cachedPhone || '\u2014';
             pdfLat.innerText = currentLat;
             pdfLng.innerText = currentLng;
-            pdfHash.innerText = ownHash;
+
+            // Show masked hash on screen — full hash only in PDF
+            pdfHash.innerText = maskedHash;
 
             pdfRoad.innerText = formatKeadaanJalan(roadCondition);
             pdfWeather.innerText = formatCuaca(weatherCondition);
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('report-modal').classList.remove('show');
     });
 
-    // PDF GENERATION - sync handler, onload callback, src set last
+    // PDF GENERATION
     document.getElementById('btn-get-certified').addEventListener('click', () => {
         document.getElementById('report-modal').classList.remove('show');
 
@@ -338,6 +338,9 @@ document.addEventListener('DOMContentLoaded', () => {
         mapImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;';
 
         mapImg.onload = async () => {
+            // SWAP: reveal full hash before html2canvas screenshots the DOM
+            pdfHash.innerText = ownHashFull;
+
             try {
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
@@ -371,6 +374,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
                 pdf.save(fileName);
+
+                // SWAP BACK: mask hash on screen after PDF saved
+                pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
+
                 mapContainer.innerHTML = `<iframe
                     src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                     style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -379,6 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 downloadBtn.innerText = '\u2705 PDF Dimuat Turun - Semak Fail Anda';
                 downloadBtn.disabled = false;
             } catch (err) {
+                // SWAP BACK on error too
+                pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
+
                 mapContainer.innerHTML = `<iframe
                     src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                     style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -391,6 +401,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         mapImg.onerror = () => {
+            // SWAP BACK on map error too
+            if (ownHashFull) pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
+
             mapContainer.innerHTML = `<iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -470,6 +483,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.2.1').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js?v=1.2.2').catch(err => console.error(err));
     });
 }
