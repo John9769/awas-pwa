@@ -17,6 +17,10 @@ let currentWritNumber = null;
 let currentLat = null;
 let currentLng = null;
 
+// Image evidence — up to 4
+let imageFiles = [];
+let imageHashesFull = [];
+
 // GPS CHECK
 function checkGPSAndProceed() {
     const gpsWarning = document.getElementById('gps-warning');
@@ -47,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const recordTrigger = document.getElementById('record-trigger');
     const videoCapture = document.getElementById('video-capture');
     const otherVideoCapture = document.getElementById('other-video-capture');
+    const imageCaptureInput = document.getElementById('image-capture');
     const statusDisplay = document.getElementById('status-display');
     const captureView = document.getElementById('capture-view');
     const incidentView = document.getElementById('incident-view');
@@ -72,13 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const pdfInjury = document.getElementById('pdf-injury');
     const pdfDescription = document.getElementById('pdf-description');
 
-    recordTrigger.addEventListener('click', () => videoCapture.click());
+    // ── RECORD VIDEO ────────────────────────────────────────────────────────
+    recordTrigger.addEventListener('click', () => {
+        const cachedPlate = localStorage.getItem('awas_vehicle_plate') || '';
+        const plateMsg = cachedPlate ? `kenderaan anda (${cachedPlate})` : 'kenderaan anda sendiri';
+        const confirmed = confirm(`⚠️ PERINGATAN AWAS\n\nSila pastikan anda merakam ${plateMsg} sahaja.\n\nVideo yang dimuat naik adalah tanggungjawab anda sepenuhnya. Writ akan dikeluarkan atas nama plat berdaftar anda.\n\nTeruskan?`);
+        if (confirmed) videoCapture.click();
+    });
 
     videoCapture.addEventListener('change', async (event) => {
         const files = event.target.files;
         if (!files || files.length === 0) return;
 
         recordTrigger.style.display = 'none';
+        document.getElementById('photo-trigger').style.display = 'none';
         statusDisplay.innerHTML = '\u26a1 <strong>METERAI BUKTI ANDA...</strong><br>Mengunci GPS, menghash video, mencap masa.';
 
         try {
@@ -109,10 +121,76 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (fault) {
             console.error('AWAS Capture Fault:', fault);
             recordTrigger.style.display = 'flex';
+            document.getElementById('photo-trigger').style.display = 'flex';
             statusDisplay.innerHTML = `\u26a0\ufe0f <strong>RAKAMAN GAGAL:</strong><br>${fault.message}. Cuba lagi.`;
         }
     });
 
+    // ── PHOTO CAPTURE (up to 4) ──────────────────────────────────────────────
+    document.getElementById('photo-trigger').addEventListener('click', () => {
+        if (imageFiles.length >= 4) {
+            alert('Maksimum 4 gambar dibenarkan.');
+            return;
+        }
+        imageCaptureInput.click();
+    });
+
+    imageCaptureInput.addEventListener('change', async (event) => {
+        const files = event.target.files;
+        if (!files || files.length === 0) return;
+
+        const file = files[0];
+        if (imageFiles.length >= 4) return;
+
+        imageFiles.push(file);
+        renderImageThumbnails();
+
+        // Update photo button label
+        const remaining = 4 - imageFiles.length;
+        const btn = document.getElementById('photo-trigger');
+        btn.innerHTML = remaining > 0
+            ? `📷 <span>Gambar Bukti (${imageFiles.length}/4)</span>`
+            : `📷 <span>Gambar Penuh (4/4)</span>`;
+        if (remaining === 0) btn.style.opacity = '0.6';
+
+        // Reset input so same file can be re-selected if needed
+        imageCaptureInput.value = '';
+    });
+
+    function renderImageThumbnails() {
+        const strip = document.getElementById('image-thumbnail-strip');
+        strip.innerHTML = '';
+        imageFiles.forEach((file, idx) => {
+            const url = URL.createObjectURL(file);
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'position:relative;display:inline-block;';
+
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.cssText = 'width:64px;height:64px;object-fit:cover;border-radius:6px;border:2px solid #16a34a;';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.innerText = '✕';
+            removeBtn.style.cssText = 'position:absolute;top:-6px;right:-6px;background:#dc2626;color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:0.6rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;';
+            removeBtn.addEventListener('click', () => {
+                imageFiles.splice(idx, 1);
+                renderImageThumbnails();
+                const btn = document.getElementById('photo-trigger');
+                const remaining = 4 - imageFiles.length;
+                btn.innerHTML = imageFiles.length === 0
+                    ? `📷 <span>Gambar Bukti (Maks 4)</span>`
+                    : `📷 <span>Gambar Bukti (${imageFiles.length}/4)</span>`;
+                btn.style.opacity = '1';
+            });
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            strip.appendChild(wrapper);
+        });
+        strip.style.display = imageFiles.length > 0 ? 'flex' : 'none';
+    }
+
+    // ── OTHER PARTY VIDEO ────────────────────────────────────────────────────
     document.getElementById('btn-record-other').addEventListener('click', () => {
         otherVideoCapture.click();
     });
@@ -143,17 +221,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ── GENERATE WRIT ────────────────────────────────────────────────────────
     document.getElementById('btn-generate-report').addEventListener('click', async () => {
         const btn = document.getElementById('btn-generate-report');
 
         if (!ownVideoFile) {
-            showGateError('Tiada video untuk disahkan. Sila rakam video kenderaan anda dahulu.');
+            showGateError('Tiada video untuk dimuat naik. Sila rakam video kenderaan anda dahulu.');
             return;
         }
 
-        btn.innerText = '\ud83d\udd0d Mengesahkan plat kenderaan anda...';
+        btn.innerText = '\u23f3 Memuat naik bukti dan menjana writ...';
         btn.disabled = true;
-        showGateStatus('\ud83d\udd0d <strong>MENGESAHKAN PLAT KENDERAAN...</strong><br>AWAS sedang membaca plat dari video anda. Ini mengambil masa 15-40 saat. Jangan tutup skrin.');
+        showGateStatus('\u23f3 <strong>MEMUAT NAIK BUKTI...</strong><br>Video dan gambar anda sedang dimuat naik ke pelayan AWAS. Jangan tutup skrin.');
 
         const cachedPlate = localStorage.getItem('awas_vehicle_plate') || 'WD519A';
         const cachedModel = localStorage.getItem('awas_vehicle_model') || 'Perodua Myvi 1.5';
@@ -185,6 +264,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (otherVideoUrl) formData.append('otherVehicleVideoUrl', otherVideoUrl);
         if (otherHash) formData.append('otherVehicleHash', otherHash);
 
+        // Append images
+        imageFiles.forEach((imgFile, idx) => {
+            formData.append('images', imgFile, `awas_img_${ownHash.substring(0, 8)}_${idx + 1}.jpg`);
+        });
+
         try {
             const response = await fetch(`${API_BASE}/api/logs/verify-seal`, {
                 method: 'POST',
@@ -194,15 +278,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (!response.ok) {
-                let msg = result.error || 'Pengesahan gagal. Cuba lagi.';
-                if (result.reason === 'UNREADABLE') {
-                    msg = '\u274c Plat kenderaan tidak dapat dibaca dari video. Pastikan plat anda kelihatan jelas dan terang. Rakam semula video kenderaan anda.';
-                } else if (result.reason === 'NOT_REGISTERED') {
-                    msg = '\u274c Plat dalam video bukan akaun AWAS berdaftar. Hanya kenderaan yang telah didaftarkan diterima.';
-                } else if (result.reason === 'MISMATCH') {
-                    msg = '\u274c Plat dalam video tidak sepadan dengan akaun log masuk anda. Hanya video kenderaan anda sendiri diterima.';
-                } else if (result.reason === 'SUBSCRIPTION_INACTIVE') {
+                let msg = result.error || 'Gagal menjana writ. Cuba lagi.';
+                if (result.reason === 'SUBSCRIPTION_INACTIVE') {
                     msg = '\u274c Langganan AWAS anda tidak aktif. Sila perbaharui sebelum menjana writ.';
+                } else if (result.reason === 'NOT_REGISTERED') {
+                    msg = '\u274c Akaun AWAS tidak dijumpai. Sila log masuk semula.';
                 }
                 showGateError(msg);
                 btn.innerText = '\ud83d\udd12 Jana Writ Forensik AWAS';
@@ -215,8 +295,9 @@ document.addEventListener('DOMContentLoaded', () => {
             currentLat = gpsCoordinates.latitude.toFixed(6);
             currentLng = gpsCoordinates.longitude.toFixed(6);
 
-            // Store full hash — never shown on screen, only revealed in PDF
+            // Store full hashes — masked on screen, revealed in PDF
             ownHashFull = ownHash;
+            imageHashesFull = result.imageHashes || [];
             const maskedHash = ownHash.substring(0, 8) + '\u2022'.repeat(56);
 
             pdfWritNum.innerText = currentWritNumber;
@@ -234,8 +315,20 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfLat.innerText = currentLat;
             pdfLng.innerText = currentLng;
 
-            // Show masked hash on screen — full hash only in PDF
+            // Masked video hash on screen
             pdfHash.innerText = maskedHash;
+
+            // Image hashes — masked on screen
+            const imgHashSection = document.getElementById('pdf-image-hashes-section');
+            const imgHashList = document.getElementById('pdf-image-hashes-list');
+            if (imageHashesFull.length > 0) {
+                imgHashList.innerHTML = imageHashesFull.map((h, i) =>
+                    `<div style="margin-bottom:6px;"><span style="font-weight:800;color:#166534;">Gambar ${i + 1}:</span> <span class="img-hash-masked">${h.substring(0, 8) + '\u2022'.repeat(56)}</span></div>`
+                ).join('');
+                imgHashSection.style.display = 'block';
+            } else {
+                imgHashSection.style.display = 'none';
+            }
 
             pdfRoad.innerText = formatKeadaanJalan(roadCondition);
             pdfWeather.innerText = formatCuaca(weatherCondition);
@@ -269,8 +362,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.scrollTo(0, 0);
 
         } catch (fault) {
-            console.error('AWAS Verify Fault:', fault);
-            showGateError('\u26a0\ufe0f Masalah sambungan semasa pengesahan. Periksa internet anda dan cuba lagi. Jika pelayan baru bangun, cuba sekali lagi dalam beberapa saat.');
+            console.error('AWAS Writ Fault:', fault);
+            showGateError('\u26a0\ufe0f Masalah sambungan semasa memuat naik. Periksa internet anda dan cuba lagi. Jika pelayan baru bangun, cuba sekali lagi dalam beberapa saat.');
             btn.innerText = '\ud83d\udd12 Jana Writ Forensik AWAS';
             btn.disabled = false;
         }
@@ -322,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('report-modal').classList.remove('show');
     });
 
-    // PDF GENERATION
+    // ── PDF GENERATION ───────────────────────────────────────────────────────
     document.getElementById('btn-get-certified').addEventListener('click', () => {
         document.getElementById('report-modal').classList.remove('show');
 
@@ -338,8 +431,14 @@ document.addEventListener('DOMContentLoaded', () => {
         mapImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;';
 
         mapImg.onload = async () => {
-            // SWAP: reveal full hash before html2canvas screenshots the DOM
+            // SWAP: reveal full video hash
             pdfHash.innerText = ownHashFull;
+
+            // SWAP: reveal full image hashes
+            const maskedEls = document.querySelectorAll('.img-hash-masked');
+            maskedEls.forEach((el, i) => {
+                if (imageHashesFull[i]) el.innerText = imageHashesFull[i];
+            });
 
             try {
                 const { jsPDF } = window.jspdf;
@@ -375,8 +474,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
                 pdf.save(fileName);
 
-                // SWAP BACK: mask hash on screen after PDF saved
+                // SWAP BACK: mask video hash
                 pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
+
+                // SWAP BACK: mask image hashes
+                const maskedElsBack = document.querySelectorAll('.img-hash-masked');
+                maskedElsBack.forEach((el, i) => {
+                    if (imageHashesFull[i]) el.innerText = imageHashesFull[i].substring(0, 8) + '\u2022'.repeat(56);
+                });
 
                 mapContainer.innerHTML = `<iframe
                     src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
@@ -386,9 +491,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 downloadBtn.innerText = '\u2705 PDF Dimuat Turun - Semak Fail Anda';
                 downloadBtn.disabled = false;
             } catch (err) {
-                // SWAP BACK on error too
+                // SWAP BACK on error
                 pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
-
+                const maskedElsBack = document.querySelectorAll('.img-hash-masked');
+                maskedElsBack.forEach((el, i) => {
+                    if (imageHashesFull[i]) el.innerText = imageHashesFull[i].substring(0, 8) + '\u2022'.repeat(56);
+                });
                 mapContainer.innerHTML = `<iframe
                     src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                     style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -401,9 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         mapImg.onerror = () => {
-            // SWAP BACK on map error too
             if (ownHashFull) pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
-
             mapContainer.innerHTML = `<iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
                 style="width:100%;height:300px;border:none;margin-bottom:-80px;"
@@ -418,44 +524,25 @@ document.addEventListener('DOMContentLoaded', () => {
         mapImg.src = `${API_BASE}/api/maps/static?lat=${currentLat}&lng=${currentLng}&t=${Date.now()}`;
     });
 
+    // ── FORMAT HELPERS ───────────────────────────────────────────────────────
     function formatKeadaanJalan(val) {
-        const map = {
-            DRY: 'Kering',
-            WET: 'Basah - Selepas Hujan',
-            FLOODED: 'Banjir',
-            UNDER_CONSTRUCTION: 'Dalam Pembinaan',
-            UNKNOWN: 'Tidak Pasti'
-        };
+        const map = { DRY: 'Kering', WET: 'Basah - Selepas Hujan', FLOODED: 'Banjir', UNDER_CONSTRUCTION: 'Dalam Pembinaan', UNKNOWN: 'Tidak Pasti' };
         return map[val] || 'Tidak Pasti';
     }
 
     function formatCuaca(val) {
-        const map = {
-            CLEAR: 'Cerah / Panas',
-            RAINY: 'Hujan',
-            FOGGY: 'Kabus Nipis',
-            HAZY: 'Jerebu',
-            NIGHT: 'Malam / Jarak Penglihatan Rendah',
-            UNKNOWN: 'Tidak Pasti'
-        };
+        const map = { CLEAR: 'Cerah / Panas', RAINY: 'Hujan', FOGGY: 'Kabus Nipis', HAZY: 'Jerebu', NIGHT: 'Malam / Jarak Penglihatan Rendah', UNKNOWN: 'Tidak Pasti' };
         return map[val] || 'Tidak Pasti';
     }
 
     function formatKecederaan(val) {
-        const map = {
-            NONE: 'Tiada Kecederaan',
-            MINOR: 'Kecederaan Ringan',
-            SERIOUS: 'Kecederaan Serius'
-        };
+        const map = { NONE: 'Tiada Kecederaan', MINOR: 'Kecederaan Ringan', SERIOUS: 'Kecederaan Serius' };
         return map[val] || 'Tiada Kecederaan';
     }
 
     function acquirePreciseLocation() {
         return new Promise((resolve) => {
-            if (!navigator.geolocation) {
-                resolve({ latitude: 2.661800, longitude: 101.875900 });
-                return;
-            }
+            if (!navigator.geolocation) { resolve({ latitude: 2.661800, longitude: 101.875900 }); return; }
             navigator.geolocation.getCurrentPosition(
                 (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
                 () => resolve({ latitude: 2.661800, longitude: 101.875900 }),
@@ -483,6 +570,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.2.2').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js?v=1.2.3').catch(err => console.error(err));
     });
 }
