@@ -81,19 +81,15 @@ document.addEventListener('DOMContentLoaded', () => {
     videoCapture.addEventListener('change', async (event) => {
         const files = event.target.files;
         if (!files || files.length === 0) return;
-
         recordTrigger.style.display = 'none';
         statusDisplay.innerHTML = '\u26a1 <strong>METERAI BUKTI ANDA...</strong><br>Mengunci GPS, menghash video, mencap masa.';
-
         try {
             eventTimestamp = new Date();
             ownVideoFile = files[0];
-
             [gpsCoordinates, ownVideoBase64] = await Promise.all([
                 acquirePreciseLocation(),
                 readVideoAsBase64(files[0])
             ]);
-
             const cachedPlate = localStorage.getItem('awas_vehicle_plate') || 'WD519A';
             const rawPayload = {
                 vehiclePlate: cachedPlate,
@@ -103,11 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 timestamp: eventTimestamp.toISOString()
             };
             ownHash = await executeLocalSHA256(JSON.stringify(rawPayload));
-
             statusDisplay.innerHTML = '\u2705 <strong>VIDEO DIRAKAM.</strong><br>Snap gambar bukti kerosakan sekarang (pilihan). Tekan Teruskan apabila selesai.';
             photoSection.style.display = 'flex';
             testBanner.style.display = 'none';
-
         } catch (fault) {
             console.error('AWAS Capture Fault:', fault);
             recordTrigger.style.display = 'flex';
@@ -117,10 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── PHOTO CAPTURE (up to 4) ──────────────────────────────────────────────
     document.getElementById('photo-trigger').addEventListener('click', () => {
-        if (imageFiles.length >= 4) {
-            alert('Maksimum 4 gambar dibenarkan.');
-            return;
-        }
+        if (imageFiles.length >= 4) { alert('Maksimum 4 gambar dibenarkan.'); return; }
         imageCaptureInput.click();
     });
 
@@ -133,9 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderImageThumbnails();
         const remaining = 4 - imageFiles.length;
         const btn = document.getElementById('photo-trigger');
-        btn.innerHTML = remaining > 0
-            ? `📷 <span>Bukti Gambar (${imageFiles.length}/4)</span>`
-            : `📷 <span>Gambar Penuh (4/4)</span>`;
+        btn.innerHTML = remaining > 0 ? `📷 <span>Bukti Gambar (${imageFiles.length}/4)</span>` : `📷 <span>Gambar Penuh (4/4)</span>`;
         if (remaining === 0) btn.style.opacity = '0.6';
         imageCaptureInput.value = '';
     });
@@ -157,9 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 imageFiles.splice(idx, 1);
                 renderImageThumbnails();
                 const btn = document.getElementById('photo-trigger');
-                btn.innerHTML = imageFiles.length === 0
-                    ? `📷 <span>Bukti Gambar (Maks 4)</span>`
-                    : `📷 <span>Bukti Gambar (${imageFiles.length}/4)</span>`;
+                btn.innerHTML = imageFiles.length === 0 ? `📷 <span>Bukti Gambar (Maks 4)</span>` : `📷 <span>Bukti Gambar (${imageFiles.length}/4)</span>`;
                 btn.style.opacity = '1';
             });
             wrapper.appendChild(img);
@@ -177,9 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ── OTHER PARTY VIDEO ────────────────────────────────────────────────────
-    document.getElementById('btn-record-other').addEventListener('click', () => {
-        otherVideoCapture.click();
-    });
+    document.getElementById('btn-record-other').addEventListener('click', () => { otherVideoCapture.click(); });
 
     otherVideoCapture.addEventListener('change', async (event) => {
         const files = event.target.files;
@@ -188,11 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btn-record-other').disabled = true;
         try {
             otherVideoBase64 = await readVideoAsBase64(files[0]);
-            const otherPayload = {
-                videoBase64: otherVideoBase64,
-                linkedToHash: ownHash,
-                timestamp: eventTimestamp.toISOString()
-            };
+            const otherPayload = { videoBase64: otherVideoBase64, linkedToHash: ownHash, timestamp: eventTimestamp.toISOString() };
             otherHash = await executeLocalSHA256(JSON.stringify(otherPayload));
             document.getElementById('other-party-pending').style.display = 'none';
             document.getElementById('other-party-captured').style.display = 'block';
@@ -206,10 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── GENERATE WRIT ────────────────────────────────────────────────────────
     document.getElementById('btn-generate-report').addEventListener('click', async () => {
         const btn = document.getElementById('btn-generate-report');
-        if (!ownVideoFile) {
-            showGateError('Tiada video untuk dimuat naik. Sila rakam video kenderaan anda dahulu.');
-            return;
-        }
+        if (!ownVideoFile) { showGateError('Tiada video untuk dimuat naik. Sila rakam video kenderaan anda dahulu.'); return; }
         btn.innerText = '\u23f3 Memuat naik bukti dan menjana writ...';
         btn.disabled = true;
         showGateStatus('\u23f3 <strong>MEMUAT NAIK BUKTI...</strong><br>Video dan gambar anda sedang dimuat naik ke pelayan AWAS. Jangan tutup skrin.');
@@ -247,19 +225,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         try {
-            const response = await fetch(`${API_BASE}/api/logs/verify-seal`, {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch(`${API_BASE}/api/logs/verify-seal`, { method: 'POST', body: formData });
             const result = await response.json();
 
             if (!response.ok) {
                 let msg = result.error || 'Gagal menjana writ. Cuba lagi.';
-                if (result.reason === 'SUBSCRIPTION_INACTIVE') {
-                    msg = '\u274c Langganan AWAS anda tidak aktif. Sila perbaharui sebelum menjana writ.';
-                } else if (result.reason === 'NOT_REGISTERED') {
-                    msg = '\u274c Akaun AWAS tidak dijumpai. Sila log masuk semula.';
-                }
+                if (result.reason === 'SUBSCRIPTION_INACTIVE') msg = '\u274c Langganan AWAS anda tidak aktif. Sila perbaharui sebelum menjana writ.';
+                else if (result.reason === 'NOT_REGISTERED') msg = '\u274c Akaun AWAS tidak dijumpai. Sila log masuk semula.';
                 showGateError(msg);
                 btn.innerText = '\ud83d\udd12 Jana Writ Forensik AWAS';
                 btn.disabled = false;
@@ -295,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const imgHashList = document.getElementById('pdf-image-hashes-list');
             if (imageHashesFull.length > 0) {
                 imgHashList.innerHTML = imageHashesFull.map((h, i) =>
-                    `<div class="img-hash-row" style="margin-bottom:6px;"><span style="font-weight:800;color:#1e40af;">Gambar ${i + 1}:</span> <span class="img-hash-masked">${h.substring(0, 8) + '\u2022'.repeat(56)}</span></div>`
+                    `<div class="img-hash-row" style="margin-bottom:8px;word-break:break-all;"><span style="font-weight:800;color:#1e40af;">Gambar ${i + 1}:</span><br><span class="img-hash-masked" style="font-family:monospace;font-size:0.7rem;">${h.substring(0, 8) + '\u2022'.repeat(56)}</span></div>`
                 ).join('');
                 imgHashSection.style.display = 'block';
             } else {
@@ -305,7 +277,8 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfRoad.innerText = formatKeadaanJalan(roadCondition);
             pdfWeather.innerText = formatCuaca(weatherCondition);
             pdfInjury.innerText = formatKecederaan(injuryStatus);
-            pdfDescription.innerText = incidentDescription || '\u2014';
+            // Hard truncate description at 150 chars for display
+            pdfDescription.innerText = incidentDescription ? incidentDescription.substring(0, 150) : '\u2014';
 
             mapContainer.innerHTML = `<iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
@@ -334,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (fault) {
             console.error('AWAS Writ Fault:', fault);
-            showGateError('\u26a0\ufe0f Masalah sambungan semasa memuat naik. Periksa internet anda dan cuba lagi. Jika pelayan baru bangun, cuba sekali lagi dalam beberapa saat.');
+            showGateError('\u26a0\ufe0f Masalah sambungan semasa memuat naik. Periksa internet anda dan cuba lagi.');
             btn.innerText = '\ud83d\udd12 Jana Writ Forensik AWAS';
             btn.disabled = false;
         }
@@ -381,30 +354,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-use-screen').addEventListener('click', () => { document.getElementById('report-modal').classList.remove('show'); });
 
     // ── PDF GENERATION ───────────────────────────────────────────────────────
-    // Strategy: loop through .report-section as before.
-    // BUT for the SHA-256 section, instead of capturing the whole section as
-    // one block, we capture its children individually:
-    //   1. Section title
-    //   2. Video hash box
-    //   3. Image hashes header (label only)
-    //   4. Each individual image hash row — one canvas each
-    // This guarantees no single canvas exceeds a PDF page height.
+    // Fixed page layout:
+    // Page 1: Header + Driver Info
+    // Page 2: GPS + Map + Incident Details (road/weather/injury/description) + Other party if any
+    // Page 3: (if other party — already on page 2, skip) OR continue
+    // Page 4: SHA-256 section title + Video hash box
+    // Page 5: Image hashes box (only if images uploaded)
+    // Last page: Stamp + Seal note + Footer
 
-    async function canvasToPage(pdf, el, contentWidth, pdfHeight, margin, currentYRef) {
-        if (!el || el.offsetWidth === 0 || el.offsetHeight === 0) return currentYRef.value;
-        const canvas = await html2canvas(el, {
+    async function captureElement(el) {
+        if (!el || el.offsetWidth === 0 || el.offsetHeight === 0) return null;
+        return await html2canvas(el, {
             scale: 2, useCORS: true, allowTaint: false,
             backgroundColor: '#ffffff', logging: false
         });
+    }
+
+    async function addCanvasToPdf(pdf, canvas, contentWidth, pdfHeight, margin, currentY) {
+        if (!canvas) return currentY;
         const imgData = canvas.toDataURL('image/jpeg', 0.95);
         const imgHeight = (canvas.height * contentWidth) / canvas.width;
-        if (currentYRef.value + imgHeight > pdfHeight - margin) {
+        if (currentY + imgHeight > pdfHeight - margin) {
             pdf.addPage();
-            currentYRef.value = margin;
+            currentY = margin;
         }
-        pdf.addImage(imgData, 'JPEG', margin, currentYRef.value, contentWidth, imgHeight);
-        currentYRef.value += imgHeight + 3;
-        return currentYRef.value;
+        pdf.addImage(imgData, 'JPEG', margin, currentY, contentWidth, imgHeight);
+        return currentY + imgHeight + 4;
     }
 
     document.getElementById('btn-get-certified').addEventListener('click', () => {
@@ -420,76 +395,83 @@ document.addEventListener('DOMContentLoaded', () => {
         mapImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;';
 
         mapImg.onload = async () => {
-            // SWAP: reveal full hashes + hide hash note lines
+            // SWAP: reveal full hashes, hide note lines
             pdfHash.innerText = ownHashFull;
-            const maskedEls = document.querySelectorAll('.img-hash-masked');
-            maskedEls.forEach((el, i) => { if (imageHashesFull[i]) el.innerText = imageHashesFull[i]; });
+            document.querySelectorAll('.img-hash-masked').forEach((el, i) => {
+                if (imageHashesFull[i]) el.innerText = imageHashesFull[i];
+            });
             document.querySelectorAll('.hash-note-line').forEach(el => el.style.display = 'none');
 
             try {
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const reportViewEl = document.getElementById('report-view');
-                const sections = reportViewEl.querySelectorAll('.report-section');
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 const margin = 10;
                 const contentWidth = pdfWidth - (margin * 2);
-                const currentY = { value: margin };
+                let y = margin;
 
-                // Identify the SHA-256 report-section by looking for sha-section-num
-                const shaSection = document.querySelector('#sha-section-num')?.closest('.report-section');
+                // ── PAGE 1: Header + Driver Info ─────────────────────────
+                const secHeader = document.querySelector('.report-section.report-header');
+                const secDriver = document.querySelector('#pdf-plate')?.closest('.report-section');
+                y = await addCanvasToPdf(pdf, await captureElement(secHeader), contentWidth, pdfHeight, margin, y);
+                y = await addCanvasToPdf(pdf, await captureElement(secDriver), contentWidth, pdfHeight, margin, y);
 
-                for (let i = 0; i < sections.length; i++) {
-                    const section = sections[i];
-                    if (section.offsetWidth === 0 || section.offsetHeight === 0) continue;
-
-                    if (section === shaSection) {
-                        // ── SPLIT SHA-256 SECTION ──────────────────────────
-                        // 1. Section title
-                        const sectionTitle = section.querySelector('.section-title');
-                        await canvasToPage(pdf, sectionTitle, contentWidth, pdfHeight, margin, currentY);
-
-                        // 2. Video hash box
-                        const videoHashBox = section.querySelector('.hash-box');
-                        await canvasToPage(pdf, videoHashBox, contentWidth, pdfHeight, margin, currentY);
-
-                        // 3. Image hashes — if present, split each row individually
-                        const imgHashSection = section.querySelector('#pdf-image-hashes-section');
-                        if (imgHashSection && imgHashSection.style.display !== 'none') {
-                            // Header label
-                            const imgHashLabel = imgHashSection.querySelector('.hash-label');
-                            await canvasToPage(pdf, imgHashLabel, contentWidth, pdfHeight, margin, currentY);
-
-                            // Each image hash row separately
-                            const hashRows = imgHashSection.querySelectorAll('.img-hash-row');
-                            for (let r = 0; r < hashRows.length; r++) {
-                                await canvasToPage(pdf, hashRows[r], contentWidth, pdfHeight, margin, currentY);
-                            }
-                        }
-                    } else {
-                        // All other sections — capture normally
-                        await canvasToPage(pdf, section, contentWidth, pdfHeight, margin, currentY);
-                    }
+                // ── PAGE 2: GPS + Map + Incident + Other party ───────────
+                pdf.addPage(); y = margin;
+                const secGps = document.querySelector('#pdf-lat')?.closest('.report-section');
+                const secIncident = document.querySelector('#pdf-road')?.closest('.report-section');
+                const secOther = document.getElementById('pdf-other-party-section');
+                y = await addCanvasToPdf(pdf, await captureElement(secGps), contentWidth, pdfHeight, margin, y);
+                y = await addCanvasToPdf(pdf, await captureElement(secIncident), contentWidth, pdfHeight, margin, y);
+                if (secOther && secOther.style.display !== 'none') {
+                    y = await addCanvasToPdf(pdf, await captureElement(secOther), contentWidth, pdfHeight, margin, y);
                 }
+
+                // ── PAGE 3 (formerly Page 4): SHA-256 title + Video hash ─
+                pdf.addPage(); y = margin;
+                const secShaTitle = document.querySelector('#sha-section-num')?.closest('.report-section');
+                // Capture just the section title
+                const shaTitle = secShaTitle?.querySelector('.section-title');
+                const videoHashBox = secShaTitle?.querySelector('.hash-box');
+                y = await addCanvasToPdf(pdf, await captureElement(shaTitle), contentWidth, pdfHeight, margin, y);
+                y = await addCanvasToPdf(pdf, await captureElement(videoHashBox), contentWidth, pdfHeight, margin, y);
+
+                // ── PAGE 4 (formerly Page 5): Image hashes (if any) ──────
+                const imgHashSec = document.getElementById('pdf-image-hashes-section');
+                if (imgHashSec && imgHashSec.style.display !== 'none') {
+                    pdf.addPage(); y = margin;
+                    y = await addCanvasToPdf(pdf, await captureElement(imgHashSec), contentWidth, pdfHeight, margin, y);
+                }
+
+                // ── LAST PAGE: Stamp + Seal note + Footer ────────────────
+                pdf.addPage(); y = margin;
+                const secStamp = document.querySelector('.awas-stamp')?.closest('.report-section');
+                const secSeal = document.querySelector('.seal-note')?.closest('.report-section');
+                const secFooter = document.querySelector('.footer-disclaimer')?.closest('.report-section');
+                y = await addCanvasToPdf(pdf, await captureElement(secStamp), contentWidth, pdfHeight, margin, y);
+                y = await addCanvasToPdf(pdf, await captureElement(secSeal), contentWidth, pdfHeight, margin, y);
+                y = await addCanvasToPdf(pdf, await captureElement(secFooter), contentWidth, pdfHeight, margin, y);
 
                 const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
                 pdf.save(fileName);
 
                 // SWAP BACK
                 pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
-                const maskedElsBack = document.querySelectorAll('.img-hash-masked');
-                maskedElsBack.forEach((el, i) => { if (imageHashesFull[i]) el.innerText = imageHashesFull[i].substring(0, 8) + '\u2022'.repeat(56); });
+                document.querySelectorAll('.img-hash-masked').forEach((el, i) => {
+                    if (imageHashesFull[i]) el.innerText = imageHashesFull[i].substring(0, 8) + '\u2022'.repeat(56);
+                });
                 document.querySelectorAll('.hash-note-line').forEach(el => el.style.display = '');
 
                 mapContainer.innerHTML = `<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}" style="width:100%;height:300px;border:none;margin-bottom:-80px;" loading="lazy"></iframe>`;
                 downloadBtn.innerText = '\u2705 PDF Dimuat Turun - Semak Fail Anda';
                 downloadBtn.disabled = false;
+
             } catch (err) {
-                // SWAP BACK on error
                 pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
-                const maskedElsBack = document.querySelectorAll('.img-hash-masked');
-                maskedElsBack.forEach((el, i) => { if (imageHashesFull[i]) el.innerText = imageHashesFull[i].substring(0, 8) + '\u2022'.repeat(56); });
+                document.querySelectorAll('.img-hash-masked').forEach((el, i) => {
+                    if (imageHashesFull[i]) el.innerText = imageHashesFull[i].substring(0, 8) + '\u2022'.repeat(56);
+                });
                 document.querySelectorAll('.hash-note-line').forEach(el => el.style.display = '');
                 mapContainer.innerHTML = `<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}" style="width:100%;height:300px;border:none;margin-bottom:-80px;" loading="lazy"></iframe>`;
                 downloadBtn.innerText = '\ud83d\udcc4 Dapatkan Writ Balai Rasmi - RM8';
