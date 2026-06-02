@@ -104,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             ownHash = await executeLocalSHA256(JSON.stringify(rawPayload));
 
-            // Video recorded — show photo section, stay on Screen 1
             statusDisplay.innerHTML = '\u2705 <strong>VIDEO DIRAKAM.</strong><br>Snap gambar bukti kerosakan sekarang (pilihan). Tekan Teruskan apabila selesai.';
             photoSection.style.display = 'flex';
             testBanner.style.display = 'none';
@@ -296,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const imgHashList = document.getElementById('pdf-image-hashes-list');
             if (imageHashesFull.length > 0) {
                 imgHashList.innerHTML = imageHashesFull.map((h, i) =>
-                    `<div style="margin-bottom:6px;"><span style="font-weight:800;color:#1e40af;">Gambar ${i + 1}:</span> <span class="img-hash-masked">${h.substring(0, 8) + '\u2022'.repeat(56)}</span></div>`
+                    `<div class="img-hash-row" style="margin-bottom:6px;"><span style="font-weight:800;color:#1e40af;">Gambar ${i + 1}:</span> <span class="img-hash-masked">${h.substring(0, 8) + '\u2022'.repeat(56)}</span></div>`
                 ).join('');
                 imgHashSection.style.display = 'block';
             } else {
@@ -382,6 +381,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-use-screen').addEventListener('click', () => { document.getElementById('report-modal').classList.remove('show'); });
 
     // ── PDF GENERATION ───────────────────────────────────────────────────────
+    // Strategy: loop through .report-section as before.
+    // BUT for the SHA-256 section, instead of capturing the whole section as
+    // one block, we capture its children individually:
+    //   1. Section title
+    //   2. Video hash box
+    //   3. Image hashes header (label only)
+    //   4. Each individual image hash row — one canvas each
+    // This guarantees no single canvas exceeds a PDF page height.
+
+    async function canvasToPage(pdf, el, contentWidth, pdfHeight, margin, currentYRef) {
+        if (!el || el.offsetWidth === 0 || el.offsetHeight === 0) return currentYRef.value;
+        const canvas = await html2canvas(el, {
+            scale: 2, useCORS: true, allowTaint: false,
+            backgroundColor: '#ffffff', logging: false
+        });
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const imgHeight = (canvas.height * contentWidth) / canvas.width;
+        if (currentYRef.value + imgHeight > pdfHeight - margin) {
+            pdf.addPage();
+            currentYRef.value = margin;
+        }
+        pdf.addImage(imgData, 'JPEG', margin, currentYRef.value, contentWidth, imgHeight);
+        currentYRef.value += imgHeight + 3;
+        return currentYRef.value;
+    }
+
     document.getElementById('btn-get-certified').addEventListener('click', () => {
         document.getElementById('report-modal').classList.remove('show');
         const downloadBtn = document.getElementById('print-btn');
@@ -395,11 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
         mapImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;';
 
         mapImg.onload = async () => {
-            // SWAP: reveal full hashes + hide the hash note lines
+            // SWAP: reveal full hashes + hide hash note lines
             pdfHash.innerText = ownHashFull;
             const maskedEls = document.querySelectorAll('.img-hash-masked');
             maskedEls.forEach((el, i) => { if (imageHashesFull[i]) el.innerText = imageHashesFull[i]; });
-            // Hide hash note lines for PDF
             document.querySelectorAll('.hash-note-line').forEach(el => el.style.display = 'none');
 
             try {
@@ -411,20 +435,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 const margin = 10;
                 const contentWidth = pdfWidth - (margin * 2);
-                let currentY = margin;
+                const currentY = { value: margin };
+
+                // Identify the SHA-256 report-section by looking for sha-section-num
+                const shaSection = document.querySelector('#sha-section-num')?.closest('.report-section');
 
                 for (let i = 0; i < sections.length; i++) {
                     const section = sections[i];
                     if (section.offsetWidth === 0 || section.offsetHeight === 0) continue;
-                    const canvas = await html2canvas(section, {
-                        scale: 2, useCORS: true, allowTaint: false,
-                        backgroundColor: '#ffffff', logging: false
-                    });
-                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                    const imgHeight = (canvas.height * contentWidth) / canvas.width;
-                    if (currentY + imgHeight > pdfHeight - margin) { pdf.addPage(); currentY = margin; }
-                    pdf.addImage(imgData, 'JPEG', margin, currentY, contentWidth, imgHeight);
-                    currentY += imgHeight + 3;
+
+                    if (section === shaSection) {
+                        // ── SPLIT SHA-256 SECTION ──────────────────────────
+                        // 1. Section title
+                        const sectionTitle = section.querySelector('.section-title');
+                        await canvasToPage(pdf, sectionTitle, contentWidth, pdfHeight, margin, currentY);
+
+                        // 2. Video hash box
+                        const videoHashBox = section.querySelector('.hash-box');
+                        await canvasToPage(pdf, videoHashBox, contentWidth, pdfHeight, margin, currentY);
+
+                        // 3. Image hashes — if present, split each row individually
+                        const imgHashSection = section.querySelector('#pdf-image-hashes-section');
+                        if (imgHashSection && imgHashSection.style.display !== 'none') {
+                            // Header label
+                            const imgHashLabel = imgHashSection.querySelector('.hash-label');
+                            await canvasToPage(pdf, imgHashLabel, contentWidth, pdfHeight, margin, currentY);
+
+                            // Each image hash row separately
+                            const hashRows = imgHashSection.querySelectorAll('.img-hash-row');
+                            for (let r = 0; r < hashRows.length; r++) {
+                                await canvasToPage(pdf, hashRows[r], contentWidth, pdfHeight, margin, currentY);
+                            }
+                        }
+                    } else {
+                        // All other sections — capture normally
+                        await canvasToPage(pdf, section, contentWidth, pdfHeight, margin, currentY);
+                    }
                 }
 
                 const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
@@ -440,6 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 downloadBtn.innerText = '\u2705 PDF Dimuat Turun - Semak Fail Anda';
                 downloadBtn.disabled = false;
             } catch (err) {
+                // SWAP BACK on error
                 pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
                 const maskedElsBack = document.querySelectorAll('.img-hash-masked');
                 maskedElsBack.forEach((el, i) => { if (imageHashesFull[i]) el.innerText = imageHashesFull[i].substring(0, 8) + '\u2022'.repeat(56); });
