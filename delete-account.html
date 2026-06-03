@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padam Akaun — AWAS</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --primary: #dc2626;
+            --text: #f8fafc; --text-muted: #94a3b8; --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .box { width: 100%; max-width: 420px; }
+        .logo { font-size: 1.8rem; font-weight: 900; letter-spacing: 4px; text-align: center; margin-bottom: 6px; }
+        .logo-sub { font-size: 0.75rem; color: var(--text-muted); text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 28px; }
+
+        /* STEP SCREENS */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* WARNING SCREEN */
+        .warning-icon { font-size: 4rem; text-align: center; margin-bottom: 16px; }
+        .warning-title { font-size: 1.3rem; font-weight: 900; color: #fca5a5; text-align: center; margin-bottom: 10px; }
+        .warning-card { background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.3); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .warning-card p { font-size: 0.88rem; color: #fca5a5; line-height: 1.7; margin-bottom: 8px; }
+        .warning-card p:last-child { margin-bottom: 0; }
+        .warning-card ul { margin: 8px 0 0 18px; }
+        .warning-card ul li { font-size: 0.85rem; color: #fca5a5; margin-bottom: 6px; line-height: 1.5; }
+        .keep-card { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; }
+        .keep-card p { font-size: 0.82rem; color: #86efac; line-height: 1.6; }
+        .btn-danger { width: 100%; background: var(--primary); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-cancel { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 13px; font-weight: 700; font-size: 0.9rem; border-radius: 8px; cursor: pointer; text-decoration: none; display: block; text-align: center; }
+        .btn-cancel:hover { border-color: #64748b; }
+
+        /* VERIFICATION SCREEN */
+        .verify-title { font-size: 1.1rem; font-weight: 800; text-align: center; margin-bottom: 6px; color: #fca5a5; }
+        .verify-sub { font-size: 0.82rem; color: var(--text-muted); text-align: center; margin-bottom: 24px; line-height: 1.5; }
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 7px; }
+        label { font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .field { width: 100%; background: #020617; border: 1px solid var(--border); padding: 13px 14px; border-radius: 8px; color: white; font-size: 1rem; }
+        .field:focus { border-color: var(--primary); outline: none; }
+        .plate-confirm { background: #020617; border: 2px solid rgba(220,38,38,0.4); padding: 13px 14px; border-radius: 8px; color: white; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; text-align: center; width: 100%; }
+        .plate-confirm:focus { border-color: var(--primary); outline: none; }
+        .plate-confirm.match { border-color: #dc2626; }
+        .plate-hint { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
+
+        /* PASSWORD EYE */
+        .password-wrap { position: relative; }
+        .password-wrap .field { padding-right: 44px; }
+        .eye-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 1.1rem; padding: 4px; line-height: 1; }
+
+        .status-box { padding: 12px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; text-align: center; margin-bottom: 14px; display: none; line-height: 1.5; }
+        .status-box.error { background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3); color: #fca5a5; }
+        .status-box.loading { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #fde68a; }
+
+        /* SUCCESS SCREEN */
+        .success-icon { font-size: 3.5rem; text-align: center; margin-bottom: 14px; }
+        .success-title { font-size: 1.2rem; font-weight: 800; text-align: center; color: #4ade80; margin-bottom: 10px; }
+        .success-card { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); border-radius: 10px; padding: 16px; text-align: center; }
+        .success-card p { font-size: 0.85rem; color: #86efac; line-height: 1.7; }
+        .redirect-note { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="logo">AWAS</div>
+        <div class="logo-sub">Accident Writ Automation System</div>
+
+        <!-- SCREEN 1: WARNING -->
+        <div class="screen active" id="screen-warning">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-title">Padam Akaun AWAS</div>
+
+            <div class="warning-card">
+                <p><strong>Tindakan ini adalah kekal dan tidak boleh dibatalkan.</strong></p>
+                <p>Apabila anda memadam akaun, perkara berikut akan berlaku:</p>
+                <ul>
+                    <li>Semua video dan gambar bukti anda akan dipadam dari pelayan AWAS</li>
+                    <li>Semua maklumat peribadi anda akan dipadamkan</li>
+                    <li>Langganan anda akan ditamatkan serta-merta</li>
+                    <li>Akaun affiliate dan komisen belum dibayar akan hilang</li>
+                    <li>Anda tidak akan dapat log masuk semula</li>
+                </ul>
+            </div>
+
+            <div class="keep-card">
+                <p>✅ <strong>Rekod writ forensik</strong> akan disimpan dalam sistem AWAS untuk tujuan audit undang-undang — tanpa sebarang maklumat peribadi anda. Nombor writ dan hash SHA-256 kekal untuk rujukan mahkamah.</p>
+            </div>
+
+            <button class="btn-danger" id="btn-proceed-delete">Ya, Saya Faham — Teruskan ke Pemadaman</button>
+            <a href="login.html" class="btn-cancel">Batal — Kembali ke Log Masuk</a>
+        </div>
+
+        <!-- SCREEN 2: VERIFICATION -->
+        <div class="screen" id="screen-verify">
+            <div class="verify-title">⚠️ Pengesahan Akhir</div>
+            <div class="verify-sub">Masukkan maklumat anda untuk mengesahkan pemadaman akaun. Semua medan diperlukan.</div>
+
+            <div class="form-group">
+                <label>Kata Laluan</label>
+                <div class="password-wrap">
+                    <input type="password" id="del-password" class="field" placeholder="Kata laluan semasa anda" autocomplete="current-password">
+                    <button type="button" class="eye-btn" id="toggle-del-pw">👁️</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>MyKad (4 Digit Terakhir)</label>
+                <input type="text" id="del-mykad" class="field" maxlength="4" placeholder="cth: 5678" inputmode="numeric">
+            </div>
+
+            <div class="form-group">
+                <label>Taip Nombor Plat Kenderaan Anda Untuk Mengesahkan</label>
+                <input type="text" id="del-plate-confirm" class="plate-confirm" placeholder="cth: WD519A" maxlength="10" autocomplete="off" autocorrect="off" spellcheck="false">
+                <div class="plate-hint" id="plate-hint">Taip nombor plat anda dengan tepat untuk mengaktifkan butang padam.</div>
+            </div>
+
+            <div class="status-box" id="del-status"></div>
+
+            <button class="btn-danger" id="btn-confirm-delete" disabled style="opacity:0.4;">🗑️ Padam Akaun Saya Sekarang</button>
+            <button class="btn-cancel" id="btn-back-warning" style="margin-top:10px;">← Kembali</button>
+        </div>
+
+        <!-- SCREEN 3: SUCCESS -->
+        <div class="screen" id="screen-success">
+            <div class="success-icon">✅</div>
+            <div class="success-title">Akaun Telah Dipadam</div>
+            <div class="success-card">
+                <p>Semua data peribadi dan fail bukti anda telah dipadam dari sistem AWAS.</p>
+                <p style="margin-top:8px;">Terima kasih kerana menggunakan AWAS. Kami doakan keselamatan anda di jalan raya.</p>
+            </div>
+            <div class="redirect-note" id="redirect-note">Anda akan dihalakan ke laman utama dalam <span id="countdown">5</span> saat...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://awas-backend.onrender.com';
+        const cachedPlate = localStorage.getItem('awas_vehicle_plate') || '';
+
+        // Eye toggle
+        document.getElementById('toggle-del-pw').addEventListener('click', () => {
+            const input = document.getElementById('del-password');
+            const btn = document.getElementById('toggle-del-pw');
+            if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+            else { input.type = 'password'; btn.textContent = '👁️'; }
+        });
+
+        // Screen transitions
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        document.getElementById('btn-proceed-delete').addEventListener('click', () => {
+            showScreen('screen-verify');
+        });
+
+        document.getElementById('btn-back-warning').addEventListener('click', () => {
+            showScreen('screen-warning');
+        });
+
+        // Plate confirm — auto uppercase + enable button only when plate matches
+        const plateConfirmInput = document.getElementById('del-plate-confirm');
+        const confirmBtn = document.getElementById('btn-confirm-delete');
+        const plateHint = document.getElementById('plate-hint');
+
+        plateConfirmInput.addEventListener('input', () => {
+            plateConfirmInput.value = plateConfirmInput.value.toUpperCase().replace(/\s+/g, '');
+            const typed = plateConfirmInput.value;
+            if (cachedPlate && typed === cachedPlate) {
+                confirmBtn.disabled = false;
+                confirmBtn.style.opacity = '1';
+                plateHint.style.color = '#4ade80';
+                plateHint.innerText = '✅ Nombor plat sepadan.';
+            } else {
+                confirmBtn.disabled = true;
+                confirmBtn.style.opacity = '0.4';
+                plateHint.style.color = '#64748b';
+                plateHint.innerText = cachedPlate
+                    ? `Taip "${cachedPlate}" untuk mengaktifkan butang padam.`
+                    : 'Taip nombor plat anda dengan tepat untuk mengaktifkan butang padam.';
+            }
+        });
+
+        // DELETE ACCOUNT
+        document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-confirm-delete');
+            const statusEl = document.getElementById('del-status');
+
+            const password = document.getElementById('del-password').value;
+            const mykadLastFour = document.getElementById('del-mykad').value.trim();
+            const vehiclePlate = plateConfirmInput.value.trim().toUpperCase();
+
+            if (!password || !mykadLastFour || !vehiclePlate) {
+                statusEl.className = 'status-box error';
+                statusEl.innerText = 'Sila lengkapkan semua medan.';
+                statusEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = '⏳ Memproses pemadaman...';
+            statusEl.className = 'status-box loading';
+            statusEl.innerText = 'Sedang memadam data anda dari pelayan AWAS...';
+            statusEl.style.display = 'block';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/drivers/account`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ vehiclePlate, password, mykadLastFour })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Clear all localStorage
+                    localStorage.removeItem('awas_vehicle_plate');
+                    localStorage.removeItem('awas_vehicle_model');
+                    localStorage.removeItem('awas_vehicle_type');
+                    localStorage.removeItem('awas_mykad_four');
+                    localStorage.removeItem('awas_phone');
+                    localStorage.removeItem('awas_referral_code');
+                    localStorage.removeItem('awas_token');
+
+                    showScreen('screen-success');
+
+                    // Countdown redirect
+                    let count = 5;
+                    const countdownEl = document.getElementById('countdown');
+                    const interval = setInterval(() => {
+                        count--;
+                        countdownEl.innerText = count;
+                        if (count <= 0) {
+                            clearInterval(interval);
+                            window.location.href = 'index.html';
+                        }
+                    }, 1000);
+
+                } else {
+                    statusEl.className = 'status-box error';
+                    statusEl.innerText = data.error || 'Pengesahan gagal. Sila semak maklumat anda.';
+                    statusEl.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerText = '🗑️ Padam Akaun Saya Sekarang';
+                }
+            } catch (err) {
+                statusEl.className = 'status-box error';
+                statusEl.innerText = 'Masalah sambungan. Periksa internet anda dan cuba lagi.';
+                statusEl.style.display = 'block';
+                btn.disabled = false;
+                btn.innerText = '🗑️ Padam Akaun Saya Sekarang';
+            }
+        });
+    </script>
+</body>
+</html>

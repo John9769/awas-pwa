@@ -22,13 +22,10 @@
         .plate-input-wrap input { width: 100%; background: #020617; border: 2px solid var(--border); padding: 14px 16px; border-radius: 8px; color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
         .plate-input-wrap input:focus { border-color: var(--success); outline: none; }
         .plate-hint { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 6px; }
-
-        /* PASSWORD FIELD WITH EYE TOGGLE */
         .password-wrap { position: relative; }
         .password-wrap input { width: 100%; background: #020617; border: 2px solid var(--border); padding: 14px 44px 14px 16px; border-radius: 8px; color: white; font-size: 1rem; }
         .password-wrap input:focus { border-color: var(--success); outline: none; }
         .eye-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px; line-height: 1; }
-
         .btn-login { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; transition: background 0.2s; }
         .btn-login:hover { background: var(--success-hover); }
         .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -52,8 +49,8 @@
         .btn-enter { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; text-decoration: none; display: block; text-align: center; }
         .btn-enter:hover { background: var(--success-hover); }
         .affiliate-link { display: block; text-align: center; margin-top: 12px; font-size: 0.78rem; color: #60a5fa; text-decoration: none; }
-
-        /* RESET PANEL */
+        .delete-link { display: block; text-align: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid #1e293b; font-size: 0.72rem; color: #475569; text-decoration: none; }
+        .delete-link:hover { color: #fca5a5; }
         #reset-panel { display: none; }
         .reset-title { font-size: 1.1rem; font-weight: 800; text-align: center; margin-bottom: 6px; }
         .reset-sub { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 20px; line-height: 1.5; }
@@ -99,6 +96,7 @@
                 <div class="profile-status">AKTIF / DISAHKAN</div>
                 <a href="app.html" class="btn-enter">🔒 Masuk AWAS App</a>
                 <a href="affiliate.html" class="affiliate-link">🔗 Dashboard Affiliate Saya →</a>
+                <a href="delete-account.html" class="delete-link">🗑️ Padam Akaun</a>
             </div>
 
             <div class="divider">
@@ -147,7 +145,6 @@
         const statusBox = document.getElementById('status-box');
         const profileBox = document.getElementById('profile-box');
 
-        // Eye toggles
         function wireEye(btnId, inputId) {
             document.getElementById(btnId).addEventListener('click', () => {
                 const input = document.getElementById(inputId);
@@ -159,7 +156,6 @@
         wireEye('toggle-login-pw', 'login-password');
         wireEye('toggle-reset-pw', 'reset-password');
 
-        // Uppercase plates
         plateInput.addEventListener('input', () => {
             plateInput.value = plateInput.value.toUpperCase().replace(/\s+/g, '');
         });
@@ -168,7 +164,6 @@
         });
         loginPw.addEventListener('keypress', (e) => { if (e.key === 'Enter') btnLogin.click(); });
 
-        // Panel toggles
         document.getElementById('show-reset').addEventListener('click', () => {
             document.getElementById('login-panel').style.display = 'none';
             document.getElementById('reset-panel').style.display = 'block';
@@ -178,7 +173,6 @@
             document.getElementById('login-panel').style.display = 'block';
         });
 
-        // LOGIN
         btnLogin.addEventListener('click', async () => {
             const plate = plateInput.value.trim().toUpperCase().replace(/\s+/g, '');
             const password = loginPw.value;
@@ -186,7 +180,6 @@
                 showStatus('Sila masukkan nombor plat dan kata laluan.', 'error');
                 return;
             }
-
             btnLogin.disabled = true;
             btnLogin.innerText = '⏳ Memeriksa...';
             showStatus('Memeriksa rekod AWAS anda...', 'loading');
@@ -236,22 +229,14 @@
             }
         });
 
-        // RESET PASSWORD
         document.getElementById('btn-reset').addEventListener('click', async () => {
             const btn = document.getElementById('btn-reset');
-            const resetStatus = document.getElementById('reset-status');
             const plate = document.getElementById('reset-plate').value.trim().toUpperCase().replace(/\s+/g, '');
             const mykad = document.getElementById('reset-mykad').value.trim();
             const newPassword = document.getElementById('reset-password').value;
 
-            if (!plate || !mykad || !newPassword) {
-                showReset('Sila lengkapkan semua medan.', 'error');
-                return;
-            }
-            if (newPassword.length < 6) {
-                showReset('Kata laluan baru minimum 6 aksara.', 'error');
-                return;
-            }
+            if (!plate || !mykad || !newPassword) { showReset('Sila lengkapkan semua medan.', 'error'); return; }
+            if (newPassword.length < 6) { showReset('Kata laluan baru minimum 6 aksara.', 'error'); return; }
 
             btn.disabled = true;
             btn.innerText = '⏳ Menetapkan...';
@@ -264,14 +249,13 @@
                     body: JSON.stringify({ vehiclePlate: plate, mykadLastFour: mykad, newPassword })
                 });
                 const data = await res.json();
-
                 if (res.ok) {
                     showReset('✅ Kata laluan berjaya ditetapkan. Sila log masuk.', 'success');
                     btn.innerText = '✅ Berjaya';
                     setTimeout(() => {
                         document.getElementById('reset-panel').style.display = 'none';
                         document.getElementById('login-panel').style.display = 'block';
-                        resetStatus.style.display = 'none';
+                        document.getElementById('reset-status').style.display = 'none';
                         btn.disabled = false;
                         btn.innerText = 'Tetapkan Kata Laluan';
                         plateInput.value = plate;

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasar Privasi — AWAS Premium Resources</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
+            --text-muted: #94a3b8; --border: #334155;
+            --success: #16a34a; --primary: #dc2626;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.7; padding: 24px 20px; max-width: 800px; margin: 0 auto; }
+        .logo { font-size: 1.8rem; font-weight: 900; letter-spacing: 3px; color: #f8fafc; text-align: center; margin-bottom: 6px; }
+        .doc-title { font-size: 1.1rem; font-weight: 800; text-align: center; color: #4ade80; margin-bottom: 4px; }
+        .doc-subtitle { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 6px; }
+        .reg-info { font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-bottom: 6px; }
+        .effective-date { font-size: 0.78rem; color: #fbbf24; text-align: center; margin-bottom: 28px; }
+        .lang-divider { display: flex; align-items: center; gap: 12px; margin: 28px 0 20px; }
+        .lang-divider-line { flex: 1; height: 1px; background: var(--border); }
+        .lang-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); white-space: nowrap; }
+        h2 { font-size: 1rem; font-weight: 800; color: #4ade80; margin: 24px 0 8px; border-left: 3px solid #16a34a; padding-left: 10px; }
+        h3 { font-size: 0.9rem; font-weight: 700; color: #f8fafc; margin: 16px 0 6px; }
+        p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.7; }
+        ul { margin: 8px 0 12px 20px; }
+        ul li { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 6px; line-height: 1.6; }
+        .highlight { color: #f8fafc; font-weight: 600; }
+        .warning-box { background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.3); border-radius: 8px; padding: 14px 16px; margin: 16px 0; }
+        .warning-box p { color: #fca5a5; margin: 0; }
+        .info-box { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.25); border-radius: 8px; padding: 14px 16px; margin: 16px 0; }
+        .info-box p { color: #86efac; margin: 0; font-size: 0.85rem; }
+        .contact-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin: 20px 0; }
+        .contact-box h3 { color: #4ade80; margin-top: 0; }
+        .contact-box p { margin-bottom: 6px; }
+        .back-link { display: block; text-align: center; margin-top: 32px; color: #60a5fa; font-size: 0.85rem; text-decoration: none; }
+        .pending-note { font-size: 0.72rem; color: #fbbf24; font-style: italic; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="logo">AWAS</div>
+    <div class="doc-title">Dasar Privasi / Privacy Policy</div>
+    <div class="doc-subtitle">AWAS Premium Resources</div>
+    <div class="reg-info">No. Pendaftaran SSM: 202603141446 (NS0323478-H)</div>
+    <div class="effective-date">Berkuat kuasa / Effective: 3 Jun 2026 | Versi / Version: 1.0</div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- BAHASA MALAYSIA -->
+    <!-- ═══════════════════════════════════════════════ -->
+
+    <div class="lang-divider">
+        <div class="lang-divider-line"></div>
+        <div class="lang-label">🇲🇾 Bahasa Malaysia</div>
+        <div class="lang-divider-line"></div>
+    </div>
+
+    <p>AWAS Premium Resources (<span class="highlight">"AWAS"</span>, <span class="highlight">"kami"</span>) menghormati privasi anda. Dasar Privasi ini menerangkan bagaimana kami mengumpul, menggunakan, menyimpan dan melindungi maklumat peribadi anda apabila anda menggunakan platform AWAS di <span class="highlight">awas.asia</span>.</p>
+
+    <p>Dengan mendaftar atau menggunakan AWAS, anda bersetuju dengan Dasar Privasi ini. Sila baca dengan teliti sebelum menggunakan perkhidmatan kami.</p>
+
+    <h2>1. Maklumat Yang Kami Kumpul</h2>
+
+    <h3>1.1 Maklumat Pendaftaran</h3>
+    <ul>
+        <li>Nombor pendaftaran kenderaan (plat kenderaan)</li>
+        <li>Jenama dan model kenderaan</li>
+        <li>Jenis kenderaan</li>
+        <li>4 digit terakhir nombor MyKad</li>
+        <li>Nombor telefon / WhatsApp (jika diberikan)</li>
+        <li>Kata laluan (disimpan dalam bentuk hash bcrypt — tidak boleh dibaca)</li>
+    </ul>
+
+    <h3>1.2 Data Bukti Kemalangan</h3>
+    <ul>
+        <li>Fail video rakaman kejadian</li>
+        <li>Fail gambar bukti kejadian (sehingga 4 gambar)</li>
+        <li>Koordinat GPS semasa kejadian</li>
+        <li>Cap masa kejadian</li>
+        <li>Cincang SHA-256 video dan gambar</li>
+        <li>Butiran insiden (keadaan jalan, cuaca, kecederaan, penerangan)</li>
+    </ul>
+
+    <h3>1.3 Data Pihak Ketiga (Dakwaan Pengadu)</h3>
+    <ul>
+        <li>Nombor plat kenderaan pihak lain (jika dimasukkan oleh pengguna)</li>
+        <li>Jenama dan model kenderaan pihak lain (jika dimasukkan)</li>
+    </ul>
+    <div class="warning-box">
+        <p>⚠️ Maklumat pihak ketiga adalah <strong>dakwaan pengadu semata-mata</strong>. AWAS tidak mengesahkan maklumat kenderaan pihak lain. Tandatangan SHA-256 hanya terpakai pada kenderaan pengadu sahaja.</p>
+    </div>
+
+    <h3>1.4 Data Affiliate</h3>
+    <ul>
+        <li>Nama bank dan nombor akaun bank</li>
+        <li>Nama pemilik akaun bank</li>
+        <li>Nombor DuitNow (jika diberikan)</li>
+        <li>Rekod pendapatan dan bayaran komisen</li>
+    </ul>
+    <div class="warning-box">
+        <p>⚠️ Data kewangan affiliate adalah sensitif. Kami menggunakannya semata-mata untuk tujuan pembayaran komisen. Data ini tidak akan dikongsi dengan mana-mana pihak ketiga kecuali institusi kewangan yang memproses pembayaran.</p>
+    </div>
+
+    <h2>2. Bagaimana Kami Menggunakan Maklumat Anda</h2>
+    <ul>
+        <li>Menyediakan perkhidmatan vault bukti digital AWAS</li>
+        <li>Menjana Writ Forensik AWAS dengan nombor writ rasmi</li>
+        <li>Memproses pembayaran langganan dan writ PDF</li>
+        <li>Memproses pembayaran komisen affiliate</li>
+        <li>Melayan pertanyaan institusi (penanggung insurans dan peguam) yang telah mendapat kebenaran pengguna</li>
+        <li>Meningkatkan keselamatan dan integriti platform</li>
+        <li>Mematuhi keperluan undang-undang dan perintah mahkamah yang sah</li>
+    </ul>
+
+    <h2>3. Penyimpanan dan Keselamatan Data</h2>
+    <p>Data anda disimpan di pelayan selamat menggunakan perkhidmatan berikut:</p>
+    <ul>
+        <li><span class="highlight">Neon PostgreSQL</span> — pangkalan data pengguna dan writ (pelayan AWS, zon ap-southeast-1)</li>
+        <li><span class="highlight">Cloudinary</span> — storan fail video dan gambar (dienkripsi semasa transit dan dalam penyimpanan)</li>
+        <li><span class="highlight">Render.com</span> — hos pelayan backend (SSL/TLS diaktifkan)</li>
+    </ul>
+    <p>Kata laluan pengguna disimpan menggunakan algoritma <span class="highlight">bcrypt</span> dengan faktor kerja 12. Tiada kata laluan disimpan dalam bentuk teks biasa.</p>
+    <p>Token JWT digunakan untuk pengesahan sesi dengan tempoh luput 30 hari.</p>
+
+    <h2>4. Perkongsian Data</h2>
+    <p>Kami <span class="highlight">tidak menjual</span> maklumat peribadi anda kepada mana-mana pihak ketiga.</p>
+    <p>Kami hanya berkongsi data dalam keadaan berikut:</p>
+    <ul>
+        <li><span class="highlight">Institusi yang diberi kebenaran</span> — penanggung insurans atau peguam yang telah membayar yuran pertanyaan institusi (RM100) dan mendapat kebenaran pengguna melalui sistem AWAS</li>
+        <li><span class="highlight">Keperluan undang-undang</span> — jika diwajibkan oleh perintah mahkamah, waran polis atau arahan pihak berkuasa yang sah di bawah undang-undang Malaysia</li>
+        <li><span class="highlight">Pembekal perkhidmatan</span> — penyedia infrastruktur teknikal (Cloudinary, Neon, Render) yang terikat dengan perjanjian kerahsiaan</li>
+    </ul>
+
+    <h2>5. Hak Anda Di Bawah PDPA 2010</h2>
+    <p>Di bawah Akta Perlindungan Data Peribadi 2010 (PDPA), anda mempunyai hak untuk:</p>
+    <ul>
+        <li>Mengakses maklumat peribadi anda yang kami simpan</li>
+        <li>Membetulkan maklumat yang tidak tepat</li>
+        <li>Menarik balik kebenaran pemprosesan data</li>
+        <li>Membuat pertanyaan tentang penggunaan data anda</li>
+    </ul>
+    <p>Untuk menggunakan hak-hak ini, hubungi DPO kami di <span class="highlight">hello@awas.asia</span>.</p>
+
+    <h2>6. Pemindahan Data Antarabangsa</h2>
+    <p>Data anda mungkin diproses di luar Malaysia oleh pembekal infrastruktur kami (Cloudinary, Neon, Render). Semua pemindahan data antarabangsa tertakluk kepada perlindungan yang setara dengan standard PDPA 2010 Malaysia.</p>
+
+    <h2>7. Tempoh Penyimpanan Data</h2>
+    <ul>
+        <li>Data akaun pengguna — selagi akaun aktif atau sehingga permintaan pemadaman diterima</li>
+        <li>Rekod writ forensik — minimum 7 tahun (keperluan undang-undang untuk rekod bukti)</li>
+        <li>Data affiliate — selagi program affiliate aktif</li>
+        <li>Log sistem — 90 hari</li>
+    </ul>
+
+    <h2>8. Kuki dan Teknologi Penjejakan</h2>
+    <p>AWAS menggunakan <span class="highlight">localStorage</span> pada peranti anda untuk menyimpan maklumat sesi log masuk dan butiran kenderaan anda bagi kemudahan penggunaan. Tiada kuki pihak ketiga atau teknologi penjejakan pengiklanan digunakan.</p>
+
+    <h2>9. Perubahan Dasar Privasi</h2>
+    <p>Kami berhak mengemas kini Dasar Privasi ini dari semasa ke semasa. Perubahan material akan dimaklumkan melalui e-mel atau notis dalam aplikasi. Penggunaan berterusan AWAS selepas notis tersebut bermakna anda menerima perubahan berkenaan.</p>
+
+    <h2>10. Pegawai Perlindungan Data (DPO)</h2>
+    <div class="contact-box">
+        <h3>Hubungi DPO Kami</h3>
+        <p><span class="highlight">Jawatan:</span> Pegawai Perlindungan Data, AWAS Premium Resources</p>
+        <p><span class="highlight">Syarikat:</span> AWAS Premium Resources (202603141446)</p>
+        <p><span class="highlight">E-mel:</span> hello@awas.asia</p>
+        <p><span class="highlight">Alamat:</span> 1622, Jln Nusari Aman 6/5, Nusari Aman, 71950 Bandar Sri Sendayan, Negeri Sembilan</p>
+    </div>
+
+    <hr>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- ENGLISH -->
+    <!-- ═══════════════════════════════════════════════ -->
+
+    <div class="lang-divider">
+        <div class="lang-divider-line"></div>
+        <div class="lang-label">🇬🇧 English</div>
+        <div class="lang-divider-line"></div>
+    </div>
+
+    <p>AWAS Premium Resources (<span class="highlight">"AWAS"</span>, <span class="highlight">"we"</span>, <span class="highlight">"us"</span>) respects your privacy. This Privacy Policy explains how we collect, use, store and protect your personal information when you use the AWAS platform at <span class="highlight">awas.asia</span>.</p>
+
+    <p>By registering or using AWAS, you agree to this Privacy Policy. Please read it carefully before using our services.</p>
+
+    <h2>1. Information We Collect</h2>
+
+    <h3>1.1 Registration Information</h3>
+    <ul>
+        <li>Vehicle registration number (plate number)</li>
+        <li>Vehicle make and model</li>
+        <li>Vehicle type</li>
+        <li>Last 4 digits of MyKad (national identity card)</li>
+        <li>Phone / WhatsApp number (if provided)</li>
+        <li>Password (stored as bcrypt hash — not readable in plain text)</li>
+    </ul>
+
+    <h3>1.2 Accident Evidence Data</h3>
+    <ul>
+        <li>Video recording of the incident</li>
+        <li>Evidence photographs (up to 4 images)</li>
+        <li>GPS coordinates at time of incident</li>
+        <li>Timestamp of incident</li>
+        <li>SHA-256 cryptographic hash of video and images</li>
+        <li>Incident details (road condition, weather, injury status, description)</li>
+    </ul>
+
+    <h3>1.3 Third-Party Data (Claimant's Statement)</h3>
+    <ul>
+        <li>Third-party vehicle plate number (if entered by user)</li>
+        <li>Third-party vehicle make and model (if entered)</li>
+    </ul>
+    <div class="warning-box">
+        <p>⚠️ Third-party information represents the <strong>claimant's statement only</strong>. AWAS does not verify third-party vehicle information. SHA-256 signatures apply only to the claimant's own vehicle.</p>
+    </div>
+
+    <h3>1.4 Affiliate Financial Data</h3>
+    <ul>
+        <li>Bank name and account number</li>
+        <li>Bank account holder name</li>
+        <li>DuitNow number (if provided)</li>
+        <li>Commission earnings and payout records</li>
+    </ul>
+    <div class="warning-box">
+        <p>⚠️ Affiliate financial data is sensitive. We use it solely for commission payment purposes. This data will not be shared with any third party except financial institutions processing the payments.</p>
+    </div>
+
+    <h2>2. How We Use Your Information</h2>
+    <ul>
+        <li>Providing the AWAS digital evidence vault service</li>
+        <li>Generating AWAS Forensic Writs with official writ numbers</li>
+        <li>Processing subscription and PDF writ payments</li>
+        <li>Processing affiliate commission payments</li>
+        <li>Serving authorised institutional queries (insurers and lawyers) with user consent</li>
+        <li>Improving platform security and integrity</li>
+        <li>Complying with legal requirements and valid court orders</li>
+    </ul>
+
+    <h2>3. Data Storage and Security</h2>
+    <p>Your data is stored on secure servers using the following services:</p>
+    <ul>
+        <li><span class="highlight">Neon PostgreSQL</span> — user and writ database (AWS servers, ap-southeast-1 zone)</li>
+        <li><span class="highlight">Cloudinary</span> — video and image file storage (encrypted in transit and at rest)</li>
+        <li><span class="highlight">Render.com</span> — backend server hosting (SSL/TLS enabled)</li>
+    </ul>
+    <p>Passwords are stored using <span class="highlight">bcrypt</span> algorithm with work factor 12. No passwords are stored in plain text.</p>
+    <p>JWT tokens are used for session authentication with a 30-day expiry period.</p>
+
+    <h2>4. Data Sharing</h2>
+    <p>We <span class="highlight">do not sell</span> your personal information to any third party.</p>
+    <p>We only share data in the following circumstances:</p>
+    <ul>
+        <li><span class="highlight">Authorised institutions</span> — insurers or lawyers who have paid the institutional query fee (RM100) and obtained user consent through the AWAS system</li>
+        <li><span class="highlight">Legal requirements</span> — if required by court order, police warrant or valid authority directive under Malaysian law</li>
+        <li><span class="highlight">Service providers</span> — technical infrastructure providers (Cloudinary, Neon, Render) bound by confidentiality agreements</li>
+    </ul>
+
+    <h2>5. Your Rights Under PDPA 2010</h2>
+    <p>Under the Personal Data Protection Act 2010 (PDPA), you have the right to:</p>
+    <ul>
+        <li>Access your personal information we hold</li>
+        <li>Correct inaccurate information</li>
+        <li>Withdraw consent for data processing</li>
+        <li>Make enquiries about the use of your data</li>
+    </ul>
+    <p>To exercise these rights, contact our DPO at <span class="highlight">hello@awas.asia</span>.</p>
+
+    <h2>6. International Data Transfers</h2>
+    <p>Your data may be processed outside Malaysia by our infrastructure providers (Cloudinary, Neon, Render). All international data transfers are subject to protections equivalent to Malaysian PDPA 2010 standards.</p>
+
+    <h2>7. Data Retention</h2>
+    <ul>
+        <li>User account data — while account is active or until deletion request is received</li>
+        <li>Forensic writ records — minimum 7 years (legal requirement for evidence records)</li>
+        <li>Affiliate data — while affiliate program is active</li>
+        <li>System logs — 90 days</li>
+    </ul>
+
+    <h2>8. Cookies and Tracking</h2>
+    <p>AWAS uses <span class="highlight">localStorage</span> on your device to store login session information and your vehicle details for convenience. No third-party cookies or advertising tracking technologies are used.</p>
+
+    <h2>9. Changes to This Privacy Policy</h2>
+    <p>We reserve the right to update this Privacy Policy from time to time. Material changes will be communicated via email or in-app notice. Continued use of AWAS after such notice constitutes acceptance of the changes.</p>
+
+    <h2>10. Data Protection Officer (DPO)</h2>
+    <div class="contact-box">
+        <h3>Contact Our DPO</h3>
+        <p><span class="highlight">Designation:</span> Data Protection Officer, AWAS Premium Resources</p>
+        <p><span class="highlight">Company:</span> AWAS Premium Resources (202603141446)</p>
+        <p><span class="highlight">Email:</span> hello@awas.asia</p>
+        <p><span class="highlight">Address:</span> 1622, Jln Nusari Aman 6/5, Nusari Aman, 71950 Bandar Sri Sendayan, Negeri Sembilan</p>
+    </div>
+
+    <div class="info-box">
+        <p>⚠️ Dokumen ini sedang dalam semakan peguam. Versi final tertakluk kepada pengesahan pakar undang-undang Malaysia.<br>
+        This document is pending legal review. Final version subject to verification by Malaysian legal counsel.</p>
+    </div>
+
+    <a href="index.html" class="back-link">← Kembali ke Laman Utama / Back to Home</a>
+
+</body>
+</html>

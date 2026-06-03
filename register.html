@@ -22,14 +22,10 @@
         input, select { background: #020617; border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: white; font-size: 1rem; width: 100%; }
         input:focus, select:focus { border-color: var(--primary); outline: none; }
         select option { background: #020617; }
-
-        /* PASSWORD FIELD WITH EYE TOGGLE */
         .password-wrap { position: relative; }
         .password-wrap input { padding-right: 44px; }
         .eye-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px; line-height: 1; }
         .pw-hint { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
-
-        /* REFERRAL CODE */
         .referral-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
         .referral-input-wrap { display: flex; gap: 8px; }
         .referral-input-wrap input { flex: 1; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
@@ -37,34 +33,27 @@
         .ref-status { font-size: 0.75rem; font-weight: 600; padding: 6px 10px; border-radius: 6px; display: none; }
         .ref-status.valid { background: rgba(22,163,74,0.1); color: #4ade80; border: 1px solid rgba(22,163,74,0.3); }
         .ref-status.invalid { background: rgba(220,38,38,0.1); color: #fca5a5; border: 1px solid rgba(220,38,38,0.3); }
-
-        .consent-container { background: #020617; border: 1px solid rgba(220,38,38,0.2); padding: 12px; border-radius: 6px; margin: 20px 0; display: flex; gap: 10px; align-items: flex-start; }
+        .consent-container { background: #020617; border: 1px solid rgba(220,38,38,0.2); padding: 12px; border-radius: 6px; margin: 12px 0; display: flex; gap: 10px; align-items: flex-start; }
         .consent-container input[type="checkbox"] { width: auto; margin-top: 4px; transform: scale(1.2); cursor: pointer; }
         .consent-text { font-size: 0.78rem; line-height: 1.4; color: var(--text-muted); }
         .consent-text strong { color: var(--text); }
+        .consent-text a { color: #60a5fa; font-weight: 700; text-decoration: none; }
         .btn-submit { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 700; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
         .btn-submit:hover { background: #15803d; }
         #message { text-align: center; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
-
-        /* LOGIN LINK */
         .login-link { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--text-muted); }
         .login-link a { color: #60a5fa; font-weight: 700; text-decoration: none; }
-
-        /* SUCCESS SCREEN */
         #success-screen { display: none; width: 100%; max-width: 420px; margin: auto 0; }
         .success-hero { background: var(--card); border-radius: 12px; padding: 28px 24px; text-align: center; margin-bottom: 16px; border: 1px solid rgba(22,163,74,0.3); }
         .shield-icon { font-size: 4rem; margin-bottom: 12px; }
         .success-title { font-size: 1.5rem; font-weight: 800; color: var(--success); margin-bottom: 6px; }
         .success-sub { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
         .expiry-badge { display: inline-block; background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); color: #86efac; font-size: 0.8rem; font-weight: 700; padding: 6px 16px; border-radius: 100px; }
-
-        /* REFERRAL CODE BADGE */
         .referral-badge { background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.3); border-radius: 10px; padding: 16px; margin-top: 16px; text-align: center; }
         .referral-badge-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #60a5fa; margin-bottom: 8px; }
         .referral-code-display { font-family: monospace; font-size: 1.6rem; font-weight: 900; color: #93c5fd; letter-spacing: 4px; margin-bottom: 8px; }
         .referral-badge-sub { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
         .referral-link-box { background: #020617; border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-top: 10px; font-size: 0.72rem; font-family: monospace; color: #60a5fa; word-break: break-all; }
-
         .guide-box { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
         .guide-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 16px; }
         .guide-step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 20px; }
@@ -109,7 +98,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Jenama & Model Kenderaan</label>
+                <label>Jenama &amp; Model Kenderaan</label>
                 <input type="text" id="vehicle-model" placeholder="cth: Perodua Myvi 1.5 / Honda Wave 125" required>
             </div>
             <div class="form-group">
@@ -121,8 +110,6 @@
                 <input type="tel" id="phone" placeholder="cth: 0123456789">
                 <small style="color:#64748b;font-size:0.72rem;">AWAS akan hubungi anda apabila penanggung insurans atau peguam memohon akses laporan anda. Kebenaran anda sentiasa diperlukan terlebih dahulu.</small>
             </div>
-
-            <!-- PASSWORD -->
             <div class="form-group">
                 <label>Kata Laluan (untuk log masuk)</label>
                 <div class="password-wrap">
@@ -131,8 +118,6 @@
                 </div>
                 <div class="pw-hint">Anda akan log masuk dengan nombor plat + kata laluan ini.</div>
             </div>
-
-            <!-- REFERRAL CODE -->
             <div class="referral-group">
                 <label>Kod Rujukan Affiliate (Pilihan)</label>
                 <div class="referral-input-wrap">
@@ -142,13 +127,23 @@
                 <div class="ref-status" id="ref-status"></div>
             </div>
 
+            <!-- CONSENT 1: PDPA Evidence Release -->
             <div class="consent-container">
                 <input type="checkbox" id="pdpa-check" required>
                 <div class="consent-text">
                     Saya bersetuju untuk AWAS menyimpan maklumat saya dan <strong>memberi kuasa sepenuhnya kepada AWAS untuk menyerahkan bukti digital saya yang disahkan</strong> kepada penanggung insurans atau wakil undang-undang berlesen yang mengendalikan siasatan kemalangan kenderaan saya.
                 </div>
             </div>
-            <button type="submit" class="btn-submit">Daftar & Aktifkan Perlindungan</button>
+
+            <!-- CONSENT 2: T&C and Privacy Policy -->
+            <div class="consent-container">
+                <input type="checkbox" id="tnc-check" required>
+                <div class="consent-text">
+                    Saya telah membaca dan bersetuju dengan <a href="terms.html" target="_blank">Terma &amp; Syarat</a> dan <a href="privacy.html" target="_blank">Dasar Privasi</a> AWAS Premium Resources (202603141446).
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Daftar &amp; Aktifkan Perlindungan</button>
         </form>
         <div id="message"></div>
 
@@ -163,8 +158,6 @@
             <div class="success-title">Anda Kini Dilindungi</div>
             <div class="success-sub">Kenderaan anda telah didaftarkan dalam rangkaian AWAS.<br>Rakaman bukti kini aktif pada akaun anda.</div>
             <div class="expiry-badge" id="expiry-display">Aktif sehingga --/--/----</div>
-
-            <!-- AFFILIATE REFERRAL CODE -->
             <div class="referral-badge" id="referral-badge" style="display:none;">
                 <div class="referral-badge-title">🔗 Kod Affiliate Anda</div>
                 <div class="referral-code-display" id="my-referral-code">--------</div>
@@ -217,36 +210,26 @@
     <script>
         const API_BASE = 'https://awas-backend.onrender.com';
 
-        // Eye toggle for password
         document.getElementById('toggle-password').addEventListener('click', () => {
             const input = document.getElementById('password');
             const btn = document.getElementById('toggle-password');
-            if (input.type === 'password') {
-                input.type = 'text';
-                btn.textContent = '🙈';
-            } else {
-                input.type = 'password';
-                btn.textContent = '👁️';
-            }
+            if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+            else { input.type = 'password'; btn.textContent = '👁️'; }
         });
 
-        // Auto-fill referral code from URL
         const urlParams = new URLSearchParams(window.location.search);
         const refFromUrl = urlParams.get('ref');
         if (refFromUrl) {
             document.getElementById('referral-code').value = refFromUrl.toUpperCase();
         }
 
-        // Validate referral code
         document.getElementById('btn-validate-ref').addEventListener('click', async () => {
             const code = document.getElementById('referral-code').value.trim().toUpperCase();
             const statusEl = document.getElementById('ref-status');
             if (!code) return;
-
             statusEl.style.display = 'block';
             statusEl.className = 'ref-status';
             statusEl.innerText = 'Menyemak kod...';
-
             try {
                 const res = await fetch(`${API_BASE}/api/drivers/referral/${code}`);
                 const data = await res.json();
@@ -263,7 +246,6 @@
             }
         });
 
-        // Auto uppercase plate
         document.getElementById('vehicle-plate').addEventListener('input', function() {
             this.value = this.value.toUpperCase().replace(/\s+/g, '');
         });
@@ -274,6 +256,19 @@
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const msgDiv = document.getElementById('message');
+
+            // Both checkboxes must be checked
+            if (!document.getElementById('pdpa-check').checked) {
+                msgDiv.style.color = 'var(--primary)';
+                msgDiv.innerText = 'Sila bersetuju dengan keizinan bukti digital AWAS.';
+                return;
+            }
+            if (!document.getElementById('tnc-check').checked) {
+                msgDiv.style.color = 'var(--primary)';
+                msgDiv.innerText = 'Sila baca dan bersetuju dengan Terma & Syarat dan Dasar Privasi AWAS.';
+                return;
+            }
+
             msgDiv.style.color = 'var(--text-muted)';
             msgDiv.innerText = 'Mengaktifkan perlindungan anda...';
 
@@ -283,7 +278,7 @@
             const mykadLastFour = document.getElementById('mykad-four').value;
             const phone = document.getElementById('phone').value.trim() || null;
             const password = document.getElementById('password').value;
-            const consentGiven = document.getElementById('pdpa-check').checked;
+            const consentGiven = true;
             const referredByCode = document.getElementById('referral-code').value.trim().toUpperCase() || null;
 
             if (!password || password.length < 6) {
@@ -300,7 +295,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
                 const data = await res.json();
                 if (res.ok) {
                     localStorage.setItem('awas_vehicle_plate', vehiclePlate);
@@ -311,17 +305,14 @@
                     if (data.referralCode) {
                         localStorage.setItem('awas_referral_code', data.referralCode);
                     }
-
                     document.getElementById('register-screen').style.display = 'none';
                     document.getElementById('success-screen').style.display = 'block';
                     document.getElementById('expiry-display').innerText = `Aktif sehingga ${new Date(data.expiry).toLocaleDateString('ms-MY')}`;
-
                     if (data.referralCode) {
                         document.getElementById('my-referral-code').innerText = data.referralCode;
                         document.getElementById('my-referral-link').innerText = `https://awas-pwa.vercel.app/register.html?ref=${data.referralCode}`;
                         document.getElementById('referral-badge').style.display = 'block';
                     }
-
                     window.scrollTo(0, 0);
                 } else {
                     msgDiv.style.color = 'var(--primary)';
