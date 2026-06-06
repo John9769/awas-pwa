@@ -35,6 +35,13 @@
         .status-box.success { background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); color: #4ade80; }
         .status-box.error { background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3); color: #fca5a5; }
         .status-box.loading { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #fde68a; }
+
+        /* PAYMENT SUCCESS BANNER */
+        .payment-success-banner { background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.4); border-radius: 10px; padding: 16px; margin-bottom: 20px; text-align: center; }
+        .payment-success-banner .icon { font-size: 2rem; margin-bottom: 8px; }
+        .payment-success-banner h3 { font-size: 1rem; font-weight: 800; color: #4ade80; margin-bottom: 6px; }
+        .payment-success-banner p { font-size: 0.82rem; color: #86efac; line-height: 1.5; }
+
         .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; }
         .divider-line { flex: 1; height: 1px; background: var(--border); }
         .divider-text { font-size: 0.75rem; color: var(--text-muted); }
@@ -64,6 +71,13 @@
     <div class="login-box">
         <div class="logo-wrap">
             <div style="font-family:-apple-system,sans-serif;font-size:2.2rem;font-weight:900;letter-spacing:4px;color:#f8fafc;">AWAS</div>
+        </div>
+
+        <!-- PAYMENT SUCCESS BANNER — shown when redirected from ToyyibPay -->
+        <div class="payment-success-banner" id="payment-success-banner" style="display:none;">
+            <div class="icon">✅</div>
+            <h3>Pembayaran Berjaya!</h3>
+            <p>Akaun AWAS anda kini aktif. Log masuk di bawah untuk mula menggunakan perlindungan anda.</p>
         </div>
 
         <!-- LOGIN PANEL -->
@@ -145,6 +159,15 @@
         const statusBox = document.getElementById('status-box');
         const profileBox = document.getElementById('profile-box');
 
+        // Show payment success banner if redirected from ToyyibPay
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('payment') === 'success') {
+            document.getElementById('payment-success-banner').style.display = 'block';
+            // Pre-fill plate if available in localStorage
+            const savedPlate = localStorage.getItem('awas_vehicle_plate');
+            if (savedPlate) plateInput.value = savedPlate;
+        }
+
         function wireEye(btnId, inputId) {
             document.getElementById(btnId).addEventListener('click', () => {
                 const input = document.getElementById(inputId);
@@ -211,6 +234,10 @@
 
                 } else if (res.status === 409 && data.reason === 'NO_PASSWORD') {
                     showStatus('Akaun ini belum mempunyai kata laluan. Sila gunakan "Lupa kata laluan" untuk menetapkannya.', 'error');
+                    btnLogin.disabled = false;
+                    btnLogin.innerText = 'Log Masuk';
+                } else if (res.status === 403 && data.reason === 'SUBSCRIPTION_INACTIVE') {
+                    showStatus('Langganan anda belum aktif. Sila semak pembayaran anda atau hubungi hello@awas.asia.', 'error');
                     btnLogin.disabled = false;
                     btnLogin.innerText = 'Log Masuk';
                 } else if (res.status === 403) {

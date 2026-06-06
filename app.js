@@ -533,6 +533,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.2.3').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js?v=1.3.0').catch(err => console.error(err));
     });
 }

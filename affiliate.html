@@ -18,7 +18,6 @@
         .page-title { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 4px; }
         .page-sub { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 24px; }
 
-        /* LOGIN BOX */
         .login-box { width: 100%; max-width: 400px; background: var(--card); padding: 28px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -35,7 +34,6 @@
         .status-msg.error { background: rgba(220,38,38,0.1); color: #fca5a5; border: 1px solid rgba(220,38,38,0.3); }
         .status-msg.loading { background: rgba(234,179,8,0.1); color: #fde68a; border: 1px solid rgba(234,179,8,0.3); }
 
-        /* DASHBOARD */
         #dashboard { display: none; width: 100%; max-width: 440px; }
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
@@ -48,6 +46,11 @@
         .stat-num.yellow { color: #fbbf24; }
         .stat-num.blue { color: #60a5fa; }
         .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* PAYOUT DUE ALERT */
+        .payout-due-alert { background: rgba(22,163,74,0.1); border: 2px solid rgba(22,163,74,0.5); border-radius: 10px; padding: 16px; margin-bottom: 12px; text-align: center; }
+        .payout-due-alert h4 { color: #4ade80; font-size: 0.95rem; font-weight: 800; margin-bottom: 6px; }
+        .payout-due-alert p { font-size: 0.82rem; color: #86efac; line-height: 1.5; }
 
         .settlement-note { background: rgba(234,179,8,0.06); border: 1px solid rgba(234,179,8,0.25); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; font-size: 0.78rem; color: #fde68a; line-height: 1.6; }
         .settlement-note strong { color: #fbbf24; display: block; margin-bottom: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -122,6 +125,12 @@
     <!-- DASHBOARD -->
     <div id="dashboard">
 
+        <!-- PAYOUT DUE ALERT — shown when pendingPayout >= RM49.90 -->
+        <div class="payout-due-alert" id="payout-due-alert" style="display:none;">
+            <h4>💰 Pembayaran Komisen Anda Telah Mencapai Had!</h4>
+            <p>Baki komisen anda telah mencapai RM49.90. Pembayaran akan diproses oleh AWAS pada tarikh pembayaran terdekat (15 atau 30 hab bulan ini). Tiada tindakan diperlukan daripada anda.</p>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card green">
                 <div class="stat-num green" id="stat-referrals">0</div>
@@ -143,28 +152,28 @@
 
         <div class="settlement-note">
             <strong>⏱ Jadual Pembayaran Komisen</strong>
-            Pendapatan anda diproses secara automatik mengikut jadual penyelesaian bank Malaysia. Pembayaran yang diterima pada <strong style="color:#fbbf24">Isnin–Khamis</strong> akan dikreditkan ke akaun anda pada hari bekerja berikutnya. Pembayaran yang diterima pada <strong style="color:#fbbf24">Jumaat, Sabtu, Ahad atau Cuti Umum</strong> akan dikreditkan pada hari Isnin berikutnya. Tiada tindakan diperlukan daripada anda — pembayaran dihantar terus ke akaun bank anda secara automatik.
+            Komisen anda terkumpul setiap kali rujukan anda mendaftar atau memperbaharui langganan. Apabila baki anda mencapai <strong style="color:#fbbf24;">RM49.90 (10 rujukan)</strong>, AWAS akan memproses pembayaran terus ke akaun bank anda pada <strong style="color:#fbbf24;">15 atau 30 hab setiap bulan</strong>. Baki di bawah RM49.90 akan dikumpul ke bulan berikutnya. Tiada tindakan diperlukan — pembayaran automatik.
         </div>
 
         <div class="ref-box">
             <div class="ref-box-title">🔗 Pautan Rujukan Anda</div>
             <div class="ref-code-big" id="ref-code-display">--------</div>
-            <div class="ref-link-display" id="ref-link-display">https://awas-pwa.vercel.app/register.html?ref=XXXXXXXX</div>
+            <div class="ref-link-display" id="ref-link-display">https://awas.asia/register.html?ref=XXXXXXXX</div>
             <button class="btn-copy" id="btn-copy">📋 Salin Pautan</button>
             <div class="copy-note">Kongsi pautan ini kepada rakan. Setiap pendaftaran = <strong style="color:#4ade80;">RM4.99 untuk anda</strong>. Termasuk pembaharuan tahunan.</div>
         </div>
 
         <div class="join-box" id="join-box" style="display:none;">
             <div class="join-title">🚀 Sertai Program Affiliate AWAS</div>
-            <div class="join-sub">Anda sudah berdaftar. Kini jadilah affiliate. Kongsi pautan anda. Setiap orang yang mendaftar melalui pautan anda — <span class="join-highlight">anda terima RM4.99</span>. Apabila mereka memperbaharui tahun depan — <span class="join-highlight">anda terima lagi</span>.</div>
+            <div class="join-sub">Anda sudah berdaftar. Kini jadilah affiliate. Kongsi pautan anda. Setiap orang yang mendaftar melalui pautan anda — <span class="join-highlight">anda terima RM4.99</span>. Apabila mereka memperbaharui tahun depan — <span class="join-highlight">anda terima lagi</span>. Bayaran apabila capai <span class="join-highlight">RM49.90</span>.</div>
             <button class="btn-join" id="btn-join">Jadi Affiliate Sekarang — Percuma</button>
         </div>
 
         <div class="bank-box" id="bank-section">
             <div class="bank-box-title">🏦 Butiran Bank Anda</div>
-            <div class="bank-box-sub">Masukkan butiran akaun bank anda. Komisen akan dihantar terus ke akaun ini secara automatik apabila pembayaran diselesaikan.</div>
+            <div class="bank-box-sub">Masukkan butiran akaun bank anda. Komisen akan dihantar terus ke akaun ini apabila mencapai RM49.90 pada tarikh pembayaran 15 atau 30 hab.</div>
             <div class="bank-form">
-                <input type="text" class="bank-input" id="bank-name" placeholder="Nama Bank (cth: Maybank, CIMB, RHB)">
+                <input type="text" class="bank-input" id="bank-name" placeholder="Nama Bank (cth: Maybank, CIMB, RHB, Bank Rakyat)">
                 <input type="text" class="bank-input" id="bank-account-number" placeholder="Nombor Akaun Bank">
                 <input type="text" class="bank-input" id="bank-account-name" placeholder="Nama Pemilik Akaun (seperti dalam buku bank)">
             </div>
@@ -208,7 +217,7 @@
             if (e.key === 'Enter') document.getElementById('btn-load').click();
         });
 
-        // On page load — check if already logged in via localStorage token
+        // On page load — check if already logged in
         window.addEventListener('DOMContentLoaded', () => {
             const storedToken = localStorage.getItem('awas_token');
             if (storedToken) {
@@ -251,7 +260,7 @@
                     hideMsg();
                     loadDashboardWithToken(sessionToken);
                 } else if (res.status === 409 && data.reason === 'NO_PASSWORD') {
-                    showMsg('Akaun ini belum mempunyai kata laluan. Sila pergi ke log masuk dan gunakan "Lupa kata laluan" untuk menetapkannya.', 'error');
+                    showMsg('Akaun ini belum mempunyai kata laluan. Pergi ke log masuk dan gunakan "Lupa kata laluan".', 'error');
                     btn.disabled = false;
                     btn.innerText = 'Log Masuk & Papar Dashboard';
                 } else if (res.status === 403) {
@@ -280,18 +289,15 @@
                 if (res.ok) {
                     renderDashboard(data);
                 } else if (res.status === 404 && data.reason === 'NOT_AFFILIATE') {
-                    // Logged in but not yet affiliate — show join box
                     document.getElementById('login-box').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'block';
                     document.getElementById('join-box').style.display = 'block';
                     document.getElementById('bank-section').style.display = 'none';
-                    // Hide stats and ref box until joined
                     document.querySelector('.stats-grid').style.display = 'none';
                     document.querySelector('.settlement-note').style.display = 'none';
                     document.querySelector('.ref-box').style.display = 'none';
                     document.querySelector('.earnings-box').style.display = 'none';
                 } else if (res.status === 401) {
-                    // Token expired — clear and show login
                     localStorage.removeItem('awas_token');
                     sessionToken = null;
                     document.getElementById('login-box').style.display = 'block';
@@ -322,8 +328,15 @@
             document.getElementById('stat-pending').innerText = `RM${data.stats.pendingPayout.toFixed(2)}`;
             document.getElementById('stat-paidout').innerText = `RM${data.stats.paidOut.toFixed(2)}`;
 
+            // Show payout due alert if threshold reached
+            if (data.stats.payoutDue) {
+                document.getElementById('payout-due-alert').style.display = 'block';
+            }
+
             document.getElementById('ref-code-display').innerText = data.referralCode;
-            document.getElementById('ref-link-display').innerText = data.referralLink;
+            // Use awas.asia domain
+            const referralLink = `https://awas.asia/register.html?ref=${data.referralCode}`;
+            document.getElementById('ref-link-display').innerText = referralLink;
 
             if (data.bankDetails.bankName) document.getElementById('bank-name').value = data.bankDetails.bankName;
             if (data.bankDetails.bankAccountNumber) document.getElementById('bank-account-number').value = data.bankDetails.bankAccountNumber;
@@ -350,7 +363,8 @@
 
         // Copy referral link
         document.getElementById('btn-copy').addEventListener('click', () => {
-            const link = document.getElementById('ref-link-display').innerText;
+            const refCode = document.getElementById('ref-code-display').innerText;
+            const link = `https://awas.asia/register.html?ref=${refCode}`;
             navigator.clipboard.writeText(link).then(() => {
                 const btn = document.getElementById('btn-copy');
                 btn.innerText = '✅ Pautan Disalin!';
@@ -401,9 +415,9 @@
                         'Authorization': `Bearer ${sessionToken}`
                     },
                     body: JSON.stringify({
-                        bankName: document.getElementById('bank-name').value,
-                        bankAccountNumber: document.getElementById('bank-account-number').value,
-                        bankAccountName: document.getElementById('bank-account-name').value,
+                        bankName: document.getElementById('bank-name').value.trim(),
+                        bankAccountNumber: document.getElementById('bank-account-number').value.trim(),
+                        bankAccountName: document.getElementById('bank-account-name').value.trim(),
                         duitnowNumber: null
                     })
                 });
