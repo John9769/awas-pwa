@@ -223,7 +223,7 @@
                     localStorage.setItem('awas_vehicle_type', data.vehicleType);
                     localStorage.setItem('awas_mykad_four', data.mykadLastFour);
                     if (data.referralCode) localStorage.setItem('awas_referral_code', data.referralCode);
-
+                    if (data.phone) localStorage.setItem('awas_phone', data.phone);
                     statusBox.style.display = 'none';
                     document.getElementById('profile-plate').innerText = data.vehiclePlate;
                     document.getElementById('profile-model').innerText = data.vehicleMakeModel;

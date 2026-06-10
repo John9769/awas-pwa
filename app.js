@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 acquirePreciseLocation(),
                 readVideoAsBase64(files[0])
             ]);
-            const cachedPlate = localStorage.getItem('awas_vehicle_plate') || 'WD519A';
+            const cachedPlate = localStorage.getItem('awas_vehicle_plate') || '';
             const rawPayload = {
                 vehiclePlate: cachedPlate,
                 latitude: gpsCoordinates.latitude,
@@ -192,9 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
         showGateStatus('\u23f3 <strong>MEMUAT NAIK BUKTI...</strong><br>Video dan gambar anda sedang dimuat naik ke pelayan AWAS. Jangan tutup skrin.');
 
-        const cachedPlate = localStorage.getItem('awas_vehicle_plate') || 'WD519A';
-        const cachedModel = localStorage.getItem('awas_vehicle_model') || 'Perodua Myvi 1.5';
-        const cachedMykad = localStorage.getItem('awas_mykad_four') || '5678';
+        const cachedPlate = localStorage.getItem('awas_vehicle_plate') || '';
+        const cachedModel = localStorage.getItem('awas_vehicle_model') || '';
+        const cachedMykad = localStorage.getItem('awas_mykad_four') || '';
         const cachedVType = localStorage.getItem('awas_vehicle_type') || 'CAR';
         const cachedPhone = localStorage.getItem('awas_phone') || '\u2014';
 
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfModel.innerText = result.vehicleMakeModel || cachedModel;
             const vtypeMap = { CAR: 'Kereta', MOTORCYCLE: 'Motosikal', LORRY: 'Lori', BUS: 'Bas', VAN: 'Van' };
             document.getElementById('pdf-vtype').innerText = vtypeMap[result.vehicleType || cachedVType] || 'Kereta';
-            pdfMykad.innerText = `******-XX-${cachedMykad}`;
+            pdfMykad.innerText = cachedMykad ? `******-XX-${cachedMykad}` : '------';
             document.getElementById('pdf-phone').innerText = cachedPhone || '\u2014';
             pdfLat.innerText = currentLat;
             pdfLng.innerText = currentLng;
@@ -277,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfRoad.innerText = formatKeadaanJalan(roadCondition);
             pdfWeather.innerText = formatCuaca(weatherCondition);
             pdfInjury.innerText = formatKecederaan(injuryStatus);
-            // Hard truncate description at 150 chars for display
             pdfDescription.innerText = incidentDescription ? incidentDescription.substring(0, 150) : '\u2014';
 
             mapContainer.innerHTML = `<iframe
@@ -354,14 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-use-screen').addEventListener('click', () => { document.getElementById('report-modal').classList.remove('show'); });
 
     // ── PDF GENERATION ───────────────────────────────────────────────────────
-    // Fixed page layout:
-    // Page 1: Header + Driver Info
-    // Page 2: GPS + Map + Incident Details (road/weather/injury/description) + Other party if any
-    // Page 3: (if other party — already on page 2, skip) OR continue
-    // Page 4: SHA-256 section title + Video hash box
-    // Page 5: Image hashes box (only if images uploaded)
-    // Last page: Stamp + Seal note + Footer
-
     async function captureElement(el) {
         if (!el || el.offsetWidth === 0 || el.offsetHeight === 0) return null;
         return await html2canvas(el, {
@@ -395,7 +386,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mapImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;';
 
         mapImg.onload = async () => {
-            // SWAP: reveal full hashes, hide note lines
             pdfHash.innerText = ownHashFull;
             document.querySelectorAll('.img-hash-masked').forEach((el, i) => {
                 if (imageHashesFull[i]) el.innerText = imageHashesFull[i];
@@ -411,13 +401,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentWidth = pdfWidth - (margin * 2);
                 let y = margin;
 
-                // ── PAGE 1: Header + Driver Info ─────────────────────────
                 const secHeader = document.querySelector('.report-section.report-header');
                 const secDriver = document.querySelector('#pdf-plate')?.closest('.report-section');
                 y = await addCanvasToPdf(pdf, await captureElement(secHeader), contentWidth, pdfHeight, margin, y);
                 y = await addCanvasToPdf(pdf, await captureElement(secDriver), contentWidth, pdfHeight, margin, y);
 
-                // ── PAGE 2: GPS + Map + Incident + Other party ───────────
                 pdf.addPage(); y = margin;
                 const secGps = document.querySelector('#pdf-lat')?.closest('.report-section');
                 const secIncident = document.querySelector('#pdf-road')?.closest('.report-section');
@@ -428,23 +416,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     y = await addCanvasToPdf(pdf, await captureElement(secOther), contentWidth, pdfHeight, margin, y);
                 }
 
-                // ── PAGE 3 (formerly Page 4): SHA-256 title + Video hash ─
                 pdf.addPage(); y = margin;
                 const secShaTitle = document.querySelector('#sha-section-num')?.closest('.report-section');
-                // Capture just the section title
                 const shaTitle = secShaTitle?.querySelector('.section-title');
                 const videoHashBox = secShaTitle?.querySelector('.hash-box');
                 y = await addCanvasToPdf(pdf, await captureElement(shaTitle), contentWidth, pdfHeight, margin, y);
                 y = await addCanvasToPdf(pdf, await captureElement(videoHashBox), contentWidth, pdfHeight, margin, y);
 
-                // ── PAGE 4 (formerly Page 5): Image hashes (if any) ──────
                 const imgHashSec = document.getElementById('pdf-image-hashes-section');
                 if (imgHashSec && imgHashSec.style.display !== 'none') {
                     pdf.addPage(); y = margin;
                     y = await addCanvasToPdf(pdf, await captureElement(imgHashSec), contentWidth, pdfHeight, margin, y);
                 }
 
-                // ── LAST PAGE: Stamp + Seal note + Footer ────────────────
                 pdf.addPage(); y = margin;
                 const secStamp = document.querySelector('.awas-stamp')?.closest('.report-section');
                 const secSeal = document.querySelector('.seal-note')?.closest('.report-section');
@@ -456,13 +440,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fileName = `AWAS-WRIT-${(currentWritNumber || 'LAPORAN').replace(/\//g, '-')}.pdf`;
                 pdf.save(fileName);
 
-                // SWAP BACK
                 pdfHash.innerText = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
                 document.querySelectorAll('.img-hash-masked').forEach((el, i) => {
                     if (imageHashesFull[i]) el.innerText = imageHashesFull[i].substring(0, 8) + '\u2022'.repeat(56);
                 });
                 document.querySelectorAll('.hash-note-line').forEach(el => el.style.display = '');
-
                 mapContainer.innerHTML = `<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}" style="width:100%;height:300px;border:none;margin-bottom:-80px;" loading="lazy"></iframe>`;
                 downloadBtn.innerText = '\u2705 PDF Dimuat Turun - Semak Fail Anda';
                 downloadBtn.disabled = false;
@@ -533,6 +515,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.3.0').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js?v=1.4.0').catch(err => console.error(err));
     });
 }
