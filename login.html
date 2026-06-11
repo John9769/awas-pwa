@@ -163,9 +163,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('payment') === 'success') {
             document.getElementById('payment-success-banner').style.display = 'block';
-            // Pre-fill plate if available in localStorage
-            const savedPlate = localStorage.getItem('awas_vehicle_plate');
-            if (savedPlate) plateInput.value = savedPlate;
+            // Plate left blank on purpose — user types their own to avoid stale localStorage from old sessions
         }
 
         function wireEye(btnId, inputId) {

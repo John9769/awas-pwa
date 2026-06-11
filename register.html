@@ -267,13 +267,9 @@
                     return;
                 }
 
-                // Save to localStorage
-                localStorage.setItem('awas_vehicle_plate', vehiclePlate);
-                localStorage.setItem('awas_vehicle_model', vehicleMakeModel);
-                localStorage.setItem('awas_vehicle_type', vehicleType);
-                localStorage.setItem('awas_mykad_four', mykadLastFour);
-                localStorage.setItem('awas_phone', phone);
-                localStorage.setItem('awas_email', email);
+                // NOTE: We do NOT save to localStorage here.
+                // The driver is not logged in yet (no token until they log in after payment).
+                // login.html saves the correct values from the login response — that is the single source of truth.
 
                 // Show payment screen and auto-redirect
                 document.getElementById('register-screen').style.display = 'none';
