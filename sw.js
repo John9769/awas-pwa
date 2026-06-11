@@ -3,8 +3,9 @@
 // DESCRIPTION: Network-First Production Cache Controller
 // ==========================================
 
-const CACHE_NAME = 'awas-v1.4.0-live';
+const CACHE_NAME = 'awas-v1.5.0-live';
 const ASSETS_TO_CACHE = [
+  './index.html',
   './app.html',
   './app.js',
   './register.html',
@@ -15,8 +16,10 @@ const ASSETS_TO_CACHE = [
   './terms.html',
   './portal.html',
   './consent.html',
-  './landing.html',
-  './manifest.json'
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-512-maskable.png'
 ];
 
 self.addEventListener('install', (event) => {

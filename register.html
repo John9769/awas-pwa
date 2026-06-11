@@ -96,6 +96,11 @@
                 <small style="color:#64748b;font-size:0.72rem;">AWAS akan hubungi anda apabila penanggung insurans atau peguam memohon akses laporan anda.</small>
             </div>
             <div class="form-group">
+                <label>Alamat Emel — Untuk Resit Pembayaran</label>
+                <input type="email" id="email" placeholder="cth: nama@email.com" required autocomplete="email">
+                <small style="color:#64748b;font-size:0.72rem;">Resit pembayaran ToyyibPay akan dihantar ke emel ini.</small>
+            </div>
+            <div class="form-group">
                 <label>Kata Laluan (untuk log masuk)</label>
                 <div class="password-wrap">
                     <input type="password" id="password" placeholder="Minimum 6 aksara" required autocomplete="new-password">
@@ -219,9 +224,14 @@
             const vehicleMakeModel = document.getElementById('vehicle-model').value.trim();
             const mykadLastFour = document.getElementById('mykad-four').value.trim();
             const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const referredByCode = document.getElementById('referral-code').value.trim().toUpperCase() || null;
 
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showMsg('Sila masukkan alamat emel yang sah.', 'error');
+                return;
+            }
             if (!password || password.length < 6) {
                 showMsg('Kata laluan diperlukan (minimum 6 aksara).', 'error');
                 return;
@@ -242,6 +252,7 @@
                         vehicleMakeModel,
                         mykadLastFour,
                         phone,
+                        email,
                         password,
                         consentGiven: true,
                         referredByCode
@@ -262,6 +273,7 @@
                 localStorage.setItem('awas_vehicle_type', vehicleType);
                 localStorage.setItem('awas_mykad_four', mykadLastFour);
                 localStorage.setItem('awas_phone', phone);
+                localStorage.setItem('awas_email', email);
 
                 // Show payment screen and auto-redirect
                 document.getElementById('register-screen').style.display = 'none';
