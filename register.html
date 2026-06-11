@@ -45,8 +45,6 @@
         #message.loading { background: rgba(234,179,8,0.1); color: #fde68a; border: 1px solid rgba(234,179,8,0.3); }
         .login-link { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--text-muted); }
         .login-link a { color: #60a5fa; font-weight: 700; text-decoration: none; }
-
-        /* PAYMENT REDIRECT SCREEN */
         #payment-screen { display: none; width: 100%; max-width: 420px; margin: auto 0; }
         .payment-box { background: var(--card); border-radius: 12px; padding: 32px 24px; text-align: center; border: 1px solid rgba(22,163,74,0.3); }
         .payment-icon { font-size: 4rem; margin-bottom: 16px; }
@@ -114,7 +112,6 @@
                 <div class="ref-status" id="ref-status"></div>
             </div>
 
-            <!-- CONSENT 1: PDPA Evidence Release -->
             <div class="consent-container">
                 <input type="checkbox" id="pdpa-check" required>
                 <div class="consent-text">
@@ -122,7 +119,6 @@
                 </div>
             </div>
 
-            <!-- CONSENT 2: T&C and Privacy Policy -->
             <div class="consent-container">
                 <input type="checkbox" id="tnc-check" required>
                 <div class="consent-text">
@@ -144,10 +140,10 @@
         <div class="payment-box">
             <div class="payment-icon">🔒</div>
             <div class="payment-title">Satu Langkah Lagi!</div>
-            <div class="payment-sub">Akaun anda telah didaftarkan. Sila selesaikan pembayaran untuk mengaktifkan perlindungan AWAS anda.</div>
+            <div class="payment-sub">Sila selesaikan pembayaran untuk mengaktifkan perlindungan AWAS anda.</div>
             <div class="payment-amount">RM29.99</div>
             <div class="payment-label">Langganan Tahunan AWAS</div>
-            <a href="#" id="btn-pay-now" class="btn-pay">💳 Bayar Sekarang — FPX</a>
+            <a href="#" id="btn-pay-now" class="btn-pay">💳 Bayar Sekarang — FPX / DuitNow</a>
             <div class="security-note">🔐 Pembayaran selamat melalui ToyyibPay.<br>Anda akan diarahkan ke halaman pembayaran bank anda.</div>
         </div>
     </div>
@@ -202,10 +198,11 @@
             }
         });
 
-        // REGISTER FORM SUBMIT
+        // REGISTER FORM SUBMIT — single API call to POST /api/payment/register
+        // Driver creation + ToyyibPay bill creation happen atomically at BE
+        // If ToyyibPay fails, driver is rolled back — no orphaned records
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const msgDiv = document.getElementById('message');
             const btn = document.getElementById('btn-submit');
 
             if (!document.getElementById('pdpa-check').checked) {
@@ -221,7 +218,7 @@
             const vehicleType = document.getElementById('vehicle-type').value;
             const vehicleMakeModel = document.getElementById('vehicle-model').value.trim();
             const mykadLastFour = document.getElementById('mykad-four').value.trim();
-            const phone = document.getElementById('phone').value.trim() || null;
+            const phone = document.getElementById('phone').value.trim();
             const password = document.getElementById('password').value;
             const referredByCode = document.getElementById('referral-code').value.trim().toUpperCase() || null;
 
@@ -231,24 +228,29 @@
             }
 
             btn.disabled = true;
-            btn.innerText = '⏳ Mendaftar...';
-            showMsg('Mendaftarkan akaun anda...', 'loading');
+            btn.innerText = '⏳ Mendaftar & Menyediakan Pembayaran...';
+            showMsg('Mendaftarkan akaun dan menyediakan halaman pembayaran...', 'loading');
 
             try {
-                // STEP 1: Register driver
-                const regRes = await fetch(`${API_BASE}/api/drivers/register`, {
+                // SINGLE API CALL — registration + bill creation in one atomic operation
+                const res = await fetch(`${API_BASE}/api/payment/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        vehiclePlate, vehicleType, vehicleMakeModel,
-                        mykadLastFour, phone, password,
-                        consentGiven: true, referredByCode
+                        vehiclePlate,
+                        vehicleType,
+                        vehicleMakeModel,
+                        mykadLastFour,
+                        phone,
+                        password,
+                        consentGiven: true,
+                        referredByCode
                     })
                 });
-                const regData = await regRes.json();
+                const data = await res.json();
 
-                if (!regRes.ok) {
-                    showMsg(regData.error || 'Pendaftaran gagal. Cuba lagi.', 'error');
+                if (!res.ok || !data.paymentUrl) {
+                    showMsg(data.error || 'Pendaftaran gagal. Sila cuba lagi.', 'error');
                     btn.disabled = false;
                     btn.innerText = 'Daftar & Teruskan ke Pembayaran';
                     return;
@@ -259,39 +261,16 @@
                 localStorage.setItem('awas_vehicle_model', vehicleMakeModel);
                 localStorage.setItem('awas_vehicle_type', vehicleType);
                 localStorage.setItem('awas_mykad_four', mykadLastFour);
-                localStorage.setItem('awas_phone', phone || '');
-                if (regData.referralCode) localStorage.setItem('awas_referral_code', regData.referralCode);
+                localStorage.setItem('awas_phone', phone);
 
-                // STEP 2: Create payment bill
-                showMsg('Menyediakan halaman pembayaran...', 'loading');
-                const payRes = await fetch(`${API_BASE}/api/payment/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        vehiclePlate,
-                        referralCode: referredByCode || null
-                    })
-                });
-                const payData = await payRes.json();
-
-                if (!payRes.ok || !payData.paymentUrl) {
-                    // Registration succeeded but payment bill failed
-                    // Show payment screen with retry
-                    showMsg('Akaun didaftarkan. Ralat menjana bil. Sila hubungi hello@awas.asia.', 'error');
-                    btn.disabled = false;
-                    btn.innerText = 'Daftar & Teruskan ke Pembayaran';
-                    return;
-                }
-
-                // STEP 3: Show payment screen and redirect
+                // Show payment screen and auto-redirect
                 document.getElementById('register-screen').style.display = 'none';
                 document.getElementById('payment-screen').style.display = 'block';
-                document.getElementById('btn-pay-now').href = payData.paymentUrl;
+                document.getElementById('btn-pay-now').href = data.paymentUrl;
                 window.scrollTo(0, 0);
 
-                // Auto-redirect after 3 seconds
                 setTimeout(() => {
-                    window.location.href = payData.paymentUrl;
+                    window.location.href = data.paymentUrl;
                 }, 3000);
 
             } catch (err) {
