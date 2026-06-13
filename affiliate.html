@@ -6,85 +6,85 @@
     <title>AWAS — Dashboard Affiliate</title>
     <style>
         :root {
-            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
-            --text-muted: #94a3b8; --success: #16a34a;
-            --success-hover: #15803d; --border: #334155;
-            --blue: #2563eb; --warn: #eab308;
+            --bg: #f1f5f9; --card: #ffffff; --navy: #0f1623; --text: #1e293b; --heading: #0f172a;
+            --text-muted: #64748b; --success: #16a34a;
+            --success-hover: #15803d; --border: #e2e8f0;
+            --blue: #2563eb; --warn: #ca8a04;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
         body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .logo-text { font-size: 2.2rem; font-weight: 900; letter-spacing: 4px; color: #f8fafc; text-align: center; margin-bottom: 20px; margin-top: 10px; }
-        .page-title { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 4px; }
+        .logo-text { font-size: 2.2rem; font-weight: 900; letter-spacing: 4px; color: #f8fafc; text-align: center; margin-bottom: 16px; margin-top: 4px; background: var(--navy); border-radius: 10px; padding: 14px 32px; }
+        .page-title { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 4px; color: var(--heading); }
         .page-sub { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 24px; }
-        .login-box { width: 100%; max-width: 400px; background: var(--card); padding: 28px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .login-box { width: 100%; max-width: 400px; background: var(--card); padding: 28px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 24px rgba(15,23,42,0.08); }
         .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .plate-input { width: 100%; background: #020617; border: 2px solid var(--border); padding: 14px 16px; border-radius: 8px; color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
-        .plate-input:focus { border-color: var(--success); outline: none; }
+        .plate-input { width: 100%; background: #f8fafc; border: 2px solid var(--border); padding: 14px 16px; border-radius: 8px; color: var(--heading); font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+        .plate-input:focus { border-color: var(--success); outline: none; background: #fff; }
         .password-wrap { position: relative; }
-        .password-wrap input { width: 100%; background: #020617; border: 2px solid var(--border); padding: 14px 44px 14px 16px; border-radius: 8px; color: white; font-size: 1rem; }
-        .password-wrap input:focus { border-color: var(--success); outline: none; }
+        .password-wrap input { width: 100%; background: #f8fafc; border: 2px solid var(--border); padding: 14px 44px 14px 16px; border-radius: 8px; color: var(--heading); font-size: 1rem; }
+        .password-wrap input:focus { border-color: var(--success); outline: none; background: #fff; }
         .eye-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px; line-height: 1; }
         .btn-load { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; margin-top: 4px; }
         .btn-load:hover { background: var(--success-hover); }
         .btn-load:disabled { opacity: 0.6; cursor: not-allowed; }
         .status-msg { margin-top: 12px; padding: 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-align: center; display: none; line-height: 1.5; }
-        .status-msg.error { background: rgba(220,38,38,0.1); color: #fca5a5; border: 1px solid rgba(220,38,38,0.3); }
-        .status-msg.loading { background: rgba(234,179,8,0.1); color: #fde68a; border: 1px solid rgba(234,179,8,0.3); }
+        .status-msg.error { background: rgba(220,38,38,0.1); color: #dc2626; border: 1px solid rgba(220,38,38,0.3); }
+        .status-msg.loading { background: rgba(202,138,4,0.1); color: #a16207; border: 1px solid rgba(202,138,4,0.3); }
         #dashboard { display: none; width: 100%; max-width: 440px; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-        .stat-card { background: var(--card); border-radius: 10px; padding: 16px; border: 1px solid var(--border); text-align: center; }
-        .stat-card.green { border-color: rgba(22,163,74,0.4); background: rgba(22,163,74,0.06); }
-        .stat-card.yellow { border-color: rgba(234,179,8,0.4); background: rgba(234,179,8,0.06); }
-        .stat-card.blue { border-color: rgba(37,99,235,0.4); background: rgba(37,99,235,0.06); }
-        .stat-num { font-size: 1.8rem; font-weight: 900; margin-bottom: 4px; }
-        .stat-num.green { color: #4ade80; }
-        .stat-num.yellow { color: #fbbf24; }
-        .stat-num.blue { color: #60a5fa; }
+        .stat-card { background: var(--card); border-radius: 10px; padding: 16px; border: 1px solid var(--border); text-align: center; box-shadow: 0 1px 3px rgba(15,23,42,0.04); }
+        .stat-card.green { border-color: rgba(22,163,74,0.4); background: rgba(22,163,74,0.05); }
+        .stat-card.yellow { border-color: rgba(202,138,4,0.4); background: rgba(202,138,4,0.05); }
+        .stat-card.blue { border-color: rgba(37,99,235,0.4); background: rgba(37,99,235,0.05); }
+        .stat-num { font-size: 1.8rem; font-weight: 900; margin-bottom: 4px; color: var(--heading); }
+        .stat-num.green { color: var(--success-hover); }
+        .stat-num.yellow { color: #a16207; }
+        .stat-num.blue { color: var(--blue); }
         .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .payout-due-alert { background: rgba(22,163,74,0.1); border: 2px solid rgba(22,163,74,0.5); border-radius: 10px; padding: 16px; margin-bottom: 12px; text-align: center; }
-        .payout-due-alert h4 { color: #4ade80; font-size: 0.95rem; font-weight: 800; margin-bottom: 6px; }
-        .payout-due-alert p { font-size: 0.82rem; color: #86efac; line-height: 1.5; }
-        .settlement-note { background: rgba(234,179,8,0.06); border: 1px solid rgba(234,179,8,0.25); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; font-size: 0.78rem; color: #fde68a; line-height: 1.6; }
-        .settlement-note strong { color: #fbbf24; display: block; margin-bottom: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .ref-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(37,99,235,0.3); }
-        .ref-box-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #60a5fa; margin-bottom: 12px; }
-        .ref-code-big { font-family: monospace; font-size: 2rem; font-weight: 900; color: #93c5fd; letter-spacing: 4px; text-align: center; margin-bottom: 12px; }
-        .ref-link-display { background: #020617; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font-size: 0.72rem; font-family: monospace; color: #60a5fa; word-break: break-all; margin-bottom: 12px; }
+        .payout-due-alert { background: rgba(22,163,74,0.08); border: 2px solid rgba(22,163,74,0.5); border-radius: 10px; padding: 16px; margin-bottom: 12px; text-align: center; }
+        .payout-due-alert h4 { color: var(--success-hover); font-size: 0.95rem; font-weight: 800; margin-bottom: 6px; }
+        .payout-due-alert p { font-size: 0.82rem; color: var(--success-hover); line-height: 1.5; }
+        .settlement-note { background: rgba(202,138,4,0.06); border: 1px solid rgba(202,138,4,0.25); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; font-size: 0.78rem; color: #854d0e; line-height: 1.6; }
+        .settlement-note strong { color: #a16207; display: block; margin-bottom: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ref-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(37,99,235,0.3); box-shadow: 0 1px 3px rgba(15,23,42,0.04); }
+        .ref-box-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); margin-bottom: 12px; }
+        .ref-code-big { font-family: monospace; font-size: 2rem; font-weight: 900; color: var(--blue); letter-spacing: 4px; text-align: center; margin-bottom: 12px; }
+        .ref-link-display { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font-size: 0.72rem; font-family: monospace; color: var(--blue); word-break: break-all; margin-bottom: 12px; }
         .btn-copy { width: 100%; background: var(--blue); border: none; color: white; padding: 12px; font-weight: 700; font-size: 0.88rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
         .btn-copy:hover { background: #1d4ed8; }
         .copy-note { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 8px; }
-        .bank-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .bank-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(15,23,42,0.04); }
         .bank-box-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
         .bank-box-sub { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
         .bank-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
-        .bank-input { background: #020617; border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; color: white; font-size: 0.9rem; width: 100%; }
-        .bank-input:focus { border-color: var(--success); outline: none; }
+        .bank-input { background: #f8fafc; border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; color: var(--heading); font-size: 0.9rem; width: 100%; }
+        .bank-input:focus { border-color: var(--success); outline: none; background: #fff; }
         .bank-divider { font-size: 0.72rem; color: var(--text-muted); text-align: center; padding: 4px 0; letter-spacing: 1px; text-transform: uppercase; }
-        .btn-save-bank { background: #334155; border: none; color: white; padding: 12px; font-weight: 700; font-size: 0.88rem; border-radius: 6px; cursor: pointer; width: 100%; }
-        .btn-save-bank:hover { background: #475569; }
-        .earnings-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .btn-save-bank { background: #475569; border: none; color: white; padding: 12px; font-weight: 700; font-size: 0.88rem; border-radius: 6px; cursor: pointer; width: 100%; }
+        .btn-save-bank:hover { background: #334155; }
+        .earnings-box { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(15,23,42,0.04); }
         .earnings-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 14px; }
         .earning-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
         .earning-row:last-child { border-bottom: none; }
-        .earning-plate { font-family: monospace; font-weight: 700; color: var(--text); }
+        .earning-plate { font-family: monospace; font-weight: 700; color: var(--heading); }
         .earning-type { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
         .earning-right { text-align: right; }
-        .earning-amount { font-weight: 800; color: #4ade80; }
+        .earning-amount { font-weight: 800; color: var(--success-hover); }
         .earning-status { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-top: 2px; }
-        .earning-status.paid { color: #4ade80; }
-        .earning-status.pending { color: #fbbf24; }
+        .earning-status.paid { color: var(--success-hover); }
+        .earning-status.pending { color: #a16207; }
         .no-earnings { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px 0; }
-        .join-box { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.3); border-radius: 12px; padding: 24px; margin-bottom: 20px; text-align: center; }
-        .join-title { font-size: 1.1rem; font-weight: 800; color: #4ade80; margin-bottom: 8px; }
+        .join-box { background: rgba(22,163,74,0.05); border: 1px solid rgba(22,163,74,0.3); border-radius: 12px; padding: 24px; margin-bottom: 20px; text-align: center; }
+        .join-title { font-size: 1.1rem; font-weight: 800; color: var(--success-hover); margin-bottom: 8px; }
         .join-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
-        .join-highlight { color: #4ade80; font-weight: 700; }
+        .join-highlight { color: var(--success-hover); font-weight: 700; }
         .btn-join { width: 100%; background: var(--success); border: none; color: white; padding: 14px; font-weight: 800; font-size: 1rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
         .btn-join:hover { background: var(--success-hover); }
         .btn-logout { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 11px; font-weight: 600; font-size: 0.85rem; border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
-        .btn-logout:hover { border-color: #dc2626; color: #fca5a5; }
+        .btn-logout:hover { border-color: #dc2626; color: #dc2626; }
         .back-link { text-align: center; margin-top: 10px; font-size: 0.78rem; color: var(--text-muted); }
-        .back-link a { color: #64748b; text-decoration: none; }
+        .back-link a { color: #94a3b8; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -132,14 +132,14 @@
                 <div class="stat-label">Belum Dibayar</div>
             </div>
             <div class="stat-card">
-                <div class="stat-num" id="stat-paidout" style="color:#94a3b8;">RM0</div>
+                <div class="stat-num" id="stat-paidout" style="color:#64748b;">RM0</div>
                 <div class="stat-label">Telah Dibayar</div>
             </div>
         </div>
 
         <div class="settlement-note">
             <strong>⏱ Jadual Pembayaran Komisen</strong>
-            Komisen anda terkumpul setiap kali rujukan anda mendaftar atau memperbaharui langganan. Apabila baki anda mencapai <strong style="color:#fbbf24;">RM49.90 (10 rujukan)</strong>, AWAS akan memproses pembayaran terus ke akaun bank anda pada <strong style="color:#fbbf24;">15 atau 30 hb setiap bulan</strong> — Pendapatan 1–14 hb dibayar 15 hb. Pendapatan 15–29 hb dibayar 30 hb. Pendapatan 30–31 hb dibawa ke 15 hb bulan berikutnya. Baki di bawah RM49.90 akan dikumpul ke bulan berikutnya. Tiada tindakan diperlukan — pembayaran automatik.
+            Komisen anda terkumpul setiap kali rujukan anda mendaftar atau memperbaharui langganan. Apabila baki anda mencapai <strong style="color:#a16207;">RM49.90 (10 rujukan)</strong>, AWAS akan memproses pembayaran terus ke akaun bank anda pada <strong style="color:#a16207;">15 atau 30 hb setiap bulan</strong> — Pendapatan 1–14 hb dibayar 15 hb. Pendapatan 15–29 hb dibayar 30 hb. Pendapatan 30–31 hb dibawa ke 15 hb bulan berikutnya. Baki di bawah RM49.90 akan dikumpul ke bulan berikutnya. Tiada tindakan diperlukan — pembayaran automatik.
         </div>
 
         <div class="ref-box">
@@ -147,7 +147,7 @@
             <div class="ref-code-big" id="ref-code-display">--------</div>
             <div class="ref-link-display" id="ref-link-display">https://awas.asia/register.html?ref=XXXXXXXX</div>
             <button class="btn-copy" id="btn-copy">📋 Salin Pautan</button>
-            <div class="copy-note">Kongsi pautan ini kepada rakan. Setiap pendaftaran = <strong style="color:#4ade80;">RM4.99 untuk anda</strong>. Termasuk pembaharuan tahunan.</div>
+            <div class="copy-note">Kongsi pautan ini kepada rakan. Setiap pendaftaran = <strong style="color:#15803d;">RM4.99 untuk anda</strong>. Termasuk pembaharuan tahunan.</div>
         </div>
 
         <div class="join-box" id="join-box" style="display:none;">
@@ -165,7 +165,7 @@
                 <input type="text" class="bank-input" id="bank-account-name" placeholder="Nama Pemilik Akaun (seperti dalam buku bank)">
                 <div class="bank-divider">— atau —</div>
                 <input type="text" class="bank-input" id="duitnow-number" placeholder="Nombor DuitNow (cth: 0123456789)" inputmode="numeric">
-                <small style="color:#64748b;font-size:0.72rem;text-align:center;">DuitNow — pembayaran percuma & segera. Masukkan nombor telefon atau nombor IC yang didaftarkan dengan DuitNow.</small>
+                <small style="color:#94a3b8;font-size:0.72rem;text-align:center;">DuitNow — pembayaran percuma & segera. Masukkan nombor telefon atau nombor IC yang didaftarkan dengan DuitNow.</small>
             </div>
             <button class="btn-save-bank" id="btn-save-bank">💾 Simpan Butiran Bank</button>
         </div>
