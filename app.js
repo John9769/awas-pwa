@@ -38,7 +38,6 @@ function checkGPSAndProceed() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    checkGPSAndProceed();
 
     const recordTrigger = document.getElementById('record-trigger');
     const videoCapture = document.getElementById('video-capture');
@@ -348,11 +347,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if (box) box.style.display = 'none';
     }
 
+    // ── PAYWALL STATUS BOX (used by RM8 flow + resume flow) ──────────────────
+    function showPaywallStatus(html, isError) {
+        let box = document.getElementById('paywall-status-box');
+        if (!box) {
+            box = document.createElement('div');
+            box.id = 'paywall-status-box';
+            box.style.cssText = 'width:100%;background:#1e293b;padding:16px;border-radius:8px;font-size:0.9rem;line-height:1.5;margin-bottom:12px;';
+            printBtn.parentNode.insertBefore(box, printBtn);
+        }
+        box.style.borderLeft = isError ? '5px solid #dc2626' : '5px solid #16a34a';
+        box.style.color = isError ? '#fca5a5' : '#bbf7d0';
+        box.innerHTML = html;
+        box.style.display = 'block';
+    }
+
+    function clearPaywallStatus() {
+        const box = document.getElementById('paywall-status-box');
+        if (box) box.style.display = 'none';
+    }
+
     printBtn.addEventListener('click', () => { document.getElementById('report-modal').classList.add('show'); });
     document.getElementById('btn-close-modal').addEventListener('click', () => { document.getElementById('report-modal').classList.remove('show'); });
     document.getElementById('btn-use-screen').addEventListener('click', () => { document.getElementById('report-modal').classList.remove('show'); });
 
-    // ── PDF GENERATION ───────────────────────────────────────────────────────
+    // ── PDF GENERATION HELPERS ────────────────────────────────────────────────
     async function captureElement(el) {
         if (!el || el.offsetWidth === 0 || el.offsetHeight === 0) return null;
         return await html2canvas(el, {
@@ -373,9 +392,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return currentY + imgHeight + 4;
     }
 
-    document.getElementById('btn-get-certified').addEventListener('click', () => {
-        document.getElementById('report-modal').classList.remove('show');
-        const downloadBtn = document.getElementById('print-btn');
+    // ── GENERATE CERTIFIED PDF (RM8 — unmasked hashes) ───────────────────────
+    // Extracted from the old btn-get-certified handler. Internals unchanged.
+    // Called ONLY after RM8 payment is confirmed (isReportPaid === true),
+    // either immediately on resume-from-ToyyibPay, or (in principle) directly
+    // if ever needed again. Requires ownHashFull, imageHashesFull,
+    // currentWritNumber, currentLat, currentLng and all pdf-* fields to
+    // already be populated.
+    function generateCertifiedPdf() {
+        const downloadBtn = printBtn;
         downloadBtn.innerText = '\u23f3 Menyediakan PDF anda...';
         downloadBtn.disabled = true;
         mapContainer.innerHTML = '';
@@ -473,7 +498,210 @@ document.addEventListener('DOMContentLoaded', () => {
 
         mapContainer.appendChild(mapImg);
         mapImg.src = `${API_BASE}/api/maps/static?lat=${currentLat}&lng=${currentLng}&t=${Date.now()}`;
+    }
+
+    // ── RM8 PAYWALL TRIGGER (btn-get-certified) ──────────────────────────────
+    // Replaces the old "generate PDF for free" behaviour. This button now
+    // creates a ToyyibPay bill for RM8 and redirects the browser there.
+    // Resume-state is saved to localStorage so that after the ToyyibPay
+    // round-trip, app.html can recognise the returning user and auto-finish
+    // the job (poll → fetch → rebuild → generateCertifiedPdf()).
+    document.getElementById('btn-get-certified').addEventListener('click', async () => {
+        document.getElementById('report-modal').classList.remove('show');
+
+        if (!currentWritNumber || !ownHash) {
+            alert('RALAT: Writ tidak dijumpai. Sila jana writ semula.');
+            return;
+        }
+
+        const downloadBtn = printBtn;
+        downloadBtn.innerText = '\u23f3 Menyediakan pembayaran...';
+        downloadBtn.disabled = true;
+
+        const verifiedPlate = pdfPlate.innerText || localStorage.getItem('awas_vehicle_plate') || '';
+
+        try {
+            const response = await fetch(`${API_BASE}/api/payment/writ`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    vehiclePlate: verifiedPlate,
+                    logHash: ownHash,
+                    writNumber: currentWritNumber
+                })
+            });
+            const result = await response.json();
+
+            if (!response.ok) {
+                downloadBtn.innerText = '\ud83d\udcc4 Dapatkan Writ Balai Rasmi - RM8';
+                downloadBtn.disabled = false;
+                alert('RALAT: ' + (result.error || 'Gagal mencipta bil pembayaran. Cuba lagi.'));
+                return;
+            }
+
+            // Save resume-state — survives the ToyyibPay redirect/reload.
+            localStorage.setItem('awas_pending_writ', currentWritNumber);
+            localStorage.setItem('awas_pending_loghash', ownHash);
+            localStorage.setItem('awas_pending_plate', verifiedPlate);
+
+            window.location.href = result.paymentUrl;
+
+        } catch (fault) {
+            console.error('AWAS Writ Bill Fault:', fault);
+            downloadBtn.innerText = '\ud83d\udcc4 Dapatkan Writ Balai Rasmi - RM8';
+            downloadBtn.disabled = false;
+            alert('\u26a0\ufe0f Masalah sambungan semasa mencipta bil. Periksa internet anda dan cuba lagi.');
+        }
     });
+
+    // ── RESUME AFTER RM8 PAYMENT (ToyyibPay return) ──────────────────────────
+    // Runs on every page load. If the URL carries ?writ_paid=1&writ=... AND
+    // localStorage has a matching pending writ, poll the backend until
+    // isReportPaid flips true, rebuild the report screen from the response,
+    // then auto-generate the certified PDF — no extra clicks from the user.
+    async function checkResumeWritPayment() {
+        const params = new URLSearchParams(window.location.search);
+        const writPaid = params.get('writ_paid');
+        const writParam = params.get('writ');
+        const pendingWrit = localStorage.getItem('awas_pending_writ');
+
+        if (writPaid !== '1' || !writParam || !pendingWrit || writParam !== pendingWrit) {
+            return; // Not a resume case — normal page load.
+        }
+
+        const pendingLogHash = localStorage.getItem('awas_pending_loghash');
+        const pendingPlate = localStorage.getItem('awas_pending_plate');
+
+        // Hide capture/incident flow, show report shell with status message.
+        captureView.style.display = 'none';
+        photoSection.style.display = 'none';
+        incidentView.style.display = 'none';
+        testBanner.style.display = 'none';
+        reportBanner.style.display = 'block';
+        reportView.style.display = 'flex';
+        checklistBox.style.display = 'block';
+        printBtn.style.display = 'block';
+        document.getElementById('btn-back-home').style.display = 'block';
+
+        showPaywallStatus('\u23f3 <strong>MENGESAHKAN PEMBAYARAN ANDA...</strong><br>Sila tunggu sebentar. Laporan PDF akan dijana secara automatik.', false);
+
+        const maxAttempts = 6;
+        const delayMs = 2000;
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                const response = await fetch(`${API_BASE}/api/logs/writ/${encodeURIComponent(writParam)}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    if (data.isReportPaid === true) {
+                        rebuildReportFromPaidWrit(data, pendingPlate);
+
+                        // Clean up resume-state and URL.
+                        localStorage.removeItem('awas_pending_writ');
+                        localStorage.removeItem('awas_pending_loghash');
+                        localStorage.removeItem('awas_pending_plate');
+                        history.replaceState({}, document.title, window.location.pathname);
+
+                        clearPaywallStatus();
+                        generateCertifiedPdf();
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.error('AWAS Resume Poll Fault:', err);
+            }
+
+            if (attempt < maxAttempts) {
+                await new Promise(r => setTimeout(r, delayMs));
+            }
+        }
+
+        // Still not paid after all attempts — webhook likely delayed.
+        showPaywallStatus(
+            '\u26a0\ufe0f <strong>PEMBAYARAN SEDANG DISAHKAN.</strong><br>Proses ini kadangkala mengambil masa sedikit lebih lama. Sila tunggu seminit dan muat semula halaman ini (refresh) untuk cuba lagi.' +
+            '<br><br><button id="btn-resume-retry" style="background:#16a34a;color:white;border:none;padding:10px 20px;border-radius:6px;font-weight:700;cursor:pointer;">\ud83d\udd04 Cuba Lagi</button>',
+            true
+        );
+        const retryBtn = document.getElementById('btn-resume-retry');
+        if (retryBtn) {
+            retryBtn.addEventListener('click', () => window.location.reload());
+        }
+    }
+
+    // ── REBUILD REPORT FROM PAID WRIT DATA ───────────────────────────────────
+    // Repopulates the same variables and DOM fields that btn-generate-report
+    // normally sets, using data fetched from GET /api/logs/writ/:writNumber.
+    function rebuildReportFromPaidWrit(data, pendingPlate) {
+        const cachedModel = localStorage.getItem('awas_vehicle_model') || '';
+        const cachedMykad = localStorage.getItem('awas_mykad_four') || '';
+        const cachedVType = localStorage.getItem('awas_vehicle_type') || 'CAR';
+        const cachedPhone = localStorage.getItem('awas_phone') || '\u2014';
+
+        currentWritNumber = data.writNumber;
+        ownHash = data.logHash;
+        ownHashFull = data.logHash;
+        imageHashesFull = data.imageHashes || [];
+        currentLat = parseFloat(data.latitude).toFixed(6);
+        currentLng = parseFloat(data.longitude).toFixed(6);
+
+        const createdAtDate = data.createdAt ? new Date(data.createdAt) : new Date();
+        eventTimestamp = createdAtDate;
+
+        const maskedHash = ownHashFull.substring(0, 8) + '\u2022'.repeat(56);
+        const verifiedPlate = data.vehiclePlate || pendingPlate || '';
+
+        pdfWritNum.innerText = currentWritNumber;
+        document.getElementById('stamp-writ').innerText = currentWritNumber;
+        document.getElementById('checklist-writ-num').innerText = currentWritNumber;
+        pdfLogId.innerText = ownHashFull.substring(0, 8).toUpperCase();
+        pdfDate.innerText = createdAtDate.toLocaleDateString('ms-MY');
+        pdfTime.innerText = createdAtDate.toLocaleTimeString('ms-MY') + ' MYT';
+        pdfPlate.innerText = verifiedPlate;
+        pdfModel.innerText = cachedModel;
+        const vtypeMap = { CAR: 'Kereta', MOTORCYCLE: 'Motosikal', LORRY: 'Lori', BUS: 'Bas', VAN: 'Van' };
+        document.getElementById('pdf-vtype').innerText = vtypeMap[cachedVType] || 'Kereta';
+        pdfMykad.innerText = cachedMykad ? `******-XX-${cachedMykad}` : '------';
+        document.getElementById('pdf-phone').innerText = cachedPhone || '\u2014';
+        pdfLat.innerText = currentLat;
+        pdfLng.innerText = currentLng;
+        pdfHash.innerText = maskedHash;
+
+        const imgHashSection = document.getElementById('pdf-image-hashes-section');
+        const imgHashList = document.getElementById('pdf-image-hashes-list');
+        if (imageHashesFull.length > 0) {
+            imgHashList.innerHTML = imageHashesFull.map((h, i) =>
+                `<div class="img-hash-row" style="margin-bottom:8px;word-break:break-all;"><span style="font-weight:800;color:#1e40af;">Gambar ${i + 1}:</span><br><span class="img-hash-masked" style="font-family:monospace;font-size:0.7rem;">${h.substring(0, 8) + '\u2022'.repeat(56)}</span></div>`
+            ).join('');
+            imgHashSection.style.display = 'block';
+        } else {
+            imgHashSection.style.display = 'none';
+        }
+
+        pdfRoad.innerText = formatKeadaanJalan(data.roadCondition);
+        pdfWeather.innerText = formatCuaca(data.weatherCondition);
+        pdfInjury.innerText = formatKecederaan(data.injuryStatus);
+        pdfDescription.innerText = data.incidentDescription ? data.incidentDescription.substring(0, 150) : '\u2014';
+
+        mapContainer.innerHTML = `<iframe
+            src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(currentLng)-0.005},${parseFloat(currentLat)-0.005},${parseFloat(currentLng)+0.005},${parseFloat(currentLat)+0.005}&layer=mapnik&marker=${currentLat},${currentLng}"
+            style="width:100%;height:300px;border:none;margin-bottom:-80px;"
+            loading="lazy">
+        </iframe>`;
+
+        if (data.otherVehiclePlate) {
+            document.getElementById('pdf-other-party-section').style.display = 'block';
+            document.getElementById('pdf-other-plate').innerText = data.otherVehiclePlate;
+            document.getElementById('pdf-other-model').innerText = data.otherVehicleMakeModel || '\u2014';
+            document.getElementById('sha-section-num').innerText = '5.';
+        } else {
+            document.getElementById('pdf-other-party-section').style.display = 'none';
+            document.getElementById('sha-section-num').innerText = '4.';
+        }
+
+        window.scrollTo(0, 0);
+    }
 
     function formatKeadaanJalan(val) {
         const map = { DRY: 'Kering', WET: 'Basah - Selepas Hujan', FLOODED: 'Banjir', UNDER_CONSTRUCTION: 'Dalam Pembinaan', UNKNOWN: 'Tidak Pasti' };
@@ -510,6 +738,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // ── INIT ──────────────────────────────────────────────────────────────────
+    // If resuming from ToyyibPay (RM8 writ payment), skip GPS gate and resume
+    // straight into the report. Otherwise normal flow: check GPS, show capture.
+    const resumeParams = new URLSearchParams(window.location.search);
+    if (resumeParams.get('writ_paid') === '1' && localStorage.getItem('awas_pending_writ')) {
+        checkResumeWritPayment();
+    } else {
+        checkGPSAndProceed();
     }
 });
 
