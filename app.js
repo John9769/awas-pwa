@@ -560,15 +560,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // isReportPaid flips true, rebuild the report screen from the response,
     // then auto-generate the certified PDF — no extra clicks from the user.
     async function checkResumeWritPayment() {
-        const params = new URLSearchParams(window.location.search);
-        const writPaid = params.get('writ_paid');
-        const writParam = params.get('writ');
         const pendingWrit = localStorage.getItem('awas_pending_writ');
 
-        if (writPaid !== '1' || !writParam || !pendingWrit || writParam !== pendingWrit) {
+        if (!pendingWrit) {
             return; // Not a resume case — normal page load.
         }
 
+        const writParam = pendingWrit;
         const pendingLogHash = localStorage.getItem('awas_pending_loghash');
         const pendingPlate = localStorage.getItem('awas_pending_plate');
 
@@ -743,8 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── INIT ──────────────────────────────────────────────────────────────────
     // If resuming from ToyyibPay (RM8 writ payment), skip GPS gate and resume
     // straight into the report. Otherwise normal flow: check GPS, show capture.
-    const resumeParams = new URLSearchParams(window.location.search);
-    if (resumeParams.get('writ_paid') === '1' && localStorage.getItem('awas_pending_writ')) {
+    if (localStorage.getItem('awas_pending_writ')) {
         checkResumeWritPayment();
     } else {
         checkGPSAndProceed();
