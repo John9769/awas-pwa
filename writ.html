@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AWAS — Writ Forensik Rasmi</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#16a34a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+    --red:#dc2626;--green:#16a34a;--green-dark:#15803d;
+    --blue:#2563eb;--blue-dark:#1d4ed8;
+    --bg:#f1f5f9;--card:#ffffff;--navy:#0f1623;
+    --text:#1e293b;--heading:#0f172a;--muted:#64748b;--border:#e2e8f0
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(15,22,35,0.95);backdrop-filter:blur(15px);border-bottom:1px solid rgba(255,255,255,0.08)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:3px;color:#f8fafc;line-height:1;text-decoration:none}
+.nav-btns{display:flex;gap:6px;align-items:center}
+.nav-btns a{font-family:'DM Sans',sans-serif;font-weight:700;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;border-radius:6px;transition:all 0.2s;padding:8px 14px;font-size:0.72rem;color:white}
+.nav-login{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2)}
+.nav-login:hover{background:rgba(255,255,255,0.22)}
+.nav-app{background:var(--green)}
+.nav-app:hover{background:var(--green-dark)}
+
+/* MAIN */
+main{flex:1;padding:90px 20px 40px;max-width:680px;margin:0 auto;width:100%}
+
+/* STATUS STATES */
+.state{display:none;flex-direction:column;align-items:center;text-align:center;padding:40px 20px}
+.state.active{display:flex}
+.state-icon{font-size:3rem;margin-bottom:16px}
+.state h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;color:var(--heading);margin-bottom:8px}
+.state p{color:var(--muted);font-size:0.95rem;line-height:1.6;max-width:400px}
+.btn-retry{margin-top:20px;background:var(--green);border:none;color:white;padding:14px 32px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
+.btn-retry:hover{background:var(--green-dark)}
+
+/* SAVE LINK BOX */
+.save-link-box{width:100%;background:rgba(22,163,74,0.08);border:2px solid rgba(22,163,74,0.4);border-radius:12px;padding:20px;margin-bottom:20px}
+.save-link-title{font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--green-dark);margin-bottom:8px}
+.save-link-url{font-family:monospace;font-size:0.8rem;color:var(--heading);word-break:break-all;background:white;border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:12px;line-height:1.5}
+.save-link-reminder{font-size:0.82rem;color:var(--green-dark);font-weight:700;margin-bottom:14px;line-height:1.5}
+.save-link-reminder span{display:block;font-weight:400;color:var(--muted);margin-top:4px;font-size:0.78rem}
+.btn-copy{width:100%;background:var(--green);border:none;color:white;padding:12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;transition:all 0.2s}
+.btn-copy:hover{background:var(--green-dark)}
+.btn-copy.copied{background:#15803d}
+
+/* WRIT REPORT */
+#report-view{width:100%;background:white;color:#000;padding:24px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:20px}
+.report-section{page-break-inside:avoid;break-inside:avoid;margin-bottom:14px}
+.report-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #e2e8f0;padding-bottom:12px}
+.report-title{font-size:1.1rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.report-subtitle{font-size:0.65rem;font-weight:700;color:#475569;text-transform:uppercase;margin-top:2px}
+.report-meta-box{font-family:monospace;font-size:0.75rem;text-align:right;line-height:1.5}
+.writ-number{font-size:0.8rem;font-weight:800;color:#dc2626}
+.section-title{font-size:0.82rem;font-weight:800;background:#e2e8f0;padding:6px 10px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;border-left:4px solid #dc2626}
+.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.85rem;padding:0 6px}
+.data-label{font-weight:700;color:#475569;text-transform:uppercase;font-size:0.72rem;margin-bottom:2px}
+.data-value{font-weight:600;color:#000}
+.map-box{width:100%;height:200px;background:#cbd5e1;border:1px solid #e2e8f0;border-radius:4px;overflow:hidden;margin-top:10px}
+.hash-box{background:#f0fdf4;padding:12px 14px;border-radius:6px;font-family:monospace;font-size:0.68rem;word-break:break-all;border:2px solid #16a34a;line-height:1.6;margin-bottom:8px}
+.hash-label{font-weight:800;color:#166534;font-size:0.68rem;margin-bottom:6px}
+.seal-note{background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:12px 14px;font-size:0.72rem;color:#166534;line-height:1.6;text-align:center}
+.awas-stamp{border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;text-align:center}
+.stamp-title{font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569}
+.stamp-value{font-size:0.82rem;font-weight:800;color:#dc2626;font-family:monospace}
+.stamp-sub{font-size:0.62rem;color:#94a3b8;margin-top:2px}
+.footer-disclaimer{font-size:0.6rem;color:#64748b;text-align:center;font-weight:600;text-transform:uppercase;padding:4px 0}
+
+/* ACTION BUTTONS */
+.action-btns{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.btn-print-writ{width:100%;background:var(--navy);border:none;color:white;padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px}
+.btn-print-writ:hover{background:#1e293b}
+.btn-back{width:100%;background:transparent;border:1px solid var(--border);color:var(--muted);padding:12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;text-decoration:none;text-align:center;display:block}
+
+/* IKMR CROSSSELL */
+.crosssell{background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.25);border-radius:12px;padding:18px;margin-bottom:20px;text-align:center}
+.crosssell-title{font-size:0.8rem;font-weight:800;color:var(--blue-dark);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.crosssell p{font-size:0.82rem;color:var(--muted);line-height:1.5}
+
+/* FOOTER */
+footer{background:var(--navy);padding:28px 24px;text-align:center;color:#94a3b8;font-size:0.75rem}
+footer .flogo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:#f8fafc;margin-bottom:8px}
+
+@media print{
+    nav,footer,.save-link-box,.action-btns,.crosssell{display:none!important}
+    main{padding:0}
+    #report-view{box-shadow:none;border:none;padding:0}
+    body{background:white}
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="nav-logo">AWAS</a>
+    <div style="font-size:0.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Writ Forensik Rasmi</div>
+</nav>
+
+<main>
+    <!-- LOADING STATE -->
+    <div class="state active" id="state-loading">
+        <div class="state-icon">⏳</div>
+        <h2>MEMUATKAN WRIT</h2>
+        <p>Sila tunggu sebentar...</p>
+    </div>
+
+    <!-- PENDING PAYMENT STATE -->
+    <div class="state" id="state-pending">
+        <div class="state-icon">⏳</div>
+        <h2>PEMBAYARAN SEDANG DISAHKAN</h2>
+        <p>Writ anda sedang diproses. Ini biasanya mengambil masa kurang dari seminit. Sila muat semula halaman ini.</p>
+        <button class="btn-retry" onclick="window.location.reload()">🔄 Muat Semula</button>
+    </div>
+
+    <!-- NOT FOUND STATE -->
+    <div class="state" id="state-notfound">
+        <div class="state-icon">❌</div>
+        <h2>WRIT TIDAK DIJUMPAI</h2>
+        <p>Nombor writ ini tidak wujud dalam sistem AWAS. Sila semak pautan anda.</p>
+        <a href="app.html" class="btn-retry" style="text-decoration:none;display:inline-block;margin-top:20px">Kembali ke App</a>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div class="state" id="state-error">
+        <div class="state-icon">⚠️</div>
+        <h2>RALAT SAMBUNGAN</h2>
+        <p>Gagal memuatkan writ. Sila periksa sambungan internet anda dan cuba lagi.</p>
+        <button class="btn-retry" onclick="window.location.reload()">🔄 Cuba Lagi</button>
+    </div>
+
+    <!-- PAID WRIT STATE -->
+    <div id="state-paid" style="display:none;width:100%">
+
+        <!-- SAVE LINK BOX -->
+        <div class="save-link-box">
+            <div class="save-link-title">🔗 Pautan Writ Rasmi Anda</div>
+            <div class="save-link-url" id="writ-url-display"></div>
+            <div class="save-link-reminder">
+                ⚠️ Simpan pautan ini — ia kekal selamanya.
+                <span>Anda boleh membuka semula writ ini pada bila-bila masa untuk dikongsi dengan polis, peguam atau syarikat insurans. Hantar pautan ini kepada mereka terus.</span>
+            </div>
+            <button class="btn-copy" id="btn-copy-link" onclick="copyWritLink()">📋 Salin Pautan</button>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="action-btns">
+            <button class="btn-print-writ" onclick="window.print()">🖨️ Cetak / Simpan sebagai PDF</button>
+            <a href="app.html" class="btn-back">← Kembali ke App AWAS</a>
+        </div>
+
+        <!-- WRIT REPORT -->
+        <div id="report-view">
+            <div class="report-section report-header">
+                <div>
+                    <div class="report-title">Writ Forensik AWAS</div>
+                    <div class="report-subtitle">Accident Writ Automation System — Bukti Dokumen Digital</div>
+                </div>
+                <div class="report-meta-box">
+                    <div class="writ-number" id="pdf-writ-number">—</div>
+                    <div>LOG: <span id="pdf-log-id">—</span></div>
+                    <div id="pdf-date">—</div>
+                    <div id="pdf-time">—</div>
+                </div>
+            </div>
+            <div class="report-section">
+                <div class="section-title">1. Maklumat Pemandu &amp; Kenderaan (Pengadu)</div>
+                <div class="data-grid">
+                    <div><div class="data-label">Nombor Pendaftaran</div><div class="data-value" id="pdf-plate">—</div></div>
+                    <div><div class="data-label">Status AWAS</div><div class="data-value" style="color:#16a34a;">AKTIF / DISAHKAN</div></div>
+                </div>
+            </div>
+            <div class="report-section">
+                <div class="section-title">2. Telemetri Lokasi Satelit GPS</div>
+                <div class="data-grid">
+                    <div><div class="data-label">Latitud</div><div class="data-value" id="pdf-lat">—</div></div>
+                    <div><div class="data-label">Longitud</div><div class="data-value" id="pdf-lng">—</div></div>
+                </div>
+                <div class="map-box" id="map-container"></div>
+            </div>
+            <div class="report-section">
+                <div class="section-title">3. Butiran Insiden</div>
+                <div class="data-grid">
+                    <div><div class="data-label">Keadaan Jalan</div><div class="data-value" id="pdf-road">—</div></div>
+                    <div><div class="data-label">Cuaca</div><div class="data-value" id="pdf-weather">—</div></div>
+                    <div><div class="data-label">Kecederaan</div><div class="data-value" id="pdf-injury">—</div></div>
+                </div>
+                <div style="padding:0 6px;margin-top:8px;">
+                    <div class="data-label">Penerangan</div>
+                    <div class="data-value" id="pdf-description" style="margin-top:4px;font-size:0.82rem;line-height:1.5;">—</div>
+                </div>
+            </div>
+            <div id="pdf-other-party-section" class="report-section" style="display:none;">
+                <div class="section-title">4. Kenderaan Pihak Lain (Catatan Pengadu)</div>
+                <div class="data-grid">
+                    <div><div class="data-label">Nombor Plate</div><div class="data-value" id="pdf-other-plate">—</div></div>
+                    <div><div class="data-label">Model Kenderaan</div><div class="data-value" id="pdf-other-model">—</div></div>
+                </div>
+                <div style="padding:0 6px;margin-top:8px;font-size:0.7rem;color:#64748b;font-style:italic;">
+                    * Bahagian ini adalah <strong>dakwaan pengadu</strong>. AWAS tidak mengesahkan maklumat kenderaan pihak lain.
+                </div>
+            </div>
+            <div class="report-section">
+                <div class="section-title"><span id="sha-section-num">4.</span> Tandatangan Digital SHA-256</div>
+                <div class="hash-box">
+                    <div class="hash-label">✅ TANDATANGAN FORENSIK VIDEO KENDERAAN ANDA</div>
+                    <span id="pdf-hash">—</span>
+                </div>
+                <div id="pdf-image-hashes-section" style="display:none;">
+                    <div class="hash-box" style="border-color:#2563eb;background:#eff6ff;">
+                        <div class="hash-label" style="color:#1e40af;">📷 TANDATANGAN FORENSIK BUKTI GAMBAR</div>
+                        <div id="pdf-image-hashes-list"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="report-section">
+                <div class="awas-stamp">
+                    <div class="stamp-title">Writ Bertauliah AWAS</div>
+                    <div class="stamp-value" id="stamp-writ">—</div>
+                    <div class="stamp-sub">Accident Writ Automation System</div>
+                </div>
+            </div>
+            <div class="report-section">
+                <div class="seal-note">
+                    ✅ <strong>Bukti Tersedia.</strong> Dokumen ini dihasilkan pada masa kejadian berlaku. Tandatangan SHA-256 di atas membuktikan data ini tidak diubah. Sebarang pengubahan pada video, gambar, GPS atau cap masa akan menghasilkan hash yang berbeza.
+                </div>
+            </div>
+            <div class="report-section">
+                <div class="footer-disclaimer">
+                    Dokumen ini dihasilkan secara automatik oleh sistem AWAS. Data visual dan koordinat dikunci pada masa kejadian.
+                </div>
+            </div>
+        </div>
+
+        <!-- CROSS-SELL -->
+        <div class="crosssell">
+            <div class="crosssell-title">💡 Tahukah Anda Hak Insurans Anda?</div>
+            <p>IKMR — I Know My Rights — bantu anda fahami polisi insurans anda sebelum kemalangan berlaku. Semak kelayakan tuntutan anda dengan mudah.</p>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <div class="flogo">AWAS</div>
+    <p style="font-weight:700;color:#f1f5f9">Accident Writ Automation System</p>
+    <p style="margin-top:6px">AWAS Premium Resources (202603141446)</p>
+    <p style="margin-top:6px;font-size:0.68rem;letter-spacing:1px">SELAMAT &bull; KEKAL &bull; MEMATUHI PDPA</p>
+</footer>
+
+<script>
+const API_BASE = 'https://awas-backend.onrender.com';
+
+function showState(id) {
+    ['state-loading','state-pending','state-notfound','state-error'].forEach(s => {
+        document.getElementById(s).classList.remove('active');
+    });
+    document.getElementById('state-paid').style.display = 'none';
+
+    if (id === 'state-paid') {
+        document.getElementById('state-paid').style.display = 'block';
+    } else {
+        document.getElementById(id).classList.add('active');
+    }
+}
+
+function formatKeadaanJalan(val) {
+    const map = { DRY:'Kering', WET:'Basah - Selepas Hujan', FLOODED:'Banjir', UNDER_CONSTRUCTION:'Dalam Pembinaan', UNKNOWN:'Tidak Pasti' };
+    return map[val] || 'Tidak Pasti';
+}
+function formatCuaca(val) {
+    const map = { CLEAR:'Cerah / Panas', RAINY:'Hujan', FOGGY:'Kabus Nipis', HAZY:'Jerebu', NIGHT:'Malam / Jarak Penglihatan Rendah', UNKNOWN:'Tidak Pasti' };
+    return map[val] || 'Tidak Pasti';
+}
+function formatKecederaan(val) {
+    const map = { NONE:'Tiada Kecederaan', MINOR:'Kecederaan Ringan', SERIOUS:'Kecederaan Serius' };
+    return map[val] || 'Tiada Kecederaan';
+}
+
+function populateWrit(data) {
+    const createdAt = data.createdAt ? new Date(data.createdAt) : new Date();
+    const lat = parseFloat(data.latitude).toFixed(6);
+    const lng = parseFloat(data.longitude).toFixed(6);
+    const imageHashes = data.imageHashes || [];
+
+    document.getElementById('pdf-writ-number').innerText = data.writNumber;
+    document.getElementById('stamp-writ').innerText = data.writNumber;
+    document.getElementById('pdf-log-id').innerText = data.logHash.substring(0, 8).toUpperCase();
+    document.getElementById('pdf-date').innerText = createdAt.toLocaleDateString('ms-MY');
+    document.getElementById('pdf-time').innerText = createdAt.toLocaleTimeString('ms-MY') + ' MYT';
+    document.getElementById('pdf-plate').innerText = data.vehiclePlate || '—';
+    document.getElementById('pdf-lat').innerText = lat;
+    document.getElementById('pdf-lng').innerText = lng;
+    document.getElementById('pdf-hash').innerText = data.logHash;
+    document.getElementById('pdf-road').innerText = formatKeadaanJalan(data.roadCondition);
+    document.getElementById('pdf-weather').innerText = formatCuaca(data.weatherCondition);
+    document.getElementById('pdf-injury').innerText = formatKecederaan(data.injuryStatus);
+    document.getElementById('pdf-description').innerText = data.incidentDescription || '—';
+
+    document.getElementById('map-container').innerHTML = `<iframe
+        src="https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.005},${lat-0.005},${lng+0.005},${lat+0.005}&layer=mapnik&marker=${lat},${lng}"
+        style="width:100%;height:200px;border:none;"
+        loading="lazy">
+    </iframe>`;
+
+    if (data.otherVehiclePlate) {
+        document.getElementById('pdf-other-party-section').style.display = 'block';
+        document.getElementById('pdf-other-plate').innerText = data.otherVehiclePlate;
+        document.getElementById('pdf-other-model').innerText = data.otherVehicleMakeModel || '—';
+        document.getElementById('sha-section-num').innerText = '5.';
+    }
+
+    if (imageHashes.length > 0) {
+        const list = document.getElementById('pdf-image-hashes-list');
+        list.innerHTML = imageHashes.map((h, i) =>
+            `<div style="margin-bottom:8px;word-break:break-all;"><span style="font-weight:800;color:#1e40af;">Gambar ${i+1}:</span><br><span style="font-family:monospace;font-size:0.68rem;">${h}</span></div>`
+        ).join('');
+        document.getElementById('pdf-image-hashes-section').style.display = 'block';
+    }
+
+    // Set the permanent writ URL display
+    const writUrl = window.location.href;
+    document.getElementById('writ-url-display').innerText = writUrl;
+}
+
+function copyWritLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('btn-copy-link');
+        btn.innerText = '✅ Pautan Disalin!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.innerText = '📋 Salin Pautan';
+            btn.classList.remove('copied');
+        }, 3000);
+    }).catch(() => {
+        prompt('Salin pautan ini:', url);
+    });
+}
+
+async function loadWrit() {
+    // Extract writNumber from URL path
+    // URL: awas.asia/writ/AWAS-MY-2026-000048
+    const pathParts = window.location.pathname.split('/');
+    const writSlug = pathParts[pathParts.length - 1];
+
+    if (!writSlug || writSlug === 'writ.html') {
+        showState('state-notfound');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/logs/writ/${encodeURIComponent(writSlug)}`);
+
+        if (response.status === 404) {
+            showState('state-notfound');
+            return;
+        }
+
+        if (!response.ok) {
+            showState('state-error');
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!data.isReportPaid) {
+            showState('state-pending');
+            return;
+        }
+
+        populateWrit(data);
+        showState('state-paid');
+
+    } catch (err) {
+        console.error('AWAS writ load fault:', err);
+        showState('state-error');
+    }
+}
+
+// Load on page ready
+document.addEventListener('DOMContentLoaded', loadWrit);
+</script>
+</body>
+</html>
