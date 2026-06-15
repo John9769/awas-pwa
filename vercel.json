@@ -1,6 +1,8 @@
 {
   "rewrites": [
     { "source": "/writ/:writNumber", "destination": "/writ.html" },
+    { "source": "/verify/:writNumber", "destination": "/verify.html" },
+    { "source": "/cert/:certNumber", "destination": "/cert.html" },
     { "source": "/", "destination": "/landing.html" }
   ]
 }

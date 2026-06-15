@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AWAS — Sijil Pengesahan Rasmi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+    --red:#dc2626;--green:#16a34a;--green-dark:#15803d;
+    --blue:#2563eb;--blue-dark:#1d4ed8;
+    --bg:#f1f5f9;--card:#ffffff;--navy:#0f1623;
+    --text:#1e293b;--heading:#0f172a;--muted:#64748b;--border:#e2e8f0
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(15,22,35,0.95);backdrop-filter:blur(15px);border-bottom:1px solid rgba(255,255,255,0.08)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:3px;color:#f8fafc;line-height:1;text-decoration:none}
+.nav-tag{font-size:0.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;}
+main{flex:1;padding:90px 20px 40px;max-width:720px;margin:0 auto;width:100%}
+footer{background:var(--navy);padding:28px 24px;text-align:center;color:#94a3b8;font-size:0.75rem}
+footer .flogo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:#f8fafc;margin-bottom:8px}
+
+/* STATES */
+.state{display:none;flex-direction:column;align-items:center;text-align:center;padding:40px 20px}
+.state.active{display:flex}
+.state-icon{font-size:3rem;margin-bottom:16px}
+.state h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;color:var(--heading);margin-bottom:8px}
+.state p{color:var(--muted);font-size:0.95rem;line-height:1.6;max-width:400px}
+
+/* ACTION BUTTONS */
+.action-btns{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.btn-print{width:100%;background:var(--navy);border:none;color:white;padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px}
+.btn-print:hover{background:#1e293b}
+
+/* CERTIFICATE */
+#cert-view{width:100%;background:white;color:#000;padding:28px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:20px;border:2px solid #0f1623}
+.cert-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #0f1623;padding-bottom:16px;margin-bottom:16px}
+.cert-awas-brand{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;color:#0f1623}
+.cert-brand-sub{font-size:0.65rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.cert-meta{text-align:right;font-family:monospace;font-size:0.75rem;line-height:1.6}
+.cert-title{text-align:center;margin-bottom:20px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0}
+.cert-title h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:#0f1623;margin-bottom:4px}
+.cert-title p{font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px}
+.cert-section{margin-bottom:16px}
+.cert-section-title{font-size:0.75rem;font-weight:800;background:#e2e8f0;padding:6px 10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;border-left:4px solid #0f1623}
+.cert-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.85rem;padding:0 6px}
+.cert-label{font-weight:700;color:#475569;text-transform:uppercase;font-size:0.72rem;margin-bottom:2px}
+.cert-value{font-weight:600;color:#000}
+.cert-hash-box{background:#f0fdf4;padding:12px 14px;border-radius:6px;font-family:monospace;font-size:0.65rem;word-break:break-all;border:2px solid #16a34a;line-height:1.6;margin-bottom:8px}
+.cert-hash-label{font-weight:800;color:#166534;font-size:0.68rem;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.cert-seal{background:#0f1623;color:white;border-radius:8px;padding:16px;text-align:center;margin-bottom:16px}
+.cert-seal-number{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;color:#fbbf24}
+.cert-seal-sub{font-size:0.7rem;color:#94a3b8;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.cert-integrity{background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:12px;font-size:0.72rem;color:#166534;line-height:1.6;text-align:center;margin-bottom:12px}
+.cert-footer{font-size:0.62rem;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:0.5px;border-top:1px solid #e2e8f0;padding-top:10px}
+
+/* MEDIA LINKS */
+.media-section{background:white;border-radius:12px;padding:20px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:20px}
+.media-title{font-size:0.85rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--heading);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.media-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8fafc;border-radius:8px;margin-bottom:8px;border:1px solid var(--border)}
+.media-item-label{font-size:0.82rem;font-weight:700;color:var(--heading)}
+.media-item-sub{font-size:0.72rem;color:var(--muted);margin-top:2px}
+.btn-download{background:var(--navy);color:white;padding:8px 14px;border-radius:6px;font-size:0.75rem;font-weight:700;text-decoration:none;text-transform:uppercase;white-space:nowrap}
+.btn-download:hover{background:#1e293b}
+
+/* SHA VERIFICATION TOOL */
+.verify-tool{background:white;border-radius:12px;padding:20px;border:2px solid var(--blue);box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:20px}
+.verify-tool-title{font-size:0.85rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue-dark);margin-bottom:6px}
+.verify-tool-sub{font-size:0.82rem;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.verify-item{background:#f8fafc;border-radius:8px;padding:14px;margin-bottom:12px;border:1px solid var(--border)}
+.verify-item-label{font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px}
+.verify-expected{font-family:monospace;font-size:0.68rem;word-break:break-all;color:var(--heading);background:white;padding:8px;border-radius:4px;border:1px solid var(--border);margin-bottom:10px;line-height:1.5}
+.verify-upload-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn-upload{background:var(--blue);color:white;padding:8px 16px;border-radius:6px;font-size:0.78rem;font-weight:700;cursor:pointer;border:none;text-transform:uppercase;white-space:nowrap}
+.btn-upload:hover{background:var(--blue-dark)}
+.verify-result{margin-top:10px;padding:10px 14px;border-radius:6px;font-size:0.82rem;font-weight:700;display:none}
+.verify-result.match{background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.4);color:#15803d}
+.verify-result.nomatch{background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.4);color:#dc2626}
+.computed-hash{font-family:monospace;font-size:0.65rem;word-break:break-all;margin-top:6px;opacity:0.8}
+
+@media print{
+    nav,footer,.action-btns,.media-section,.verify-tool{display:none!important}
+    main{padding:0}
+    #cert-view{box-shadow:none;border:2px solid #0f1623;padding:16px}
+    body{background:white}
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="nav-logo">AWAS</a>
+    <div class="nav-tag">Sijil Pengesahan Rasmi</div>
+</nav>
+
+<main>
+    <!-- LOADING -->
+    <div class="state active" id="state-loading">
+        <div class="state-icon">⏳</div>
+        <h2>MEMUATKAN SIJIL</h2>
+        <p>Sila tunggu sebentar...</p>
+    </div>
+
+    <!-- NOT FOUND -->
+    <div class="state" id="state-notfound">
+        <div class="state-icon">❌</div>
+        <h2>SIJIL TIDAK DIJUMPAI</h2>
+        <p>Nombor sijil ini tidak wujud dalam sistem AWAS.</p>
+    </div>
+
+    <!-- ERROR -->
+    <div class="state" id="state-error">
+        <div class="state-icon">⚠️</div>
+        <h2>RALAT SAMBUNGAN</h2>
+        <p>Gagal memuatkan sijil. Sila cuba lagi.</p>
+        <button style="margin-top:20px;background:var(--green);border:none;color:white;padding:14px 32px;border-radius:8px;font-weight:700;cursor:pointer;" onclick="window.location.reload()">🔄 Cuba Lagi</button>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div id="state-cert" style="display:none;width:100%">
+
+        <div class="action-btns">
+            <button class="btn-print" onclick="window.print()">🖨️ Cetak / Simpan sebagai PDF</button>
+        </div>
+
+        <!-- CERTIFICATE DOCUMENT -->
+        <div id="cert-view">
+            <div class="cert-header">
+                <div>
+                    <div class="cert-awas-brand">AWAS</div>
+                    <div class="cert-brand-sub">Accident Writ Automation System</div>
+                    <div class="cert-brand-sub">AWAS Premium Resources (202603141446)</div>
+                </div>
+                <div class="cert-meta">
+                    <div style="font-weight:800;color:#dc2626;" id="cert-number-display">—</div>
+                    <div>Tarikh: <span id="cert-issued-date">—</span></div>
+                    <div>Masa: <span id="cert-issued-time">—</span></div>
+                </div>
+            </div>
+
+            <div class="cert-title">
+                <h2>SIJIL PENGESAHAN FORENSIK AWAS</h2>
+                <p>Forensic Evidence Verification Certificate</p>
+            </div>
+
+            <div class="cert-section">
+                <div class="cert-section-title">1. Maklumat Pemohon</div>
+                <div class="cert-grid">
+                    <div><div class="cert-label">Syarikat</div><div class="cert-value" id="cert-company">—</div></div>
+                    <div><div class="cert-label">Jenis</div><div class="cert-value" id="cert-type">—</div></div>
+                    <div><div class="cert-label">Nombor Kes</div><div class="cert-value" id="cert-case-ref">—</div></div>
+                    <div><div class="cert-label">Consent Pemandu</div><div class="cert-value" id="cert-consent-date">—</div></div>
+                </div>
+            </div>
+
+            <div class="cert-section">
+                <div class="cert-section-title">2. Maklumat Writ AWAS</div>
+                <div class="cert-grid">
+                    <div><div class="cert-label">Nombor Writ</div><div class="cert-value" id="cert-writ-number">—</div></div>
+                    <div><div class="cert-label">Plat Kenderaan</div><div class="cert-value" id="cert-plate">—</div></div>
+                    <div><div class="cert-label">Tarikh Kejadian</div><div class="cert-value" id="cert-incident-date">—</div></div>
+                    <div><div class="cert-label">Masa Dimeterai</div><div class="cert-value" id="cert-sealed-time">—</div></div>
+                </div>
+            </div>
+
+            <div class="cert-section">
+                <div class="cert-section-title">3. Tandatangan Digital SHA-256</div>
+                <div class="cert-hash-box">
+                    <div class="cert-hash-label">✅ Hash Video Forensik (SHA-256)</div>
+                    <div id="cert-video-hash">—</div>
+                </div>
+                <div id="cert-image-hashes-section"></div>
+            </div>
+
+            <div class="cert-seal">
+                <div style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Nombor Sijil</div>
+                <div class="cert-seal-number" id="cert-seal-number">—</div>
+                <div class="cert-seal-sub">AWAS Verification Certificate</div>
+            </div>
+
+            <div class="cert-section">
+                <div class="cert-section-title">4. Hash Integriti Sijil</div>
+                <div class="cert-hash-box" style="border-color:#0f1623;background:#f8fafc;">
+                    <div class="cert-hash-label" style="color:#0f1623;">🔒 Certificate Hash (SHA-256)</div>
+                    <div id="cert-hash-display">—</div>
+                </div>
+                <div style="font-size:0.7rem;color:#64748b;padding:0 6px;line-height:1.5;">
+                    Hash ini dihasilkan daripada kandungan sijil ini. Sebarang pengubahan akan menghasilkan hash yang berbeza — membuktikan sijil ini adalah asli dan tidak diubah.
+                </div>
+            </div>
+
+            <div class="cert-integrity">
+                ✅ <strong>AWAS mengesahkan</strong> bahawa bukti digital yang dirujuk dalam sijil ini telah direkodkan, dimeterai dan disimpan dalam sistem AWAS pada masa kejadian berlaku. Tandatangan SHA-256 di atas boleh digunakan untuk mengesahkan keaslian fail video dan gambar asal.
+            </div>
+
+            <div style="padding:0 6px;margin-bottom:12px;font-size:0.72rem;color:#64748b;line-height:1.5;">
+                Untuk pengesahan digital rasmi: <strong>awas.asia/cert/<span id="cert-verify-path">—</span></strong>
+            </div>
+
+            <div class="cert-footer">
+                Sijil ini dikeluarkan secara automatik oleh sistem AWAS selepas pembayaran pengesahan diterima dan consent pemandu diperoleh. Dokumen ini sah untuk tujuan tuntutan insurans dan prosiding mahkamah.
+            </div>
+        </div>
+
+        <!-- MEDIA ACCESS -->
+        <div class="media-section">
+            <div class="media-title">🎥 Akses Fail Bukti Asal</div>
+            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">Muat turun fail asal untuk menjalankan pengesahan SHA-256 sendiri. Hash yang dikira mestilah sepadan dengan hash dalam sijil di atas.</p>
+            <div id="media-list"></div>
+        </div>
+
+        <!-- SHA-256 VERIFICATION TOOL -->
+        <div class="verify-tool">
+            <div class="verify-tool-title">🔬 Alat Pengesahan SHA-256</div>
+            <div class="verify-tool-sub">Muat naik fail yang dimuat turun di atas. Sistem akan mengira SHA-256 dan membandingkan dengan hash dalam sijil secara automatik. Jika hash sepadan — bukti adalah asli dan tidak diubah.</div>
+            <div id="verify-items"></div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <div class="flogo">AWAS</div>
+    <p style="font-weight:700;color:#f1f5f9">Accident Writ Automation System</p>
+    <p style="margin-top:6px">AWAS Premium Resources (202603141446)</p>
+    <p style="margin-top:6px;font-size:0.68rem;letter-spacing:1px">SELAMAT &bull; KEKAL &bull; MEMATUHI PDPA</p>
+</footer>
+
+<script>
+const API_BASE = 'https://awas-backend.onrender.com';
+
+function showState(id) {
+    ['state-loading','state-notfound','state-error'].forEach(s => {
+        document.getElementById(s).classList.remove('active');
+    });
+    document.getElementById('state-cert').style.display = 'none';
+    if (id === 'state-cert') {
+        document.getElementById('state-cert').style.display = 'block';
+    } else {
+        document.getElementById(id).classList.add('active');
+    }
+}
+
+async function computeSHA256(file) {
+    const buffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function buildVerifyItem(label, expectedHash, index) {
+    return `
+        <div class="verify-item">
+            <div class="verify-item-label">${label}</div>
+            <div class="verify-expected">${expectedHash}</div>
+            <div class="verify-upload-row">
+                <input type="file" id="file-input-${index}" style="display:none;" onchange="verifyFile(this, '${expectedHash}', 'result-${index}')">
+                <button class="btn-upload" onclick="document.getElementById('file-input-${index}').click()">📁 Pilih Fail untuk Disahkan</button>
+                <span style="font-size:0.75rem;color:var(--muted);" id="filename-${index}">Tiada fail dipilih</span>
+            </div>
+            <div class="verify-result" id="result-${index}"></div>
+        </div>
+    `;
+}
+
+async function verifyFile(input, expectedHash, resultId) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const filenameEl = document.getElementById(input.id.replace('file-input', 'filename'));
+    if (filenameEl) filenameEl.innerText = file.name;
+
+    const resultEl = document.getElementById(resultId);
+    resultEl.style.display = 'block';
+    resultEl.className = 'verify-result';
+    resultEl.innerHTML = '⏳ Mengira SHA-256...';
+
+    try {
+        const computed = await computeSHA256(file);
+        const match = computed.toLowerCase() === expectedHash.toLowerCase();
+        resultEl.className = `verify-result ${match ? 'match' : 'nomatch'}`;
+        resultEl.innerHTML = match
+            ? `✅ SEPADAN — Fail ini adalah asli dan tidak diubah.<div class="computed-hash">Hash dikira: ${computed}</div>`
+            : `❌ TIDAK SEPADAN — Fail ini mungkin telah diubah atau bukan fail asal.<div class="computed-hash">Hash dikira: ${computed}</div>`;
+    } catch (err) {
+        resultEl.className = 'verify-result nomatch';
+        resultEl.innerText = '⚠️ Ralat semasa mengira hash. Sila cuba lagi.';
+    }
+}
+
+function populateCert(data) {
+    const cert = data;
+    const vr = data.verificationRequest;
+    const log = data.accidentLog;
+
+    const issuedAt = new Date(cert.issuedAt);
+    const incidentDate = new Date(log.createdAt);
+    const sealedAt = log.videoSealedAt ? new Date(log.videoSealedAt) : incidentDate;
+
+    // Certificate details
+    document.getElementById('cert-number-display').innerText = cert.certNumber;
+    document.getElementById('cert-seal-number').innerText = cert.certNumber;
+    document.getElementById('cert-verify-path').innerText = cert.certNumber;
+    document.getElementById('cert-issued-date').innerText = issuedAt.toLocaleDateString('ms-MY');
+    document.getElementById('cert-issued-time').innerText = issuedAt.toLocaleTimeString('ms-MY') + ' MYT';
+    document.getElementById('cert-hash-display').innerText = cert.certHash;
+
+    // Requester
+    document.getElementById('cert-company').innerText = vr.companyName;
+    document.getElementById('cert-type').innerText = vr.requesterType === 'INSURANCE' ? 'Syarikat Insurans' : 'Firma Guaman';
+    document.getElementById('cert-case-ref').innerText = vr.caseReferenceNo;
+    document.getElementById('cert-consent-date').innerText = vr.driverApprovedAt ? new Date(vr.driverApprovedAt).toLocaleDateString('ms-MY') : '—';
+
+    // Accident log
+    document.getElementById('cert-writ-number').innerText = log.writNumber;
+    document.getElementById('cert-plate').innerText = log.vehiclePlate;
+    document.getElementById('cert-incident-date').innerText = incidentDate.toLocaleDateString('ms-MY');
+    document.getElementById('cert-sealed-time').innerText = sealedAt.toLocaleTimeString('ms-MY') + ' MYT';
+
+    // Video hash
+    document.getElementById('cert-video-hash').innerText = log.videoHash || log.logHash;
+
+    // Image hashes
+    const imageHashes = log.imageHashes || [];
+    if (imageHashes.length > 0) {
+        document.getElementById('cert-image-hashes-section').innerHTML = imageHashes.map((h, i) => `
+            <div class="cert-hash-box" style="border-color:#2563eb;background:#eff6ff;">
+                <div class="cert-hash-label" style="color:#1e40af;">📷 Hash Gambar ${i+1} (SHA-256)</div>
+                <div>${h}</div>
+            </div>
+        `).join('');
+    }
+
+    // Media links
+    const mediaList = document.getElementById('media-list');
+    const mediaItems = [];
+    if (log.rawVideoUrl) {
+        mediaItems.push(`
+            <div class="media-item">
+                <div>
+                    <div class="media-item-label">🎥 Video Bukti Asal</div>
+                    <div class="media-item-sub">Fail video yang dimeterai pada masa kejadian</div>
+                </div>
+                <a href="${log.rawVideoUrl}" target="_blank" class="btn-download">Muat Turun</a>
+            </div>
+        `);
+    }
+    const imageUrls = log.imageUrls || [];
+    imageUrls.forEach((url, i) => {
+        mediaItems.push(`
+            <div class="media-item">
+                <div>
+                    <div class="media-item-label">📷 Gambar Bukti ${i+1}</div>
+                    <div class="media-item-sub">Fail gambar yang dimeterai pada masa kejadian</div>
+                </div>
+                <a href="${url}" target="_blank" class="btn-download">Muat Turun</a>
+            </div>
+        `);
+    });
+    mediaList.innerHTML = mediaItems.length > 0 ? mediaItems.join('') : '<p style="color:var(--muted);font-size:0.85rem;">Tiada fail media tersedia.</p>';
+
+    // SHA-256 verification tool
+    const verifyItems = document.getElementById('verify-items');
+    const verifyList = [];
+    let idx = 0;
+    if (log.videoHash || log.logHash) {
+        verifyList.push(buildVerifyItem('🎥 Sahkan Video Bukti', log.videoHash || log.logHash, idx++));
+    }
+    imageHashes.forEach((h, i) => {
+        verifyList.push(buildVerifyItem(`📷 Sahkan Gambar ${i+1}`, h, idx++));
+    });
+    verifyItems.innerHTML = verifyList.length > 0 ? verifyList.join('') : '<p style="color:var(--muted);font-size:0.85rem;">Tiada fail untuk disahkan.</p>';
+
+    showState('state-cert');
+}
+
+async function loadCert() {
+    const pathParts = window.location.pathname.split('/');
+    const certSlug = pathParts[pathParts.length - 1];
+
+    if (!certSlug || certSlug === 'cert.html') {
+        showState('state-notfound');
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/institutions/certificate/${encodeURIComponent(certSlug)}`);
+        if (res.status === 404) { showState('state-notfound'); return; }
+        if (!res.ok) { showState('state-error'); return; }
+        const data = await res.json();
+        populateCert(data);
+    } catch (err) {
+        console.error('AWAS cert load fault:', err);
+        showState('state-error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadCert);
+</script>
+</body>
+</html>

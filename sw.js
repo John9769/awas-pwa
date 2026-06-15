@@ -3,12 +3,14 @@
 // DESCRIPTION: Network-First Production Cache Controller
 // ==========================================
 
-const CACHE_NAME = 'awas-v1.7.0-live';
+const CACHE_NAME = 'awas-v1.8.0-live';
 const ASSETS_TO_CACHE = [
   './index.html',
   './app.html',
   './app.js',
   './writ.html',
+  './verify.html',
+  './cert.html',
   './register.html',
   './login.html',
   './affiliate.html',

@@ -1,257 +1,301 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWAS - Institutional Portal</title>
-    <style>
-        :root {
-            --bg: #0f172a; --card: #1e293b; --primary: #2563eb;
-            --primary-hover: #1d4ed8; --text: #f8fafc; --text-muted: #94a3b8;
-            --success: #16a34a; --warn: #eab308; --border: #334155; --danger: #dc2626;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        header { text-align: center; margin-bottom: 24px; }
-        h1 { font-size: 1.8rem; font-weight: 800; }
-        .badge { display: inline-block; background: #1e3a8a; color: #60a5fa; font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-top: 4px; }
-        main { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; }
-        .panel { background: var(--card); padding: 24px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border: 1px solid var(--border); }
-        h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group { margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-        input, select { background: #020617; border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: white; font-size: 0.95rem; width: 100%; }
-        input:focus { border-color: var(--primary); outline: none; }
-        .btn-action { width: 100%; background: var(--primary); border: none; color: white; padding: 14px; font-weight: 700; font-size: 0.95rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
-        .btn-action:hover { background: var(--primary-hover); }
-        .toggle-link { text-align: center; margin-top: 14px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
-        .status-banner { background: #020617; padding: 16px; border-radius: 8px; border-left: 4px solid var(--border); margin-top: 14px; font-size: 0.9rem; line-height: 1.5; }
-        .status-banner.pending { border-left-color: var(--warn); color: #fde047; }
-        .status-banner.approved { border-left-color: var(--success); color: #4ade80; }
-        .status-banner.error { border-left-color: var(--danger); color: #fca5a5; }
-        #evidence-payload { display: none; margin-top: 20px; background: #020617; border: 1px solid var(--border); padding: 16px; border-radius: 8px; }
-        pre { white-space: pre-wrap; word-break: break-all; font-family: monospace; font-size: 0.8rem; color: #38bdf8; line-height: 1.4; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AWAS — Portal Institusi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+    --red:#dc2626;--green:#16a34a;--green-dark:#15803d;
+    --blue:#2563eb;--blue-dark:#1d4ed8;
+    --bg:#f1f5f9;--card:#ffffff;--navy:#0f1623;
+    --text:#1e293b;--heading:#0f172a;--muted:#64748b;--border:#e2e8f0
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(15,22,35,0.95);backdrop-filter:blur(15px);border-bottom:1px solid rgba(255,255,255,0.08)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:3px;color:#f8fafc;line-height:1;text-decoration:none}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-company{font-size:0.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;}
+.btn-logout{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;padding:6px 12px;border-radius:6px;font-size:0.72rem;font-weight:700;cursor:pointer;text-transform:uppercase}
+main{flex:1;padding:90px 20px 40px;max-width:680px;margin:0 auto;width:100%}
+footer{background:var(--navy);padding:28px 24px;text-align:center;color:#94a3b8;font-size:0.75rem}
+footer .flogo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:#f8fafc;margin-bottom:8px}
+
+/* LOGIN */
+.panel{background:white;border-radius:12px;padding:24px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:20px}
+.panel-title{font-size:0.85rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--heading);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px}
+.form-input{width:100%;background:#f8fafc;border:1px solid var(--border);padding:11px 14px;border-radius:6px;color:var(--heading);font-size:0.9rem;font-family:'DM Sans',sans-serif}
+.form-input:focus{border-color:var(--blue);outline:none;background:white}
+.btn-primary{width:100%;background:var(--navy);border:none;color:white;padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px}
+.btn-primary:hover{background:#1e293b}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed}
+.status-box{padding:14px;border-radius:8px;font-size:0.85rem;line-height:1.5;margin-top:14px;display:none}
+.status-box.error{background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.3);color:#dc2626}
+.status-box.success{background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);color:#15803d}
+
+/* DASHBOARD */
+.dashboard-header{margin-bottom:20px}
+.dashboard-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;color:var(--heading);margin-bottom:4px}
+.dashboard-sub{font-size:0.85rem;color:var(--muted)}
+.btn-new-request{display:inline-block;background:var(--green);color:white;padding:10px 20px;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:20px}
+.btn-new-request:hover{background:var(--green-dark)}
+
+/* REQUEST CARDS */
+.request-card{background:white;border-radius:12px;padding:20px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:14px}
+.request-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.request-writ{font-family:monospace;font-size:0.9rem;font-weight:800;color:var(--red)}
+.status-badge{font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:20px}
+.status-badge.pending{background:rgba(234,179,8,0.1);color:#a16207}
+.status-badge.approved{background:rgba(22,163,74,0.1);color:#15803d}
+.status-badge.rejected{background:rgba(220,38,38,0.1);color:#dc2626}
+.status-badge.paid{background:rgba(37,99,235,0.1);color:#1d4ed8}
+.request-meta{font-size:0.82rem;color:var(--muted);line-height:1.8;margin-bottom:14px}
+.request-meta strong{color:var(--heading)}
+.request-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-pay{background:var(--green);border:none;color:white;padding:10px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;text-transform:uppercase}
+.btn-pay:hover{background:var(--green-dark)}
+.btn-pay:disabled{opacity:0.6;cursor:not-allowed}
+.btn-cert{background:var(--blue);border:none;color:white;padding:10px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;text-transform:uppercase;text-decoration:none;display:inline-block}
+.btn-cert:hover{background:var(--blue-dark)}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px}
+.empty-title{font-weight:700;color:var(--heading);margin-bottom:6px}
+.loading-state{text-align:center;padding:40px;color:var(--muted)}
+</style>
 </head>
 <body>
-    <header>
-        <h1>AWAS Legal Hub</h1>
-        <div class="badge">Enterprise Verification Gateway</div>
-    </header>
 
-    <main>
-        <div class="panel" id="login-panel">
-            <h3>Institutional Login</h3>
+<nav>
+    <a href="index.html" class="nav-logo">AWAS</a>
+    <div class="nav-right">
+        <span class="nav-company" id="nav-company"></span>
+        <button class="btn-logout" id="btn-logout" style="display:none;" onclick="logout()">Log Keluar</button>
+    </div>
+</nav>
+
+<main>
+    <!-- LOGIN PANEL -->
+    <div id="panel-login">
+        <div class="panel">
+            <div class="panel-title">Log Masuk — Portal Institusi</div>
             <div class="form-group">
-                <label>Corporate Email</label>
-                <input type="email" id="login-email" placeholder="name@company.com.my">
+                <label class="form-label">Emel Syarikat</label>
+                <input type="email" id="login-email" class="form-input" placeholder="adjuster@syarikat.com.my">
             </div>
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="login-pass">
+                <label class="form-label">Kata Laluan</label>
+                <input type="password" id="login-pass" class="form-input" placeholder="••••••••">
             </div>
-            <button class="btn-action" id="btn-login">Authenticate Account</button>
-            <div id="login-status" class="status-banner" style="display:none;"></div>
-            <div class="toggle-link" id="go-to-signup">Need corporate account? Apply here</div>
+            <button class="btn-primary" id="btn-login">Log Masuk</button>
+            <div class="status-box" id="login-status"></div>
         </div>
-
-        <div class="panel" id="signup-panel" style="display:none;">
-            <h3>Corporate Registration</h3>
-            <div class="form-group">
-                <label>Corporate Email</label>
-                <input type="email" id="signup-email" placeholder="agent@allianz.com.my">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="signup-pass">
-            </div>
-            <div class="form-group">
-                <label>Company Name</label>
-                <input type="text" id="signup-company" placeholder="e.g., Allianz Insurance Malaysia">
-            </div>
-            <div class="form-group">
-                <label>Institution Type</label>
-                <select id="signup-type">
-                    <option value="INSURANCE">Insurance Adjuster Agency</option>
-                    <option value="LAWYER">Legal Counsel / Law Firm</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>License Number (PIAM / Bar Council ID)</label>
-                <input type="text" id="signup-license" placeholder="e.g., BC/12345/26">
-            </div>
-            <button class="btn-action" id="btn-signup" style="background:var(--success);">Submit Vetting Application</button>
-            <div id="signup-status" class="status-banner" style="display:none;"></div>
-            <div class="toggle-link" id="go-to-login">Return to login</div>
+        <div style="text-align:center;font-size:0.85rem;color:var(--muted);">
+            Belum ada akaun? <a href="verify.html" style="color:var(--blue);font-weight:700;">Daftar di sini →</a>
         </div>
+    </div>
 
-        <div class="panel" id="query-panel" style="display:none;">
-            <h3>Forensic Ledger Query</h3>
-            <div id="welcome-badge" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;font-weight:600;"></div>
-            <div class="form-group">
-                <label>Target SHA-256 Forensic Hash</label>
-                <input type="text" id="log-hash" placeholder="Paste 64-character hash">
-            </div>
-            <div class="form-group">
-                <label>Internal Case Reference Number</label>
-                <input type="text" id="case-ref" placeholder="Your internal claim number">
-            </div>
-            <button class="btn-action" id="btn-query">Query Verification Ledger</button>
-            <div id="request-status" class="status-banner" style="display:none;"></div>
+    <!-- DASHBOARD -->
+    <div id="panel-dashboard" style="display:none;">
+        <div class="dashboard-header">
+            <div class="dashboard-title">Portal Institusi</div>
+            <div class="dashboard-sub" id="dashboard-sub">Senarai permohonan pengesahan writ anda.</div>
         </div>
-
-        <div class="panel" id="unlock-panel" style="display:none;">
-            <h3>Consent Approved: Process Settlement</h3>
-            <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;">
-                Driver has digitally authorized evidence release. Settle transaction to unlock forensic pack.
-            </div>
-            <button id="btn-pay-unlock" class="btn-action" style="background:var(--success);">Authorize Settlement & Download</button>
-            <div id="evidence-payload">
-                <h4 style="font-size:0.85rem;margin-bottom:8px;color:var(--text-muted);">CHAIN-OF-CUSTODY DATA UNLOCKED:</h4>
-                <pre id="payload-display"></pre>
-            </div>
+        <a href="#" id="btn-new-request" class="btn-new-request">+ Permohonan Baharu</a>
+        <div id="requests-container">
+            <div class="loading-state">⏳ Memuatkan permohonan...</div>
         </div>
-    </main>
+    </div>
+</main>
 
-    <script>
-        const API_BASE = 'https://awas-backend.onrender.com'; // Change to production URL before deploy
+<footer>
+    <div class="flogo">AWAS</div>
+    <p style="font-weight:700;color:#f1f5f9">Accident Writ Automation System</p>
+    <p style="margin-top:6px">AWAS Premium Resources (202603141446)</p>
+    <p style="margin-top:6px;font-size:0.68rem;letter-spacing:1px">SELAMAT &bull; KEKAL &bull; MEMATUHI PDPA</p>
+</footer>
 
-        let globalTicketId = null;
-        let authToken = null;
+<script>
+const API_BASE = 'https://awas-backend.onrender.com';
+let authToken = null;
 
-        document.getElementById('go-to-signup').addEventListener('click', () => {
-            document.getElementById('login-panel').style.display = 'none';
-            document.getElementById('signup-panel').style.display = 'block';
+function logout() {
+    localStorage.removeItem('awas_inst_token');
+    localStorage.removeItem('awas_inst_company');
+    window.location.reload();
+}
+
+function showStatus(id, msg, type) {
+    const box = document.getElementById(id);
+    box.className = `status-box ${type}`;
+    box.innerText = msg;
+    box.style.display = 'block';
+}
+
+function getStatusBadge(request) {
+    if (request.isPaymentSettled) return '<span class="status-badge paid">✅ Sijil Dikeluarkan</span>';
+    if (request.approvalStatus === 'APPROVED') return '<span class="status-badge approved">✅ Consent Diperoleh — Bayar RM100</span>';
+    if (request.approvalStatus === 'REJECTED') return '<span class="status-badge rejected">❌ Ditolak</span>';
+    return '<span class="status-badge pending">⏳ Menunggu Consent</span>';
+}
+
+function getActionButtons(request) {
+    if (request.isPaymentSettled && request.certificate) {
+        return `<a href="/cert/${request.certificate.certNumber}" class="btn-cert">📋 Lihat Sijil Pengesahan</a>`;
+    }
+    if (request.isPaymentSettled) {
+        return `<span style="font-size:0.82rem;color:var(--muted);">Sijil sedang diproses...</span>`;
+    }
+    if (request.approvalStatus === 'APPROVED' && !request.isPaymentSettled) {
+        if (request.payment && request.payment.toyyibpayUrl) {
+            return `<button class="btn-pay" onclick="window.location.href='${request.payment.toyyibpayUrl}'">💳 Teruskan Pembayaran RM100</button>`;
+        }
+        return `<button class="btn-pay" onclick="createBill(${request.ticketId}, this)">💳 Bayar RM100 — Dapatkan Sijil</button>`;
+    }
+    if (request.approvalStatus === 'REJECTED') {
+        return `<span style="font-size:0.82rem;color:var(--red);">Pemandu telah menolak permintaan ini.</span>`;
+    }
+    return `<span style="font-size:0.82rem;color:var(--muted);">Menunggu consent pemandu. Anda akan dimaklumkan melalui emel.</span>`;
+}
+
+async function createBill(ticketId, btn) {
+    btn.disabled = true;
+    btn.innerText = '⏳ Mencipta bil...';
+    try {
+        const res = await fetch(`${API_BASE}/api/institutions/create-bill`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ ticketId })
         });
-        document.getElementById('go-to-login').addEventListener('click', () => {
-            document.getElementById('signup-panel').style.display = 'none';
-            document.getElementById('login-panel').style.display = 'block';
+        const data = await res.json();
+        if (res.ok) {
+            window.location.href = data.paymentUrl;
+        } else {
+            alert(data.error || 'Gagal mencipta bil.');
+            btn.disabled = false;
+            btn.innerText = '💳 Bayar RM100 — Dapatkan Sijil';
+        }
+    } catch {
+        alert('Ralat sambungan.');
+        btn.disabled = false;
+        btn.innerText = '💳 Bayar RM100 — Dapatkan Sijil';
+    }
+}
+
+async function loadRequests() {
+    try {
+        const res = await fetch(`${API_BASE}/api/institutions/my-requests`, {
+            headers: { 'Authorization': `Bearer ${authToken}` }
         });
+        const data = await res.json();
+        const container = document.getElementById('requests-container');
 
-        document.getElementById('btn-signup').addEventListener('click', async () => {
-            const statusBox = document.getElementById('signup-status');
-            statusBox.className = 'status-banner';
-            statusBox.style.display = 'block';
-            statusBox.innerText = 'Submitting application...';
+        if (!res.ok) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div>Gagal memuatkan permohonan.</div></div>';
+            return;
+        }
 
-            const payload = {
-                email: document.getElementById('signup-email').value,
-                password: document.getElementById('signup-pass').value,
-                companyName: document.getElementById('signup-company').value,
-                requesterType: document.getElementById('signup-type').value,
-                licenseId: document.getElementById('signup-license').value
-            };
+        if (data.count === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <div class="empty-title">Tiada Permohonan Lagi</div>
+                    <div>Klik "Permohonan Baharu" untuk memulakan pengesahan writ.</div>
+                </div>`;
+            return;
+        }
 
-            try {
-                const res = await fetch(`${API_BASE}/api/auth/signup`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                statusBox.classList.add(res.ok ? 'approved' : 'error');
-                statusBox.innerText = res.ok ? data.message : data.error;
-            } catch {
-                statusBox.classList.add('error');
-                statusBox.innerText = 'Network connection error.';
-            }
-        });
+        container.innerHTML = data.requests.map(r => `
+            <div class="request-card">
+                <div class="request-card-header">
+                    <div class="request-writ">${r.writNumber || '—'}</div>
+                    ${getStatusBadge(r)}
+                </div>
+                <div class="request-meta">
+                    <div>Plat: <strong>${r.vehiclePlate || '—'}</strong></div>
+                    <div>Nombor Kes: <strong>${r.caseReferenceNo}</strong></div>
+                    <div>Ticket ID: <strong>#${r.ticketId}</strong></div>
+                    <div>Tarikh: <strong>${new Date(r.createdAt).toLocaleDateString('ms-MY')}</strong></div>
+                    ${r.driverApprovedAt ? `<div>Consent: <strong>${new Date(r.driverApprovedAt).toLocaleDateString('ms-MY')}</strong></div>` : ''}
+                </div>
+                <div class="request-actions">
+                    ${getActionButtons(r)}
+                </div>
+            </div>
+        `).join('');
 
-        document.getElementById('btn-login').addEventListener('click', async () => {
-            const statusBox = document.getElementById('login-status');
-            statusBox.className = 'status-banner';
-            statusBox.style.display = 'block';
-            statusBox.innerText = 'Validating credentials...';
+    } catch {
+        document.getElementById('requests-container').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div>Ralat sambungan.</div></div>';
+    }
+}
 
-            const payload = {
-                email: document.getElementById('login-email').value,
+// Login
+document.getElementById('btn-login').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-login');
+    btn.disabled = true;
+    btn.innerText = 'Mengesahkan...';
+
+    try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: document.getElementById('login-email').value.trim(),
                 password: document.getElementById('login-pass').value
-            };
-
-            try {
-                const res = await fetch(`${API_BASE}/api/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    authToken = data.token; // Save JWT
-                    document.getElementById('login-panel').style.display = 'none';
-                    document.getElementById('query-panel').style.display = 'block';
-                    document.getElementById('welcome-badge').innerText = `🏢 ${data.companyName} (${data.requesterType})`;
-                } else {
-                    statusBox.classList.add('error');
-                    statusBox.innerText = data.error;
-                }
-            } catch {
-                statusBox.classList.add('error');
-                statusBox.innerText = 'Server connection error.';
-            }
+            })
         });
+        const data = await res.json();
+        if (res.ok) {
+            authToken = data.token;
+            localStorage.setItem('awas_inst_token', data.token);
+            localStorage.setItem('awas_inst_company', data.companyName);
+            showDashboard(data.companyName);
+        } else {
+            showStatus('login-status', data.error || 'Log masuk gagal.', 'error');
+        }
+    } catch {
+        showStatus('login-status', 'Ralat sambungan.', 'error');
+    }
 
-        document.getElementById('btn-query').addEventListener('click', async () => {
-            const statusDiv = document.getElementById('request-status');
-            statusDiv.className = 'status-banner';
-            statusDiv.style.display = 'block';
-            statusDiv.innerText = 'Routing forensic lookup...';
+    btn.disabled = false;
+    btn.innerText = 'Log Masuk';
+});
 
-            const payload = {
-                logHash: document.getElementById('log-hash').value.trim(),
-                caseReferenceNo: document.getElementById('case-ref').value.trim()
-            };
+function showDashboard(companyName) {
+    document.getElementById('panel-login').style.display = 'none';
+    document.getElementById('panel-dashboard').style.display = 'block';
+    document.getElementById('nav-company').innerText = companyName;
+    document.getElementById('btn-logout').style.display = 'block';
+    document.getElementById('dashboard-sub').innerText = `${companyName} — Semua permohonan pengesahan writ.`;
 
-            try {
-                const res = await fetch(`${API_BASE}/api/institutions/request-access`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (res.status === 202) {
-                    globalTicketId = data.ticketId;
-                    statusDiv.classList.add('pending');
-                    statusDiv.innerHTML = `⏳ <strong>${data.message}</strong><br>Ticket ID: <strong>${globalTicketId}</strong>`;
-                    document.getElementById('unlock-panel').style.display = 'block';
-                } else {
-                    statusDiv.classList.add('error');
-                    statusDiv.innerText = data.error || 'Query failed.';
-                }
-            } catch {
-                statusDiv.classList.add('error');
-                statusDiv.innerText = 'Network error.';
-            }
-        });
+    // New request button — go to verify.html
+    document.getElementById('btn-new-request').href = 'verify.html';
 
-        document.getElementById('btn-pay-unlock').addEventListener('click', async () => {
-            const statusDiv = document.getElementById('request-status');
-            if (!globalTicketId) return alert('Invalid flow. Re-query first.');
+    loadRequests();
+}
 
-            try {
-                const res = await fetch(`${API_BASE}/api/institutions/unlock-evidence`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify({ ticketId: globalTicketId })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    statusDiv.className = 'status-banner approved';
-                    statusDiv.innerHTML = `✅ <strong>SETTLED (${data.meta.billingRate})</strong><br>Consent signed: ${new Date(data.meta.consentSignedAt).toLocaleString('en-MY')}`;
-                    document.getElementById('payload-display').innerText = JSON.stringify(data.evidenceBundle, null, 2);
-                    document.getElementById('evidence-payload').style.display = 'block';
-                } else {
-                    alert(data.error || 'Unlock failed.');
-                }
-            } catch {
-                alert('Network error during settlement.');
-            }
-        });
-    </script>
+// Auto-login if token exists
+window.addEventListener('DOMContentLoaded', () => {
+    const savedToken = localStorage.getItem('awas_inst_token');
+    const savedCompany = localStorage.getItem('awas_inst_company');
+    if (savedToken) {
+        authToken = savedToken;
+        showDashboard(savedCompany || 'Institusi');
+    }
+
+    // Check if returning from payment
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('verified') === '1') {
+        setTimeout(() => loadRequests(), 2000);
+    }
+});
+</script>
 </body>
 </html>

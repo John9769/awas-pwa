@@ -237,6 +237,13 @@ footer .flogo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacin
             </div>
         </div>
 
+        <!-- VERIFICATION CTA — for insurers/lawyers -->
+        <div style="background:rgba(15,22,35,0.06);border:1px solid rgba(15,22,35,0.15);border-radius:12px;padding:18px;margin-bottom:20px;text-align:center;">
+            <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#475569;margin-bottom:6px;">🔒 Pengesahan Keaslian Dokumen</div>
+            <p style="font-size:0.82rem;color:#64748b;line-height:1.5;margin-bottom:12px;">Dokumen ini boleh disahkan secara rasmi oleh penanggung insurans dan peguam.</p>
+            <a id="verify-cta-link" href="#" style="background:#0f1623;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.82rem;display:inline-block;">Sahkan Writ Ini — awas.asia/verify</a>
+        </div>
+
         <!-- CROSS-SELL -->
         <div class="crosssell">
             <div class="crosssell-title">💡 Tahukah Anda Hak Insurans Anda?</div>
@@ -327,6 +334,11 @@ function populateWrit(data) {
     // Strip ToyyibPay query params — show only clean permanent writ URL
     const writUrl = window.location.origin + window.location.pathname;
     document.getElementById('writ-url-display').innerText = writUrl;
+
+    // Set verification CTA link — points to /verify/:writSlug
+    const writSlug = window.location.pathname.split('/').pop();
+    const verifyLink = document.getElementById('verify-cta-link');
+    if (verifyLink) verifyLink.href = `/verify/${writSlug}`;
 }
 
 function copyWritLink() {
